@@ -1,0 +1,60 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# up2daite.com – GitLab CI/CD Pipeline
+# Stufe 1: Build → Package
+#
+# Geplante Erweiterungen (noch nicht aktiv):
+#   scan   → Tenable / Container-Vulnerability-Scan
+#   deploy → kubectl apply / helm upgrade (Kubernetes)
+# ─────────────────────────────────────────────────────────────────────────────
+
+stages:
+  - build
+  - package
+
+variables:
+  IMAGE_NAME: $CI_REGISTRY_IMAGE/frontend
+  IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+
+# ─── Stage: build ────────────────────────────────��───────────────────────────
+# Führt den TypeScript-Kompiler und Vite-Build aus.
+# Schlägt sofort fehl wenn es Typ-Fehler gibt — schnelles Feedback ohne Docker.
+
+build-frontend:
+  stage: build
+  # Kein rules-Block → GitLab-Standard: läuft bei jedem Push auf jedem Branch
+  image: node:20-alpine
+  cache:
+    key: "$CI_COMMIT_REF_SLUG"
+    paths:
+      - frontend/node_modules/
+  script:
+    - cd frontend
+    - npm ci
+    - npm run build
+  artifacts:
+    name: frontend-dist
+    paths:
+      - frontend/dist/
+    expire_in: 1 hour
+
+# ─── Stage: package ──────────────────────────────────────────────────────────
+# Baut das Docker-Image und pusht es in die GitLab Container Registry.
+# Läuft nur auf dem main-Branch (nicht bei Feature-Branches oder MRs).
+
+build-and-push-image:
+  stage: package
+  image: docker:24
+  services:
+    - docker:24-dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build -t $IMAGE_NAME:$IMAGE_TAG frontend/
+    - docker push $IMAGE_NAME:$IMAGE_TAG
+    # Zusätzlich als "latest" taggen damit der aktuelle Stand leicht auffindbar ist
+    - docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:latest
+    - docker push $IMAGE_NAME:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"

@@ -1,0 +1,14 @@
+# Lokale Entwicklungsumgebung
+# Starten: docker compose up --build
+#
+# Hinweis: Für lokales Dev (mit Hot Reload) besser direkt "npm run dev" im
+# frontend/-Verzeichnis verwenden. Docker hier nur für Produktions-Simulation.
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    restart: unless-stopped
