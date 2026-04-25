@@ -1,4 +1,4 @@
-import { Box, Container, Typography, Button, Divider, Grid } from '@mui/material'
+import { Box, Container, Typography, Button, Divider, Grid2 as Grid } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { useEditions } from '../../hooks/useEditions'
 import { useStories } from '../../hooks/useStories'

@@ -1,7 +1,7 @@
 import {
   Box,
   Typography,
-  Grid,
+  Grid2 as Grid,
   Card,
   CardContent,
   Button,
