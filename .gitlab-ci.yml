@@ -5,15 +5,17 @@
 #   build   → Code kompilieren + testen
 #   package → Docker-Images bauen + pushen (nur main)
 #   scan    → Trivy Security Scan der Images
+#   deploy  → [DEAKTIVIERT] K8s Deployment — siehe unten
 #
-# K8s-Deployment kommt später mit Cloud-Cluster (GKE/EKS).
-# Lokal: docker compose up
+# Lokal entwickeln: docker compose up
+# K8s aktivieren:   siehe k8s/README.md + Deploy-Block unten einkommentieren
 # ─────────────────────────────────────────────────────────────────────────────
 
 stages:
   - build
   - package
   - scan
+  # - deploy  # ← Einkommentieren wenn Cloud-Cluster bereit
 
 variables:
   FRONTEND_IMAGE: $CI_REGISTRY_IMAGE/frontend
@@ -138,3 +140,55 @@ scan-backend:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   allow_failure: false
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# K8S DEPLOYMENT (DEAKTIVIERT)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Zum Aktivieren:
+#   1. Cloud-Cluster erstellen (GKE, EKS, AKS)
+#   2. GitLab CI/CD Variable KUBE_CONFIG setzen (Base64-encoded kubeconfig)
+#      ODER GitLab Kubernetes Agent einrichten
+#   3. "- deploy" oben bei stages einkommentieren
+#   4. Diesen Block einkommentieren
+#   5. KUBE_NAMESPACE Variable oben hinzufügen: KUBE_NAMESPACE: up2daite-staging
+#
+# Siehe auch: k8s/README.md
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# deploy-frontend:
+#   stage: deploy
+#   image: dtzar/helm-kubectl:latest
+#   before_script:
+#     - mkdir -p ~/.kube
+#     - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
+#   script:
+#     - kubectl set image deployment/frontend
+#         frontend=$FRONTEND_IMAGE:$IMAGE_TAG
+#         -n $KUBE_NAMESPACE
+#     - kubectl rollout status deployment/frontend
+#         -n $KUBE_NAMESPACE
+#         --timeout=120s
+#   environment:
+#     name: staging
+#     url: https://staging.up2daite.com
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == "main"
+
+# deploy-backend:
+#   stage: deploy
+#   image: dtzar/helm-kubectl:latest
+#   before_script:
+#     - mkdir -p ~/.kube
+#     - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
+#   script:
+#     - kubectl set image deployment/backend
+#         backend=$BACKEND_IMAGE:$IMAGE_TAG
+#         -n $KUBE_NAMESPACE
+#     - kubectl rollout status deployment/backend
+#         -n $KUBE_NAMESPACE
+#         --timeout=180s
+#   environment:
+#     name: staging
+#     url: https://staging.up2daite.com
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == "main"
