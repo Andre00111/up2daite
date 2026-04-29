@@ -2,27 +2,25 @@
 # up2daite.com – GitLab CI/CD Pipeline
 #
 # Stages:
-#   build   → TypeScript + Vite (jeder Push)
-#   package → Kaniko: Docker-Image bauen + pushen (nur main)
-#   deploy  → kubectl: Deployment im Cluster aktualisieren (nur main)
+#   build   → Code kompilieren + testen
+#   package → Docker-Images bauen + pushen (nur main)
+#   scan    → Trivy Security Scan der Images
 #
-# Geplant (noch nicht aktiv):
-#   scan    → Tenable Container-Scan (zwischen package und deploy)
-# ─────────────────────────────────────���───────────────────────────────────────
+# K8s-Deployment kommt später mit Cloud-Cluster (GKE/EKS).
+# Lokal: docker compose up
+# ─────────────────────────────────────────────────────────────────────────────
 
 stages:
   - build
   - package
-  - deploy
+  - scan
 
 variables:
   FRONTEND_IMAGE: $CI_REGISTRY_IMAGE/frontend
   BACKEND_IMAGE: $CI_REGISTRY_IMAGE/backend
   IMAGE_TAG: $CI_COMMIT_SHORT_SHA
-  KUBE_NAMESPACE: up2daite-staging
 
 # ─── Stage: build ─────────────────────────────────────────────────────────────
-# Kein rules-Block → läuft bei jedem Push auf jedem Branch
 
 build-frontend:
   stage: build
@@ -41,7 +39,6 @@ build-frontend:
       - frontend/dist/
     expire_in: 1 hour
 
-# ★ Backend Build — Maven kompiliert und testet das Spring Boot Projekt
 build-backend:
   stage: build
   image: maven:3.9-eclipse-temurin-21-alpine
@@ -61,7 +58,6 @@ build-backend:
     expire_in: 1 hour
 
 # ─── Stage: package ───────────────────────────────────────────────────────────
-# Kaniko baut das Image ohne Docker-Daemon (kein privileged-Modus nötig).
 
 package-frontend:
   stage: package
@@ -81,7 +77,6 @@ package-frontend:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
-# ★ Backend Image bauen — Kaniko baut ohne Docker-Daemon
 package-backend:
   stage: package
   image:
@@ -100,43 +95,46 @@ package-backend:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
-# ─── Stage: deploy ────────────────────────────────────────────────────────────
-# Rollt das neue Image im Cluster aus. Wartet auf erfolgreichen Rollout.
+# ─── Stage: scan ──────────────────────────────────────────────────────────────
+# Trivy scannt die Images auf bekannte Vulnerabilities (CVEs).
+# Bei CRITICAL oder HIGH Findings schlägt der Job fehl.
 
-# ★ Deploy-Jobs sind MANUELL — Shared Runners haben keinen Cluster-Zugriff
-# Für automatisches Deployment: kubeconfig als CI/CD Variable hinterlegen
-# oder selbst-gehosteten Runner mit Cluster-Zugang nutzen
-
-deploy-frontend:
-  stage: deploy
-  image: dtzar/helm-kubectl:latest
+scan-frontend:
+  stage: scan
+  image:
+    name: aquasec/trivy:latest
+    entrypoint: [""]
+  variables:
+    TRIVY_USERNAME: $CI_REGISTRY_USER
+    TRIVY_PASSWORD: $CI_REGISTRY_PASSWORD
   script:
-    - kubectl set image deployment/frontend
-        frontend=$FRONTEND_IMAGE:$IMAGE_TAG
-        -n $KUBE_NAMESPACE
-    - kubectl rollout status deployment/frontend
-        -n $KUBE_NAMESPACE
-        --timeout=120s
-  environment:
-    name: staging
-    url: http://up2daite.local
+    - trivy image
+      --exit-code 1
+      --severity CRITICAL,HIGH
+      --ignore-unfixed
+      --no-progress
+      --format table
+      $FRONTEND_IMAGE:$IMAGE_TAG
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
-      when: manual
+  allow_failure: false
 
-deploy-backend:
-  stage: deploy
-  image: dtzar/helm-kubectl:latest
+scan-backend:
+  stage: scan
+  image:
+    name: aquasec/trivy:latest
+    entrypoint: [""]
+  variables:
+    TRIVY_USERNAME: $CI_REGISTRY_USER
+    TRIVY_PASSWORD: $CI_REGISTRY_PASSWORD
   script:
-    - kubectl set image deployment/backend
-        backend=$BACKEND_IMAGE:$IMAGE_TAG
-        -n $KUBE_NAMESPACE
-    - kubectl rollout status deployment/backend
-        -n $KUBE_NAMESPACE
-        --timeout=180s
-  environment:
-    name: staging
-    url: http://up2daite.local
+    - trivy image
+      --exit-code 1
+      --severity CRITICAL,HIGH
+      --ignore-unfixed
+      --no-progress
+      --format table
+      $BACKEND_IMAGE:$IMAGE_TAG
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
-      when: manual
+  allow_failure: false
