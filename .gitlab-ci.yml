@@ -103,9 +103,13 @@ package-backend:
 # ─── Stage: deploy ────────────────────────────────────────────────────────────
 # Rollt das neue Image im Cluster aus. Wartet auf erfolgreichen Rollout.
 
+# ★ Deploy-Jobs sind MANUELL — Shared Runners haben keinen Cluster-Zugriff
+# Für automatisches Deployment: kubeconfig als CI/CD Variable hinterlegen
+# oder selbst-gehosteten Runner mit Cluster-Zugang nutzen
+
 deploy-frontend:
   stage: deploy
-  image: bitnami/kubectl:latest
+  image: dtzar/helm-kubectl:latest
   script:
     - kubectl set image deployment/frontend
         frontend=$FRONTEND_IMAGE:$IMAGE_TAG
@@ -118,11 +122,11 @@ deploy-frontend:
     url: http://up2daite.local
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
 
-# ★ Backend Deployment — rollt neues Image im Cluster aus
 deploy-backend:
   stage: deploy
-  image: bitnami/kubectl:latest
+  image: dtzar/helm-kubectl:latest
   script:
     - kubectl set image deployment/backend
         backend=$BACKEND_IMAGE:$IMAGE_TAG
@@ -135,3 +139,4 @@ deploy-backend:
     url: http://up2daite.local
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
