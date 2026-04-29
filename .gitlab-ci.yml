@@ -1,30 +1,35 @@
 # ─────────────────────────────────────────────────────────────────────────────
 # up2daite.com – GitLab CI/CD Pipeline
-# Stufe 1: Build → Package
 #
-# Geplante Erweiterungen (noch nicht aktiv):
-#   scan   → Tenable / Container-Vulnerability-Scan
-#   deploy → kubectl apply / helm upgrade (Kubernetes)
-# ─────────────────────────────────────────────────────────────────────────────
+# Stages:
+#   build   → TypeScript + Vite (jeder Push)
+#   package → Kaniko: Docker-Image bauen + pushen (nur main)
+#   deploy  → kubectl: Deployment im Cluster aktualisieren (nur main)
+#
+# Geplant (noch nicht aktiv):
+#   scan    → Tenable Container-Scan (zwischen package und deploy)
+# ─────────────────────────────────────���───────────────────────────────────────
 
 stages:
   - build
   - package
+  - deploy
 
 variables:
-  IMAGE_NAME: $CI_REGISTRY_IMAGE/frontend
+  FRONTEND_IMAGE: $CI_REGISTRY_IMAGE/frontend
+  BACKEND_IMAGE: $CI_REGISTRY_IMAGE/backend
   IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+  KUBE_NAMESPACE: up2daite-staging
 
-# ─── Stage: build ────────────────────────────────��───────────────────────────
-# Führt den TypeScript-Kompiler und Vite-Build aus.
-# Schlägt sofort fehl wenn es Typ-Fehler gibt — schnelles Feedback ohne Docker.
+# ─── Stage: build ─────────────────────────────────────────────────────────────
+# Kein rules-Block → läuft bei jedem Push auf jedem Branch
 
 build-frontend:
   stage: build
-  # Kein rules-Block → GitLab-Standard: läuft bei jedem Push auf jedem Branch
+  tags: [kubernetes]
   image: node:20-alpine
   cache:
-    key: "$CI_COMMIT_REF_SLUG"
+    key: "$CI_COMMIT_REF_SLUG-frontend"
     paths:
       - frontend/node_modules/
   script:
@@ -37,24 +42,102 @@ build-frontend:
       - frontend/dist/
     expire_in: 1 hour
 
-# ─── Stage: package ──────────────────────────────────────────────────────────
-# Baut das Docker-Image und pusht es in die GitLab Container Registry.
-# Läuft nur auf dem main-Branch (nicht bei Feature-Branches oder MRs).
-
-build-and-push-image:
-  stage: package
-  image: docker:24
-  services:
-    - docker:24-dind
+# ★ Backend Build — Maven kompiliert und testet das Spring Boot Projekt
+build-backend:
+  stage: build
+  tags: [kubernetes]
+  image: maven:3.9-eclipse-temurin-21-alpine
+  cache:
+    key: "$CI_COMMIT_REF_SLUG-backend"
+    paths:
+      - backend/.m2/
   variables:
-    DOCKER_TLS_CERTDIR: "/certs"
-  before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    MAVEN_OPTS: "-Dmaven.repo.local=backend/.m2"
   script:
-    - docker build -t $IMAGE_NAME:$IMAGE_TAG frontend/
-    - docker push $IMAGE_NAME:$IMAGE_TAG
-    # Zusätzlich als "latest" taggen damit der aktuelle Stand leicht auffindbar ist
-    - docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:latest
-    - docker push $IMAGE_NAME:latest
+    - cd backend
+    - mvn clean verify -q
+  artifacts:
+    name: backend-jar
+    paths:
+      - backend/target/*.jar
+    expire_in: 1 hour
+
+# ─── Stage: package ───────────────────────────────────────────────────────────
+# Kaniko baut das Image ohne Docker-Daemon (kein privileged-Modus nötig).
+
+package-frontend:
+  stage: package
+  tags: [kubernetes]
+  image:
+    name: gcr.io/kaniko-project/executor:v1.23.2-debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(echo -n $CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD | base64)\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor
+      --context $CI_PROJECT_DIR/frontend
+      --dockerfile $CI_PROJECT_DIR/frontend/Dockerfile
+      --destination $FRONTEND_IMAGE:$IMAGE_TAG
+      --destination $FRONTEND_IMAGE:latest
+      --cache=true
+      --cache-ttl=24h
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+# ★ Backend Image bauen — Kaniko baut ohne Docker-Daemon
+package-backend:
+  stage: package
+  tags: [kubernetes]
+  image:
+    name: gcr.io/kaniko-project/executor:v1.23.2-debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(echo -n $CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD | base64)\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor
+      --context $CI_PROJECT_DIR/backend
+      --dockerfile $CI_PROJECT_DIR/backend/Dockerfile
+      --destination $BACKEND_IMAGE:$IMAGE_TAG
+      --destination $BACKEND_IMAGE:latest
+      --cache=true
+      --cache-ttl=24h
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+# ─── Stage: deploy ────────────────────────────────────────────────────────────
+# Rollt das neue Image im Cluster aus. Wartet auf erfolgreichen Rollout.
+
+deploy-frontend:
+  stage: deploy
+  tags: [kubernetes]
+  image: bitnami/kubectl:latest
+  script:
+    - kubectl set image deployment/frontend
+        frontend=$FRONTEND_IMAGE:$IMAGE_TAG
+        -n $KUBE_NAMESPACE
+    - kubectl rollout status deployment/frontend
+        -n $KUBE_NAMESPACE
+        --timeout=120s
+  environment:
+    name: staging
+    url: http://up2daite.local
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+# ★ Backend Deployment — rollt neues Image im Cluster aus
+deploy-backend:
+  stage: deploy
+  tags: [kubernetes]
+  image: bitnami/kubectl:latest
+  script:
+    - kubectl set image deployment/backend
+        backend=$BACKEND_IMAGE:$IMAGE_TAG
+        -n $KUBE_NAMESPACE
+    - kubectl rollout status deployment/backend
+        -n $KUBE_NAMESPACE
+        --timeout=180s
+  environment:
+    name: staging
+    url: http://up2daite.local
   rules:
     - if: $CI_COMMIT_BRANCH == "main"

@@ -1,0 +1,30 @@
+# ★ SERVICE — stabiler Netzwerkendpunkt für Pods
+#
+# Pods kommen und gehen (Updates, Neustarts, Abstürze).
+# Ihre IP-Adressen ändern sich dabei ständig.
+# Ein Service hat eine feste interne IP und leitet Traffic
+# automatisch an die richtigen Pods weiter.
+#
+# Ohne Service: niemand weiß wie er den Pod erreichen soll.
+# Mit Service: feste Adresse, Kubernetes kümmert sich ums Routing.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: up2daite-staging
+  labels:
+    app.kubernetes.io/name: frontend
+    app.kubernetes.io/part-of: up2daite
+
+spec:
+  # ★ SELECTOR — welche Pods bekommt der Traffic?
+  # Muss mit den Labels im Deployment übereinstimmen.
+  # Das ist die einzige Verknüpfung zwischen Service und Pods.
+  selector:
+    app.kubernetes.io/name: frontend
+
+  ports:
+    - name: http
+      port: 80         # Port des Service (intern im Cluster erreichbar)
+      targetPort: 80   # Port des Containers — muss mit containerPort übereinstimmen

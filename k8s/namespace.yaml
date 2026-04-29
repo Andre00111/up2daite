@@ -1,0 +1,13 @@
+# ★ NAMESPACE — logische Trennwand im Cluster
+#
+# Alles was zu diesem Projekt gehört läuft im Namespace "up2daite-staging".
+# Damit sind Ressourcen anderer Projekte sauber getrennt.
+# → kubectl get pods -n up2daite-staging  (nur unsere Pods sehen)
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: up2daite-staging       # ★ dieser Name taucht in JEDER anderen Datei unter "namespace:" auf
+  labels:
+    app.kubernetes.io/managed-by: kubectl
+    environment: staging

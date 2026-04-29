@@ -1,0 +1,23 @@
+# ★ PERSISTENT VOLUME CLAIM — reserviert Speicherplatz für Postgres-Daten
+#
+# Ohne PVC gehen alle Daten verloren wenn der Pod neu startet.
+# Das PVC fordert Speicher vom Cluster an, der Pod mountet ihn dann.
+#
+# In minikube: automatisch bereitgestellt
+# In Cloud: StorageClass muss existieren (z.B. "standard" bei GKE)
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: up2daite-staging
+  labels:
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/part-of: up2daite
+
+spec:
+  accessModes:
+    - ReadWriteOnce    # nur ein Pod kann gleichzeitig schreiben — passt für DB
+  resources:
+    requests:
+      storage: 1Gi     # 1 GB für Staging ausreichend

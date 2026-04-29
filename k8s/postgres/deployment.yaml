@@ -1,0 +1,86 @@
+# ★ POSTGRES DEPLOYMENT — Datenbank für das Backend
+#
+# In Produktion sollte man einen managed Service (z.B. Cloud SQL, RDS) nutzen.
+# Für Staging/Dev ist ein Pod mit PersistentVolume ausreichend.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: up2daite-staging
+  labels:
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/part-of: up2daite
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: postgres
+
+  # ★ Recreate statt RollingUpdate: Datenbanken sollten nicht parallel laufen
+  # (sonst könnten zwei Pods gleichzeitig auf das Volume zugreifen)
+  strategy:
+    type: Recreate
+
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: postgres
+        app.kubernetes.io/part-of: up2daite
+
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+
+          ports:
+            - containerPort: 5432
+              name: postgres
+
+          # ★ Credentials aus Secret laden — nicht im Klartext im Deployment
+          env:
+            - name: POSTGRES_DB
+              value: up2daite
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: password
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+
+          # ★ Volume für persistente Daten — ohne das gehen Daten bei Pod-Neustart verloren
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+
+          # ★ Readiness: pg_isready prüft ob Postgres Verbindungen annimmt
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "up2daite"]
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "up2daite"]
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            failureThreshold: 3
+
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-pvc

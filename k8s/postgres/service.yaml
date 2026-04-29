@@ -1,0 +1,22 @@
+# ★ POSTGRES SERVICE — macht die Datenbank im Cluster erreichbar
+#
+# Das Backend verbindet sich zu "postgres:5432" — dieser Service-Name
+# wird von K8s DNS automatisch aufgelöst.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: up2daite-staging
+  labels:
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/part-of: up2daite
+
+spec:
+  # ★ ClusterIP (default): nur intern erreichbar — genau richtig für eine DB
+  selector:
+    app.kubernetes.io/name: postgres
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432

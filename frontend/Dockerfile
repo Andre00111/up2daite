@@ -12,6 +12,10 @@ RUN npm run build
 # Stage 2: nginx serviert das fertige Bundle
 FROM nginx:alpine
 
+# ★ Eigene nginx-Config mit API-Proxy und SPA-Fallback
+# Ersetzt die Default-Config, die kein Proxying kann
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 EXPOSE 80

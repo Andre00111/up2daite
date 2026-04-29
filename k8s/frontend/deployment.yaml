@@ -1,0 +1,93 @@
+# ★ DEPLOYMENT — beschreibt WIE die App laufen soll
+#
+# Ein Deployment sagt Kubernetes:
+#   "Sorge dafür, dass immer X Kopien dieses Containers laufen."
+# Kubernetes übernimmt den Rest: starten, neustarten, updaten.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: up2daite-staging
+
+  # Labels sind reine Metadaten — wie Aufkleber auf einer Box.
+  # Sie werden von Service und anderen Objekten genutzt um Pods zu finden.
+  labels:
+    app.kubernetes.io/name: frontend
+    app.kubernetes.io/part-of: up2daite
+
+spec:
+  # ★ Wie viele Kopien (Pods) sollen laufen?
+  replicas: 1
+
+  # ★ SELECTOR — das Herzstück der Verknüpfung
+  # Kubernetes fragt sich: "Welche Pods gehören zu diesem Deployment?"
+  # Antwort: alle Pods die dieses Label haben.
+  # MUSS identisch mit template.metadata.labels unten sein.
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: frontend
+
+  # Rolling Update: neuer Pod startet BEVOR der alte stirbt → kein Ausfall
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0   # nie weniger als replicas Pods laufen lassen
+      maxSurge: 1         # kurzzeitig 1 Pod mehr erlaubt (der neue)
+
+  # ★ TEMPLATE — die Schablone für jeden Pod
+  # Alles unter "template" beschreibt wie ein einzelner Pod aussieht.
+  template:
+    metadata:
+      # ★ Diese Labels MÜSSEN mit selector.matchLabels übereinstimmen
+      labels:
+        app.kubernetes.io/name: frontend
+        app.kubernetes.io/part-of: up2daite
+
+    spec:
+      # Zugangsdaten zur privaten GitLab Registry
+      # → wird per k8s/image-pull-secret.sh einmalig angelegt
+      imagePullSecrets:
+        - name: gitlab-registry
+
+      containers:
+        - name: frontend
+
+          # ★ Welches Docker-Image soll laufen?
+          # Die Pipeline aktualisiert diesen Wert per "kubectl set image"
+          image: registry.gitlab.com/andre00111/up2daite/frontend:latest
+
+          ports:
+            - containerPort: 80   # Port auf dem nginx im Container lauscht
+              name: http
+
+          # Ressourcen: requests = Mindestgarantie, limits = harte Obergrenze
+          # 50m CPU = 5% eines CPU-Kerns
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "32Mi"
+            limits:
+              cpu: "200m"
+              memory: "64Mi"
+
+          # ★ READINESS PROBE — "Bin ich bereit für Traffic?"
+          # Kubernetes schickt erst dann Anfragen an den Pod wenn diese
+          # Probe erfolgreich ist. Schützt vor halbfertig gestarteten Pods.
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5    # erst nach 5s anfangen zu prüfen
+            periodSeconds: 10         # alle 10s wiederholen
+
+          # ★ LIVENESS PROBE — "Lebe ich noch?"
+          # Wenn diese Probe 3x fehlschlägt, startet Kubernetes den Pod neu.
+          # Fängt hängende Prozesse auf ohne manuellen Eingriff.
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            failureThreshold: 3

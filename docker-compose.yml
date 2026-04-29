@@ -1,14 +1,53 @@
-# Lokale Entwicklungsumgebung
-# Starten: docker compose up --build
+# Lokale Entwicklungsumgebung — alle Services zusammen
 #
-# Hinweis: Für lokales Dev (mit Hot Reload) besser direkt "npm run dev" im
-# frontend/-Verzeichnis verwenden. Docker hier nur für Produktions-Simulation.
+# Starten:        docker compose up --build
+# Nur Backend:    docker compose up postgres backend
+# Frontend-Dev:   cd frontend && npm run dev  (mit Hot Reload, empfohlen)
 
 services:
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: up2daite
+      POSTGRES_USER: up2daite
+      POSTGRES_PASSWORD: up2daite
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U up2daite"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: up2daite
+      DB_USER: up2daite
+      DB_PASSWORD: up2daite
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
       - "3000:80"
+    depends_on:
+      - backend
     restart: unless-stopped
+
+volumes:
+  postgres_data:

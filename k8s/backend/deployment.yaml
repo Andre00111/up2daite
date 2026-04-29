@@ -1,0 +1,79 @@
+# ★ BACKEND DEPLOYMENT — Spring Boot API Server
+#
+# Stellt die REST API bereit. Verbindet sich zur PostgreSQL Datenbank.
+# Wird nur intern vom Frontend (nginx-Proxy) angesprochen, nicht direkt von außen.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: up2daite-staging
+  labels:
+    app.kubernetes.io/name: backend
+    app.kubernetes.io/part-of: up2daite
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: backend
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: backend
+        app.kubernetes.io/part-of: up2daite
+    spec:
+      imagePullSecrets:
+        - name: gitlab-registry
+
+      containers:
+        - name: backend
+          image: registry.gitlab.com/andre00111/up2daite/backend:latest
+          ports:
+            - containerPort: 8080
+              name: http
+
+          env:
+            - name: DB_HOST
+              value: postgres
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: up2daite
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: password
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            failureThreshold: 3
