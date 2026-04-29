@@ -26,7 +26,6 @@ variables:
 
 build-frontend:
   stage: build
-  tags: [kubernetes]
   image: node:20-alpine
   cache:
     key: "$CI_COMMIT_REF_SLUG-frontend"
@@ -45,7 +44,6 @@ build-frontend:
 # ★ Backend Build — Maven kompiliert und testet das Spring Boot Projekt
 build-backend:
   stage: build
-  tags: [kubernetes]
   image: maven:3.9-eclipse-temurin-21-alpine
   cache:
     key: "$CI_COMMIT_REF_SLUG-backend"
@@ -67,7 +65,6 @@ build-backend:
 
 package-frontend:
   stage: package
-  tags: [kubernetes]
   image:
     name: gcr.io/kaniko-project/executor:v1.23.2-debug
     entrypoint: [""]
@@ -87,7 +84,6 @@ package-frontend:
 # ★ Backend Image bauen — Kaniko baut ohne Docker-Daemon
 package-backend:
   stage: package
-  tags: [kubernetes]
   image:
     name: gcr.io/kaniko-project/executor:v1.23.2-debug
     entrypoint: [""]
@@ -109,7 +105,6 @@ package-backend:
 
 deploy-frontend:
   stage: deploy
-  tags: [kubernetes]
   image: bitnami/kubectl:latest
   script:
     - kubectl set image deployment/frontend
@@ -127,7 +122,6 @@ deploy-frontend:
 # ★ Backend Deployment — rollt neues Image im Cluster aus
 deploy-backend:
   stage: deploy
-  tags: [kubernetes]
   image: bitnami/kubectl:latest
   script:
     - kubectl set image deployment/backend
