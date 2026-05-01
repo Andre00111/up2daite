@@ -2,10 +2,10 @@
 # Doku: docs/VERSIONING.md
 
 stages:
-  - security      # NEU: Gitleaks + Semgrep (läuft ZUERST)
+  - security # NEU: Gitleaks + Semgrep (läuft ZUERST)
   - build
   - package
-  - scan          # Trivy Container-Scan
+  - scan # Trivy Container-Scan
   # - deploy
 
 variables:
