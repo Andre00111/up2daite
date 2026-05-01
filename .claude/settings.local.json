@@ -1,7 +1,21 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git config *)"
+      "Bash(git config *)",
+      "Bash(ssh-keygen -F gitlab.com)",
+      "Bash(ssh-keyscan gitlab.com)",
+      "Bash(npm run *)",
+      "Bash(minikube status *)",
+      "Bash(kubectl get *)",
+      "Bash(kubectl logs *)",
+      "Bash(kubectl describe *)",
+      "Bash(kubectl apply *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(npx tsc *)",
+      "Bash(git commit *)"
     ]
-  }
+  },
+  "model": "claude-opus-4-5"
 }
