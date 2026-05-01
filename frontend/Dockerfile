@@ -10,17 +10,18 @@ COPY . .
 RUN npm run build
 
 # Stage 2: nginx serviert das fertige Bundle
-FROM nginx:alpine
+# nginxinc/nginx-unprivileged läuft bereits als non-root (User: nginx, UID 101)
+FROM nginxinc/nginx-unprivileged:alpine
 
 # Alle Alpine-Pakete aktualisieren (fixt CVEs im Base-Image)
+USER root
 RUN apk upgrade --no-cache
+USER nginx
 
 # ★ Eigene nginx-Config mit API-Proxy und SPA-Fallback
-# Ersetzt die Default-Config, die kein Proxying kann
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --chown=nginx:nginx nginx.conf /etc/nginx/conf.d/default.conf
+COPY --chown=nginx:nginx --from=builder /app/dist /usr/share/nginx/html
 
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-EXPOSE 80
+EXPOSE 8080
 
 CMD ["nginx", "-g", "daemon off;"]

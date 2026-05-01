@@ -27,4 +27,4 @@ spec:
   ports:
     - name: http
       port: 80         # Port des Service (intern im Cluster erreichbar)
-      targetPort: 80   # Port des Containers — muss mit containerPort übereinstimmen
+      targetPort: 8080 # Port des Containers (nginx-unprivileged)

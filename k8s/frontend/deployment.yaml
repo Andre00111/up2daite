@@ -46,23 +46,31 @@ spec:
 
     spec:
       # Zugangsdaten zur privaten GitLab Registry
-      # → wird per k8s/image-pull-secret.sh einmalig angelegt
       imagePullSecrets:
         - name: gitlab-registry
 
+      # Security: Container darf nicht als root laufen
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101      # nginx user in nginx-unprivileged image
+        runAsGroup: 101
+        fsGroup: 101
+
       containers:
         - name: frontend
-
-          # ★ Welches Docker-Image soll laufen?
-          # Die Pipeline aktualisiert diesen Wert per "kubectl set image"
           image: registry.gitlab.com/andre00111/up2daite/frontend:latest
 
+          # Security: Keine Privilege Escalation erlauben
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop: ["ALL"]
+
           ports:
-            - containerPort: 80   # Port auf dem nginx im Container lauscht
+            - containerPort: 8080   # nginx-unprivileged lauscht auf 8080
               name: http
 
-          # Ressourcen: requests = Mindestgarantie, limits = harte Obergrenze
-          # 50m CPU = 5% eines CPU-Kerns
           resources:
             requests:
               cpu: "50m"
@@ -71,23 +79,17 @@ spec:
               cpu: "200m"
               memory: "64Mi"
 
-          # ★ READINESS PROBE — "Bin ich bereit für Traffic?"
-          # Kubernetes schickt erst dann Anfragen an den Pod wenn diese
-          # Probe erfolgreich ist. Schützt vor halbfertig gestarteten Pods.
           readinessProbe:
             httpGet:
               path: /
-              port: 80
-            initialDelaySeconds: 5    # erst nach 5s anfangen zu prüfen
-            periodSeconds: 10         # alle 10s wiederholen
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
 
-          # ★ LIVENESS PROBE — "Lebe ich noch?"
-          # Wenn diese Probe 3x fehlschlägt, startet Kubernetes den Pod neu.
-          # Fängt hängende Prozesse auf ohne manuellen Eingriff.
           livenessProbe:
             httpGet:
               path: /
-              port: 80
+              port: 8080
             initialDelaySeconds: 15
             periodSeconds: 20
             failureThreshold: 3

@@ -30,24 +30,37 @@ spec:
         app.kubernetes.io/part-of: up2daite
 
     spec:
+      # Security: Container darf nicht als root laufen
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001     # bitnami postgres user
+        runAsGroup: 1001
+        fsGroup: 1001
+
       containers:
         - name: postgres
-          image: postgres:16-alpine
+          # bitnami/postgresql läuft als non-root (UID 1001)
+          image: bitnami/postgresql:16
+
+          # Security: Keine Privilege Escalation
+          securityContext:
+            allowPrivilegeEscalation: false
 
           ports:
             - containerPort: 5432
               name: postgres
 
-          # ★ Credentials aus Secret laden — nicht im Klartext im Deployment
+          # ★ Credentials aus Secret laden
+          # Bitnami nutzt andere Env-Variablen als das offizielle Image
           env:
-            - name: POSTGRES_DB
+            - name: POSTGRESQL_DATABASE
               value: up2daite
-            - name: POSTGRES_USER
+            - name: POSTGRESQL_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
                   key: username
-            - name: POSTGRES_PASSWORD
+            - name: POSTGRESQL_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
@@ -61,10 +74,10 @@ spec:
               cpu: "500m"
               memory: "512Mi"
 
-          # ★ Volume für persistente Daten — ohne das gehen Daten bei Pod-Neustart verloren
+          # ★ Volume für persistente Daten
           volumeMounts:
             - name: postgres-data
-              mountPath: /var/lib/postgresql/data
+              mountPath: /bitnami/postgresql    # Bitnami data directory
 
           # ★ Readiness: pg_isready prüft ob Postgres Verbindungen annimmt
           readinessProbe:

@@ -30,9 +30,24 @@ spec:
       imagePullSecrets:
         - name: gitlab-registry
 
+      # Security: Container darf nicht als root laufen
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+
       containers:
         - name: backend
           image: registry.gitlab.com/andre00111/up2daite/backend:latest
+
+          # Security: Keine Privilege Escalation erlauben
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop: ["ALL"]
+
           ports:
             - containerPort: 8080
               name: http
