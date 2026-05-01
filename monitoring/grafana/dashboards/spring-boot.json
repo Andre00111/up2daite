@@ -1,0 +1,68 @@
+{
+  "annotations": { "list": [] },
+  "title": "Spring Boot Backend",
+  "uid": "spring-boot-backend",
+  "panels": [
+    {
+      "title": "HTTP Requests/sec",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [{
+        "expr": "rate(http_server_requests_seconds_count{job=\"backend\"}[1m])",
+        "legendFormat": "{{method}} {{uri}}"
+      }]
+    },
+    {
+      "title": "HTTP Response Time (avg)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [{
+        "expr": "rate(http_server_requests_seconds_sum{job=\"backend\"}[1m]) / rate(http_server_requests_seconds_count{job=\"backend\"}[1m])",
+        "legendFormat": "{{method}} {{uri}}"
+      }]
+    },
+    {
+      "title": "JVM Heap Used",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [{
+        "expr": "jvm_memory_used_bytes{job=\"backend\", area=\"heap\"}",
+        "legendFormat": "{{id}}"
+      }],
+      "fieldConfig": { "defaults": { "unit": "bytes" } }
+    },
+    {
+      "title": "JVM Threads",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "targets": [{
+        "expr": "jvm_threads_live_threads{job=\"backend\"}",
+        "legendFormat": "Live Threads"
+      }]
+    },
+    {
+      "title": "DB Connection Pool",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "targets": [
+        { "expr": "hikaricp_connections_active{job=\"backend\"}", "legendFormat": "Active" },
+        { "expr": "hikaricp_connections_idle{job=\"backend\"}", "legendFormat": "Idle" },
+        { "expr": "hikaricp_connections_pending{job=\"backend\"}", "legendFormat": "Pending" }
+      ]
+    },
+    {
+      "title": "CPU Usage",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "targets": [{
+        "expr": "process_cpu_usage{job=\"backend\"}",
+        "legendFormat": "CPU Usage"
+      }],
+      "fieldConfig": { "defaults": { "unit": "percentunit" } }
+    }
+  ],
+  "schemaVersion": 38,
+  "version": 1,
+  "time": { "from": "now-1h", "to": "now" },
+  "refresh": "10s"
+}
