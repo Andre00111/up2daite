@@ -1,15 +1,49 @@
-# ─────────────────────────────────────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════════════
 # up2daite.com – GitLab CI/CD Pipeline
+# ═══════════════════════════════════════════════════════════════════════════════
 #
-# Stages:
+# STAGES:
 #   build   → Code kompilieren + testen
-#   package → Docker-Images bauen + pushen (nur main)
-#   scan    → Trivy Security Scan der Images
-#   deploy  → [DEAKTIVIERT] K8s Deployment — siehe unten
+#   package → Docker-Images bauen + pushen
+#   scan    → Trivy Security Scan
+#   deploy  → [DEAKTIVIERT] K8s Deployment
 #
-# Lokal entwickeln: docker compose up
-# K8s aktivieren:   siehe k8s/README.md + Deploy-Block unten einkommentieren
-# ─────────────────────────────────────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════════════
+# VERSIONIERUNG & IMAGE-TAGGING
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │ AKTUELL (vor diesem Update):                                                │
+# │                                                                             │
+# │   Push auf main → Image bekommt 2 Tags:                                     │
+# │     • :a9821b8  (Commit-SHA, eindeutig)                                     │
+# │     • :latest   (wird überschrieben)                                        │
+# │                                                                             │
+# │   Problem: Kein Unterschied zwischen Entwicklung und Release               │
+# └─────────────────────────────────────────────────────────────────────────────┘
+#
+# ┌─────────────────────────────────────────────────────────────────────────────┐
+# │ NEU (nach diesem Update):                                                   │
+# │                                                                             │
+# │   1. ENTWICKLUNG (Push auf main):                                           │
+# │      • :a9821b8  (Commit-SHA)                                               │
+# │      • :latest   (neueste Entwicklungsversion)                              │
+# │      • :snapshot (explizit als "nicht stabil" markiert)                     │
+# │                                                                             │
+# │   2. RELEASE (Git-Tag erstellen, z.B. v0.2.0):                              │
+# │      • :a9821b8  (Commit-SHA)                                               │
+# │      • :v0.2.0   (Release-Version, stabil)                                  │
+# │      • :stable   (zeigt auf neuestes Release)                               │
+# │                                                                             │
+# │   Workflow für Release:                                                     │
+# │     1. pom.xml: 0.2.0-SNAPSHOT → 0.2.0                                      │
+# │     2. git commit -m "release: v0.2.0"                                      │
+# │     3. git tag v0.2.0                                                       │
+# │     4. git push origin main --tags                                          │
+# │     5. pom.xml: → 0.3.0-SNAPSHOT (nächste Entwicklung)                      │
+# └─────────────────────────────────────────────────────────────────────────────┘
+#
+# ═══════════════════════════════════════════════════════════════════════════════
 
 stages:
   - build
@@ -22,7 +56,11 @@ variables:
   BACKEND_IMAGE: $CI_REGISTRY_IMAGE/backend
   IMAGE_TAG: $CI_COMMIT_SHORT_SHA
 
-# ─── Stage: build ─────────────────────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════════════
+# STAGE: BUILD
+# ═══════════════════════════════════════════════════════════════════════════════
+# Läuft bei JEDEM Push auf JEDEN Branch.
+# Kompiliert Code und führt Tests aus.
 
 build-frontend:
   stage: build
@@ -59,7 +97,16 @@ build-backend:
       - backend/target/*.jar
     expire_in: 1 hour
 
-# ─── Stage: package ───────────────────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════════════
+# STAGE: PACKAGE (Entwicklung)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Läuft nur auf main-Branch (kein Tag).
+# Baut Docker-Image und pusht mit :latest und :snapshot Tags.
+#
+# Tags die erstellt werden:
+#   • :a9821b8   → Commit-SHA (eindeutig, für Debugging)
+#   • :latest    → "neueste Version" (für docker compose pull)
+#   • :snapshot  → explizit als Entwicklungsversion markiert
 
 package-frontend:
   stage: package
@@ -74,10 +121,12 @@ package-frontend:
       --dockerfile $CI_PROJECT_DIR/frontend/Dockerfile
       --destination $FRONTEND_IMAGE:$IMAGE_TAG
       --destination $FRONTEND_IMAGE:latest
+      --destination $FRONTEND_IMAGE:snapshot
       --cache=true
       --cache-ttl=24h
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+    # Nur main-Branch, NICHT bei Tags (Tags haben eigenen Job)
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_COMMIT_TAG == null
 
 package-backend:
   stage: package
@@ -92,12 +141,69 @@ package-backend:
       --dockerfile $CI_PROJECT_DIR/backend/Dockerfile
       --destination $BACKEND_IMAGE:$IMAGE_TAG
       --destination $BACKEND_IMAGE:latest
+      --destination $BACKEND_IMAGE:snapshot
       --cache=true
       --cache-ttl=24h
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_COMMIT_TAG == null
 
-# ─── Stage: scan ──────────────────────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════════════
+# STAGE: PACKAGE (Release)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Läuft nur wenn ein Git-Tag erstellt wird (z.B. v0.2.0).
+# Baut Docker-Image und pusht mit Release-Tags.
+#
+# Tags die erstellt werden:
+#   • :a9821b8   → Commit-SHA
+#   • :v0.2.0    → Release-Version (aus Git-Tag)
+#   • :stable    → "neuestes stabiles Release"
+#
+# Auslösen:
+#   git tag v0.2.0
+#   git push origin v0.2.0
+
+release-frontend:
+  stage: package
+  image:
+    name: gcr.io/kaniko-project/executor:v1.23.2-debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(echo -n $CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD | base64)\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor
+      --context $CI_PROJECT_DIR/frontend
+      --dockerfile $CI_PROJECT_DIR/frontend/Dockerfile
+      --destination $FRONTEND_IMAGE:$IMAGE_TAG
+      --destination $FRONTEND_IMAGE:$CI_COMMIT_TAG
+      --destination $FRONTEND_IMAGE:stable
+      --cache=true
+      --cache-ttl=24h
+  rules:
+    # Nur bei Tags die mit 'v' beginnen (v0.1.0, v1.0.0, etc.)
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/
+
+release-backend:
+  stage: package
+  image:
+    name: gcr.io/kaniko-project/executor:v1.23.2-debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(echo -n $CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD | base64)\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor
+      --context $CI_PROJECT_DIR/backend
+      --dockerfile $CI_PROJECT_DIR/backend/Dockerfile
+      --destination $BACKEND_IMAGE:$IMAGE_TAG
+      --destination $BACKEND_IMAGE:$CI_COMMIT_TAG
+      --destination $BACKEND_IMAGE:stable
+      --cache=true
+      --cache-ttl=24h
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# STAGE: SCAN
+# ═══════════════════════════════════════════════════════════════════════════════
 # Trivy scannt die Images auf bekannte Vulnerabilities (CVEs).
 # Bei CRITICAL oder HIGH Findings schlägt der Job fehl.
 
@@ -119,6 +225,7 @@ scan-frontend:
       $FRONTEND_IMAGE:$IMAGE_TAG
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/
   allow_failure: false
 
 scan-backend:
@@ -139,6 +246,7 @@ scan-backend:
       $BACKEND_IMAGE:$IMAGE_TAG
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/
   allow_failure: false
 
 # ═══════════════════════════════════════════════════════════════════════════════
