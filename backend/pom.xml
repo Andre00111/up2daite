@@ -12,23 +12,7 @@
 
     <groupId>com.up2daite</groupId>
     <artifactId>backend</artifactId>
-    <!--
-    ╔═══════════════════════════════════════════════════════════════════════════╗
-    ║  VERSIONIERUNG                                                             ║
-    ╠═══════════════════════════════════════════════════════════════════════════╣
-    ║  Format: MAJOR.MINOR.PATCH[-SNAPSHOT]                                      ║
-    ║                                                                            ║
-    ║  SNAPSHOT = Entwicklungsversion (kann sich jederzeit ändern)               ║
-    ║  Ohne SNAPSHOT = Release (stabil, unveränderlich)                          ║
-    ║                                                                            ║
-    ║  Workflow:                                                                 ║
-    ║    1. Entwicklung:  0.2.0-SNAPSHOT                                         ║
-    ║    2. Release:      Version auf 0.2.0 setzen, Git-Tag v0.2.0 erstellen     ║
-    ║    3. Weiter:       Version auf 0.3.0-SNAPSHOT setzen                      ║
-    ║                                                                            ║
-    ║  AKTUELL: 0.2.0-SNAPSHOT = wir arbeiten an Version 0.2.0                   ║
-    ╚═══════════════════════════════════════════════════════════════════════════╝
-    -->
+    <!-- SNAPSHOT = Entwicklung, ohne = Release. Siehe docs/VERSIONING.md -->
     <version>0.2.0-SNAPSHOT</version>
     <name>up2daite-backend</name>
 

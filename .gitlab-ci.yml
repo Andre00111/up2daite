@@ -1,82 +1,29 @@
-# ═══════════════════════════════════════════════════════════════════════════════
 # up2daite.com – GitLab CI/CD Pipeline
-# ═══════════════════════════════════════════════════════════════════════════════
-#
-# STAGES:
-#   build   → Code kompilieren + testen
-#   package → Docker-Images bauen + pushen
-#   scan    → Trivy Security Scan
-#   deploy  → [DEAKTIVIERT] K8s Deployment
-#
-# ═══════════════════════════════════════════════════════════════════════════════
-# VERSIONIERUNG & IMAGE-TAGGING
-# ═══════════════════════════════════════════════════════════════════════════════
-#
-# ┌─────────────────────────────────────────────────────────────────────────────┐
-# │ AKTUELL (vor diesem Update):                                                │
-# │                                                                             │
-# │   Push auf main → Image bekommt 2 Tags:                                     │
-# │     • :a9821b8  (Commit-SHA, eindeutig)                                     │
-# │     • :latest   (wird überschrieben)                                        │
-# │                                                                             │
-# │   Problem: Kein Unterschied zwischen Entwicklung und Release               │
-# └─────────────────────────────────────────────────────────────────────────────┘
-#
-# ┌─────────────────────────────────────────────────────────────────────────────┐
-# │ NEU (nach diesem Update):                                                   │
-# │                                                                             │
-# │   1. ENTWICKLUNG (Push auf main):                                           │
-# │      • :a9821b8  (Commit-SHA)                                               │
-# │      • :latest   (neueste Entwicklungsversion)                              │
-# │      • :snapshot (explizit als "nicht stabil" markiert)                     │
-# │                                                                             │
-# │   2. RELEASE (Git-Tag erstellen, z.B. v0.2.0):                              │
-# │      • :a9821b8  (Commit-SHA)                                               │
-# │      • :v0.2.0   (Release-Version, stabil)                                  │
-# │      • :stable   (zeigt auf neuestes Release)                               │
-# │                                                                             │
-# │   Workflow für Release:                                                     │
-# │     1. pom.xml: 0.2.0-SNAPSHOT → 0.2.0                                      │
-# │     2. git commit -m "release: v0.2.0"                                      │
-# │     3. git tag v0.2.0                                                       │
-# │     4. git push origin main --tags                                          │
-# │     5. pom.xml: → 0.3.0-SNAPSHOT (nächste Entwicklung)                      │
-# └─────────────────────────────────────────────────────────────────────────────┘
-#
-# ═══════════════════════════════════════════════════════════════════════════════
+# Doku: docs/VERSIONING.md
 
 stages:
   - build
   - package
   - scan
-  # - deploy  # ← Einkommentieren wenn Cloud-Cluster bereit
+  # - deploy  # K8s später aktivieren (siehe k8s/README.md)
 
 variables:
   FRONTEND_IMAGE: $CI_REGISTRY_IMAGE/frontend
   BACKEND_IMAGE: $CI_REGISTRY_IMAGE/backend
   IMAGE_TAG: $CI_COMMIT_SHORT_SHA
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# STAGE: BUILD
-# ═══════════════════════════════════════════════════════════════════════════════
-# Läuft bei JEDEM Push auf JEDEN Branch.
-# Kompiliert Code und führt Tests aus.
+# ─── BUILD ────────────────────────────────────────────────────────────────────
 
 build-frontend:
   stage: build
   image: node:20-alpine
   cache:
     key: "$CI_COMMIT_REF_SLUG-frontend"
-    paths:
-      - frontend/node_modules/
+    paths: [frontend/node_modules/]
   script:
-    - cd frontend
-    - npm ci
-    - npm run build
+    - cd frontend && npm ci && npm run build
   artifacts:
-    name: frontend-dist
-    paths:
-      - frontend/dist/
+    paths: [frontend/dist/]
     expire_in: 1 hour
 
 build-backend:
@@ -84,29 +31,16 @@ build-backend:
   image: maven:3.9-eclipse-temurin-21-alpine
   cache:
     key: "$CI_COMMIT_REF_SLUG-backend"
-    paths:
-      - backend/.m2/
+    paths: [backend/.m2/]
   variables:
     MAVEN_OPTS: "-Dmaven.repo.local=backend/.m2"
   script:
-    - cd backend
-    - mvn clean verify -q
+    - cd backend && mvn clean verify -q
   artifacts:
-    name: backend-jar
-    paths:
-      - backend/target/*.jar
+    paths: [backend/target/*.jar]
     expire_in: 1 hour
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# STAGE: PACKAGE (Entwicklung)
-# ═══════════════════════════════════════════════════════════════════════════════
-# Läuft nur auf main-Branch (kein Tag).
-# Baut Docker-Image und pusht mit :latest und :snapshot Tags.
-#
-# Tags die erstellt werden:
-#   • :a9821b8   → Commit-SHA (eindeutig, für Debugging)
-#   • :latest    → "neueste Version" (für docker compose pull)
-#   • :snapshot  → explizit als Entwicklungsversion markiert
+# ─── PACKAGE (Entwicklung: main branch) ───────────────────────────────────────
 
 package-frontend:
   stage: package
@@ -122,10 +56,8 @@ package-frontend:
       --destination $FRONTEND_IMAGE:$IMAGE_TAG
       --destination $FRONTEND_IMAGE:latest
       --destination $FRONTEND_IMAGE:snapshot
-      --cache=true
-      --cache-ttl=24h
+      --cache=true --cache-ttl=24h
   rules:
-    # Nur main-Branch, NICHT bei Tags (Tags haben eigenen Job)
     - if: $CI_COMMIT_BRANCH == "main" && $CI_COMMIT_TAG == null
 
 package-backend:
@@ -142,25 +74,11 @@ package-backend:
       --destination $BACKEND_IMAGE:$IMAGE_TAG
       --destination $BACKEND_IMAGE:latest
       --destination $BACKEND_IMAGE:snapshot
-      --cache=true
-      --cache-ttl=24h
+      --cache=true --cache-ttl=24h
   rules:
     - if: $CI_COMMIT_BRANCH == "main" && $CI_COMMIT_TAG == null
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# STAGE: PACKAGE (Release)
-# ═══════════════════════════════════════════════════════════════════════════════
-# Läuft nur wenn ein Git-Tag erstellt wird (z.B. v0.2.0).
-# Baut Docker-Image und pusht mit Release-Tags.
-#
-# Tags die erstellt werden:
-#   • :a9821b8   → Commit-SHA
-#   • :v0.2.0    → Release-Version (aus Git-Tag)
-#   • :stable    → "neuestes stabiles Release"
-#
-# Auslösen:
-#   git tag v0.2.0
-#   git push origin v0.2.0
+# ─── PACKAGE (Release: git tag v*) ────────────────────────────────────────────
 
 release-frontend:
   stage: package
@@ -176,10 +94,8 @@ release-frontend:
       --destination $FRONTEND_IMAGE:$IMAGE_TAG
       --destination $FRONTEND_IMAGE:$CI_COMMIT_TAG
       --destination $FRONTEND_IMAGE:stable
-      --cache=true
-      --cache-ttl=24h
+      --cache=true --cache-ttl=24h
   rules:
-    # Nur bei Tags die mit 'v' beginnen (v0.1.0, v1.0.0, etc.)
     - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/
 
 release-backend:
@@ -196,16 +112,11 @@ release-backend:
       --destination $BACKEND_IMAGE:$IMAGE_TAG
       --destination $BACKEND_IMAGE:$CI_COMMIT_TAG
       --destination $BACKEND_IMAGE:stable
-      --cache=true
-      --cache-ttl=24h
+      --cache=true --cache-ttl=24h
   rules:
     - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# STAGE: SCAN
-# ═══════════════════════════════════════════════════════════════════════════════
-# Trivy scannt die Images auf bekannte Vulnerabilities (CVEs).
-# Bei CRITICAL oder HIGH Findings schlägt der Job fehl.
+# ─── SCAN (Trivy) ─────────────────────────────────────────────────────────────
 
 scan-frontend:
   stage: scan
@@ -216,17 +127,10 @@ scan-frontend:
     TRIVY_USERNAME: $CI_REGISTRY_USER
     TRIVY_PASSWORD: $CI_REGISTRY_PASSWORD
   script:
-    - trivy image
-      --exit-code 1
-      --severity CRITICAL,HIGH
-      --ignore-unfixed
-      --no-progress
-      --format table
-      $FRONTEND_IMAGE:$IMAGE_TAG
+    - trivy image --exit-code 1 --severity CRITICAL,HIGH --ignore-unfixed --no-progress $FRONTEND_IMAGE:$IMAGE_TAG
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
     - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/
-  allow_failure: false
 
 scan-backend:
   stage: scan
@@ -237,66 +141,7 @@ scan-backend:
     TRIVY_USERNAME: $CI_REGISTRY_USER
     TRIVY_PASSWORD: $CI_REGISTRY_PASSWORD
   script:
-    - trivy image
-      --exit-code 1
-      --severity CRITICAL,HIGH
-      --ignore-unfixed
-      --no-progress
-      --format table
-      $BACKEND_IMAGE:$IMAGE_TAG
+    - trivy image --exit-code 1 --severity CRITICAL,HIGH --ignore-unfixed --no-progress $BACKEND_IMAGE:$IMAGE_TAG
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
     - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/
-  allow_failure: false
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# K8S DEPLOYMENT (DEAKTIVIERT)
-# ═══════════════════════════════════════════════════════════════════════════════
-# Zum Aktivieren:
-#   1. Cloud-Cluster erstellen (GKE, EKS, AKS)
-#   2. GitLab CI/CD Variable KUBE_CONFIG setzen (Base64-encoded kubeconfig)
-#      ODER GitLab Kubernetes Agent einrichten
-#   3. "- deploy" oben bei stages einkommentieren
-#   4. Diesen Block einkommentieren
-#   5. KUBE_NAMESPACE Variable oben hinzufügen: KUBE_NAMESPACE: up2daite-staging
-#
-# Siehe auch: k8s/README.md
-# ═══════════════════════════════════════════════════════════════════════════════
-
-# deploy-frontend:
-#   stage: deploy
-#   image: dtzar/helm-kubectl:latest
-#   before_script:
-#     - mkdir -p ~/.kube
-#     - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
-#   script:
-#     - kubectl set image deployment/frontend
-#         frontend=$FRONTEND_IMAGE:$IMAGE_TAG
-#         -n $KUBE_NAMESPACE
-#     - kubectl rollout status deployment/frontend
-#         -n $KUBE_NAMESPACE
-#         --timeout=120s
-#   environment:
-#     name: staging
-#     url: https://staging.up2daite.com
-#   rules:
-#     - if: $CI_COMMIT_BRANCH == "main"
-
-# deploy-backend:
-#   stage: deploy
-#   image: dtzar/helm-kubectl:latest
-#   before_script:
-#     - mkdir -p ~/.kube
-#     - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
-#   script:
-#     - kubectl set image deployment/backend
-#         backend=$BACKEND_IMAGE:$IMAGE_TAG
-#         -n $KUBE_NAMESPACE
-#     - kubectl rollout status deployment/backend
-#         -n $KUBE_NAMESPACE
-#         --timeout=180s
-#   environment:
-#     name: staging
-#     url: https://staging.up2daite.com
-#   rules:
-#     - if: $CI_COMMIT_BRANCH == "main"
