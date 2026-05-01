@@ -2,15 +2,67 @@
 # Doku: docs/VERSIONING.md
 
 stages:
+  - security      # NEU: Gitleaks + Semgrep (läuft ZUERST)
   - build
   - package
-  - scan
-  # - deploy  # K8s später aktivieren (siehe k8s/README.md)
+  - scan          # Trivy Container-Scan
+  # - deploy
 
 variables:
   FRONTEND_IMAGE: $CI_REGISTRY_IMAGE/frontend
   BACKEND_IMAGE: $CI_REGISTRY_IMAGE/backend
   IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SECURITY STAGE - Läuft bei JEDEM Push auf JEDEN Branch
+# ══════════════════════════════════════════════════════════════════════════════
+
+# ─── GITLEAKS ─────────────────────────────────────────────────────────────────
+# WAS: Scannt Git-History + Code nach versehentlich committeten Secrets
+# FINDET: API Keys, Passwörter, Tokens, Private Keys, AWS Credentials, etc.
+# WARUM WICHTIG: Ein einmal gepushtes Secret ist kompromittiert (Git-History!)
+#
+# Beispiele was Gitleaks findet:
+#   - password = "geheim123"
+#   - GITHUB_TOKEN=ghp_xxxxxxxxxxxx
+#   - -----BEGIN RSA PRIVATE KEY-----
+#
+# Docs: https://github.com/gitleaks/gitleaks
+
+gitleaks:
+  stage: security
+  image:
+    name: zricethezav/gitleaks:latest
+    entrypoint: [""]
+  script:
+    - gitleaks detect --source . --verbose --redact
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH
+
+# ─── SEMGREP (SAST) ───────────────────────────────────────────────────────────
+# WAS: Static Application Security Testing - analysiert Quellcode auf Schwachstellen
+# FINDET: SQL Injection, XSS, Command Injection, unsichere Krypto, etc.
+# WARUM WICHTIG: Findet Bugs die zur Laufzeit ausnutzbar wären
+#
+# Beispiele was Semgrep findet:
+#   - String query = "SELECT * FROM users WHERE id=" + userId;  → SQL Injection!
+#   - eval(userInput)  → Code Injection!
+#   - new Random()  → Unsichere Zufallszahlen für Krypto
+#
+# Regeln: "p/default" = Community-Regeln für Java, JS, Python, etc.
+# Docs: https://semgrep.dev/docs/
+
+semgrep:
+  stage: security
+  image:
+    name: semgrep/semgrep:latest
+    entrypoint: [""]
+  script:
+    - semgrep scan --config=p/default --config=p/security-audit --error --verbose .
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH
 
 # ─── BUILD ────────────────────────────────────────────────────────────────────
 

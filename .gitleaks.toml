@@ -1,0 +1,20 @@
+# Gitleaks Konfiguration
+# Docs: https://github.com/gitleaks/gitleaks#configuration
+
+title = "up2daite gitleaks config"
+
+# Dateien/Pfade die ignoriert werden sollen
+[allowlist]
+  paths = [
+    # Test-Dateien mit Dummy-Credentials
+    '''.*test.*''',
+    '''.*Test.*''',
+    # Lock-Dateien
+    '''package-lock\.json''',
+    '''pom\.xml''',
+  ]
+
+# Einzelne Findings ignorieren (z.B. False Positives)
+# [[rules]]
+#   id = "generic-api-key"
+#   allowlist = { commits = ["abc123"] }
