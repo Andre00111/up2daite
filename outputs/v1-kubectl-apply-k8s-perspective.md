@@ -137,7 +137,7 @@ etcd: "Neues Deployment: frontend, replicas: 1"
 [kubelet auf node1]
   └─ Sieht: "Ich soll Pod frontend-7d9f8b6c4-xk2p9 ausführen"
   └─ Ruft Container Runtime (z.B. containerd) auf
-  └─ Pulled Image: registry.gitlab.com/user/up2daite/frontend:latest
+  └─ Pulled Image: registry.gitlab.com/user/todoapp/frontend:latest
   └─ Startet Container
   └─ Startet Readiness- und Liveness-Probes
 ```
@@ -153,7 +153,7 @@ etcd: "Neues Deployment: frontend, replicas: 1"
 | **Scheduler** | Entscheidet: welcher Node führt den Pod aus |
 | **kubelet** | Startet den Container auf dem zugewiesenen Node |
 | **kube-proxy** | Richtet Netzwerkregeln für den Service ein |
-| **Ingress-Controller** | Konfiguriert nginx-Routing für `up2daite.local` |
+| **Ingress-Controller** | Konfiguriert nginx-Routing für `todoapp.local` |
 
 ### Warum sind Controller getrennt?
 
@@ -217,7 +217,7 @@ Wenn die LivenessProbe 3-mal scheitert, **tötet kubelet den Container** und sta
 ### Direkt beobachten
 
 ```bash
-kubectl get pods -n up2daite-staging -w
+kubectl get pods -n todoapp-staging -w
 ```
 
 Ausgabe während des Starts:
@@ -242,8 +242,8 @@ frontend-7d9f8b6c4-xk2p9   1/1     Running             0          13s  ← Ready
 
 ```bash
 kubectl apply -f k8s/namespace.yaml
-# → namespace/up2daite-staging configured  (beim ersten Mal)
-# → namespace/up2daite-staging unchanged   (beim zweiten Mal)
+# → namespace/todoapp-staging configured  (beim ersten Mal)
+# → namespace/todoapp-staging unchanged   (beim zweiten Mal)
 ```
 
 ### Drei mögliche Ausgaben
@@ -257,7 +257,7 @@ kubectl apply -f k8s/namespace.yaml
 ### Was passiert intern beim zweiten Apply
 
 1. kubectl liest das YAML
-2. kubectl fragt: "Existiert `frontend` Deployment in `up2daite-staging` schon?"
+2. kubectl fragt: "Existiert `frontend` Deployment in `todoapp-staging` schon?"
 3. Kubernetes vergleicht (3-Wege-Merge):
    - Letzter `apply`-Stand (Annotation)
    - Aktuelles YAML
@@ -305,7 +305,7 @@ Schritt 4: Wenn alter Pod weg: 1 Pod mit v2 läuft
 ### Das erste Diagnosetool
 
 ```bash
-kubectl get all -n up2daite-staging
+kubectl get all -n todoapp-staging
 ```
 
 ```
@@ -327,13 +327,13 @@ deployment.apps/frontend   0/1     1            0           2m
 
 **Symptom:**
 ```bash
-kubectl get pods -n up2daite-staging
+kubectl get pods -n todoapp-staging
 # STATUS: ImagePullBackOff oder ErrImagePull
 ```
 
 **Details:**
 ```bash
-kubectl describe pod frontend-7d9f8b6c4-xk2p9 -n up2daite-staging
+kubectl describe pod frontend-7d9f8b6c4-xk2p9 -n todoapp-staging
 ```
 
 Im Abschnitt `Events`:
@@ -351,7 +351,7 @@ kubectl create secret docker-registry gitlab-registry \
   --docker-server=registry.gitlab.com \
   --docker-username=<user> \
   --docker-password=<token> \
-  -n up2daite-staging
+  -n todoapp-staging
 ```
 
 ---
@@ -360,7 +360,7 @@ kubectl create secret docker-registry gitlab-registry \
 
 **Symptom:**
 ```bash
-kubectl get pods -n up2daite-staging
+kubectl get pods -n todoapp-staging
 # NAME                        READY   STATUS    RESTARTS
 # frontend-7d9f8b6c4-xk2p9   0/1     Running   0
 ```
@@ -369,7 +369,7 @@ Status `Running`, aber `0/1` Ready — die ReadinessProbe schlägt fehl.
 
 **Details:**
 ```bash
-kubectl describe pod frontend-7d9f8b6c4-xk2p9 -n up2daite-staging
+kubectl describe pod frontend-7d9f8b6c4-xk2p9 -n todoapp-staging
 ```
 
 Im Abschnitt `Events`:
@@ -396,10 +396,10 @@ Der Container startet, crasht sofort, kubelet versucht es wieder — mit wachsen
 
 **Logs ansehen:**
 ```bash
-kubectl logs frontend-7d9f8b6c4-xk2p9 -n up2daite-staging
+kubectl logs frontend-7d9f8b6c4-xk2p9 -n todoapp-staging
 
 # Vorherigen Container-Log (nach Restart):
-kubectl logs frontend-7d9f8b6c4-xk2p9 -n up2daite-staging --previous
+kubectl logs frontend-7d9f8b6c4-xk2p9 -n todoapp-staging --previous
 ```
 
 **Typische Ursachen:**
@@ -416,7 +416,7 @@ Wenn du `kubectl apply -f k8s/frontend/` ausführst, **bevor** der Namespace exi
 ```bash
 Error from server (NotFound): 
   error when creating "k8s/frontend/deployment.yaml": 
-  namespaces "up2daite-staging" not found
+  namespaces "todoapp-staging" not found
 ```
 
 **Fix:** Immer erst `kubectl apply -f k8s/namespace.yaml`.
@@ -425,27 +425,27 @@ Error from server (NotFound):
 
 ### Problem 5: Ingress liefert keinen Traffic
 
-Der Pod läuft und ist Ready, aber `http://up2daite.local` antwortet nicht.
+Der Pod läuft und ist Ready, aber `http://todoapp.local` antwortet nicht.
 
 **Diagnose-Schritte:**
 
 ```bash
 # Ist der Ingress konfiguriert?
-kubectl get ingress -n up2daite-staging
+kubectl get ingress -n todoapp-staging
 # ADDRESS-Spalte sollte eine IP zeigen
 
 # Ist der Ingress-Controller überhaupt installiert?
 kubectl get pods -n ingress-nginx
 
 # Details zum Ingress:
-kubectl describe ingress frontend -n up2daite-staging
+kubectl describe ingress frontend -n todoapp-staging
 ```
 
 **Typische Ursache:** `ingressClassName: nginx` — der Ingress-Controller muss im Cluster installiert sein (z.B. via `helm install ingress-nginx`).
 
-Für lokale Entwicklung mit `up2daite.local`: `/etc/hosts` muss einen Eintrag haben:
+Für lokale Entwicklung mit `todoapp.local`: `/etc/hosts` muss einen Eintrag haben:
 ```
-127.0.0.1  up2daite.local
+127.0.0.1  todoapp.local
 ```
 
 ---
@@ -454,19 +454,19 @@ Für lokale Entwicklung mit `up2daite.local`: `/etc/hosts` muss einen Eintrag ha
 
 ```bash
 # 1. Überblick
-kubectl get all -n up2daite-staging
+kubectl get all -n todoapp-staging
 
 # 2. Pod-Details (Events sind oft entscheidend)
-kubectl describe pod <pod-name> -n up2daite-staging
+kubectl describe pod <pod-name> -n todoapp-staging
 
 # 3. Logs der App
-kubectl logs <pod-name> -n up2daite-staging
+kubectl logs <pod-name> -n todoapp-staging
 
 # 4. Vorherige Logs (nach Crash)
-kubectl logs <pod-name> -n up2daite-staging --previous
+kubectl logs <pod-name> -n todoapp-staging --previous
 
 # 5. Events im Namespace
-kubectl get events -n up2daite-staging --sort-by='.lastTimestamp'
+kubectl get events -n todoapp-staging --sort-by='.lastTimestamp'
 ```
 
 `kubectl describe` und `kubectl get events` sind bei 80% der Probleme die erste Anlaufstelle — die Events zeigen genau, was Kubernetes versucht hat und warum es fehlschlug.

@@ -45,7 +45,7 @@ Die Pipeline macht in `deploy-frontend` genau das:
 script:
   - kubectl set image deployment/frontend
       frontend=$FRONTEND_IMAGE:$IMAGE_TAG
-      -n up2daite-staging
+      -n todoapp-staging
   - kubectl rollout status deployment/frontend
       -n $KUBE_NAMESPACE
       --timeout=120s
@@ -66,7 +66,7 @@ script:
 **Voraussetzung:** `kubectl apply -f k8s/namespace.yaml` und `kubectl apply -f k8s/frontend/` wurden bereits einmalig manuell ausgeführt. Das Deployment existiert im Cluster, läuft aber noch mit dem Placeholder-Image aus `deployment.yaml`:
 
 ```yaml
-image: registry.gitlab.com/DEIN_GITLAB_USER/up2daite/frontend:latest
+image: registry.gitlab.com/DEIN_GITLAB_USER/todoapp/frontend:latest
 ```
 
 Jetzt wird Code gepusht und die Pipeline startet.
@@ -96,7 +96,7 @@ Das Image liegt jetzt in der GitLab Registry. Kubernetes weiß noch nichts davon
 ```
 kubectl set image deployment/frontend \
   frontend=registry.gitlab.com/.../frontend:abc1234 \
-  -n up2daite-staging
+  -n todoapp-staging
 ```
 
 **Was Kubernetes intern macht:**
@@ -182,14 +182,14 @@ Beim Timeout gibt `kubectl rollout status` **Exit Code 1** zurück. Die Pipeline
 ```yaml
 environment:
   name: staging
-  url: http://up2daite.local
+  url: http://todoapp.local
 ```
 
 Dieser Block registriert eine Deployment-Umgebung in GitLab. Was der Entwickler in der UI sieht:
 
 **Unter Operate → Environments:**
 - Eine Zeile "staging" mit Status, letztem Deployment, Commit-SHA
-- Ein direkter Link auf `http://up2daite.local`
+- Ein direkter Link auf `http://todoapp.local`
 - Eine Liste aller bisherigen Deployments mit Zeitstempel und wer sie ausgelöst hat
 
 **Weitere Features die dadurch freigeschaltet werden:**
@@ -200,7 +200,7 @@ Dieser Block registriert eine Deployment-Umgebung in GitLab. Was der Entwickler 
 
 **Was der Entwickler im Merge Request sieht:**
 
-Wenn ein Merge Request in staging deployed wurde, erscheint ein "View deployment"-Button direkt im MR. Ein Klick öffnet `http://up2daite.local`.
+Wenn ein Merge Request in staging deployed wurde, erscheint ein "View deployment"-Button direkt im MR. Ein Klick öffnet `http://todoapp.local`.
 
 ---
 
@@ -230,20 +230,20 @@ In diesem Fall:
 
 ```bash
 # Pods im Namespace anzeigen
-kubectl get pods -n up2daite-staging
+kubectl get pods -n todoapp-staging
 
 # Ausgabe zeigt:
 # NAME                        READY   STATUS             RESTARTS   AGE
 # frontend-9f2c1-xyz          0/1     CrashLoopBackOff   3          2m
 
 # Logs des crashenden Pods anzeigen
-kubectl logs deployment/frontend -n up2daite-staging
+kubectl logs deployment/frontend -n todoapp-staging
 
 # Wenn der Pod schon tot ist, letzte Logs:
-kubectl logs deployment/frontend -n up2daite-staging --previous
+kubectl logs deployment/frontend -n todoapp-staging --previous
 
 # Details zum Pod (Events, Fehlermeldungen):
-kubectl describe pod frontend-9f2c1-xyz -n up2daite-staging
+kubectl describe pod frontend-9f2c1-xyz -n todoapp-staging
 ```
 
 **Schutz dagegen:**

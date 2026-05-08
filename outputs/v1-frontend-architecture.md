@@ -1,4 +1,4 @@
-# up2daite.com – Frontend-Architektur
+# todoapp.com – Frontend-Architektur
 > Basis: v1-frontend-spec.md + v1-ia.md + v1-domain-model.md | Erstellt: 19. April 2026
 > Stack: React + Vite + TypeScript + Material UI + React Router v6
 

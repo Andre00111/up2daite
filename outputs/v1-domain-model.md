@@ -1,4 +1,4 @@
-# up2daite.com – Frontend-Domainmodell
+# todoapp.com – Frontend-Domainmodell
 > Basis: v1-frontend-spec.md + v1-ia.md | Erstellt: 19. April 2026
 
 ---

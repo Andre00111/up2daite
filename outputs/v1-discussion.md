@@ -1,4 +1,4 @@
-# up2daite.com – V1 Produktentscheidung
+# todoapp.com – V1 Produktentscheidung
 ## Multi-Agenten-Diskussion | 19. April 2026
 
 ---
@@ -24,7 +24,7 @@
 
 ### Moderator – Eröffnung
 
-Wir haben heute eine Aufgabe: V1 von up2daite.com definieren. Nicht V3. Nicht die Vision. V1. Was bauen wir zuerst, für wen, warum jetzt?
+Wir haben heute eine Aufgabe: V1 von todoapp.com definieren. Nicht V3. Nicht die Vision. V1. Was bauen wir zuerst, für wen, warum jetzt?
 
 Ich bitte jede Rolle, in drei bis fünf Sätzen ihre Startposition darzulegen. Bitte keine Kompromisse vorab – ich will die Spannungen sehen. Wir fangen an.
 
@@ -44,7 +44,7 @@ Mein größtes Problem mit „kuratiertem AI-News" ist, dass 80% der Marktteilne
 
 ### Trust & UX Analyst – Startposition
 
-Vertrauen ist das eigentliche Produkt. Nicht die Artikel. Nicht das Ranking. Das Vertrauen, dass up2daite.com mir nicht wieder Sponsored Content als „Kuration" verkauft. Deshalb brauchen wir ab Tag 1: vollständige Quellenangaben mit Kontext (wer hat das publiziert, welche Agenda?), einen klaren Hinweis wenn etwas spekulativ oder PR-getrieben ist, und ein UX-Muster das Wiederbesuch belohnt – nicht durch Gamification, sondern durch echte Nützlichkeit. Trade-off: Transparenz kostet Bildschirmfläche und Entwicklungszeit. Ein minimaler Trust-Layer, der wirklich überzeugt, ist nicht trivial.
+Vertrauen ist das eigentliche Produkt. Nicht die Artikel. Nicht das Ranking. Das Vertrauen, dass todoapp.com mir nicht wieder Sponsored Content als „Kuration" verkauft. Deshalb brauchen wir ab Tag 1: vollständige Quellenangaben mit Kontext (wer hat das publiziert, welche Agenda?), einen klaren Hinweis wenn etwas spekulativ oder PR-getrieben ist, und ein UX-Muster das Wiederbesuch belohnt – nicht durch Gamification, sondern durch echte Nützlichkeit. Trade-off: Transparenz kostet Bildschirmfläche und Entwicklungszeit. Ein minimaler Trust-Layer, der wirklich überzeugt, ist nicht trivial.
 
 ---
 
@@ -188,7 +188,7 @@ Die Diskussion hat genug Substanz geliefert. Ich formuliere jetzt die V1-Entsche
 
 ---
 
-# up2daite.com – V1 Produkt-Entscheidung
+# todoapp.com – V1 Produkt-Entscheidung
 
 ## Zielgruppe
 
@@ -198,7 +198,7 @@ Die Diskussion hat genug Substanz geliefert. Ich formuliere jetzt die V1-Entsche
 
 ## Kernnutzen
 
-> **up2daite.com filtert AI-Rauschen zu verifizierbarem Signal – dreimal pro Woche, mit redaktionellem Urteil, ohne Bullshit.**
+> **todoapp.com filtert AI-Rauschen zu verifizierbarem Signal – dreimal pro Woche, mit redaktionellem Urteil, ohne Bullshit.**
 
 Der Differenzierungsvorteil liegt nicht im Algorithmus, sondern im kuratorischen Urteil: Wir erklären, *warum* etwas relevant ist – und wir sagen auch, *warum* wir etwas nicht gebracht haben.
 

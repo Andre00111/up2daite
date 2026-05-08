@@ -7,10 +7,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgres
-  namespace: up2daite-staging
+  namespace: todoapp-staging
   labels:
     app.kubernetes.io/name: postgres
-    app.kubernetes.io/part-of: up2daite
+    app.kubernetes.io/part-of: todoapp
 
 spec:
   replicas: 1
@@ -27,40 +27,27 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: postgres
-        app.kubernetes.io/part-of: up2daite
+        app.kubernetes.io/part-of: todoapp
 
     spec:
-      # Security: Container darf nicht als root laufen
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1001     # bitnami postgres user
-        runAsGroup: 1001
-        fsGroup: 1001
-
       containers:
         - name: postgres
-          # bitnami/postgresql läuft als non-root (UID 1001)
-          image: bitnami/postgresql:16
-
-          # Security: Keine Privilege Escalation
-          securityContext:
-            allowPrivilegeEscalation: false
+          image: postgres:16-alpine
 
           ports:
             - containerPort: 5432
               name: postgres
 
-          # ★ Credentials aus Secret laden
-          # Bitnami nutzt andere Env-Variablen als das offizielle Image
+          # ★ Credentials aus Secret laden (offizielles Image nutzt POSTGRES_* Variablen)
           env:
-            - name: POSTGRESQL_DATABASE
-              value: up2daite
-            - name: POSTGRESQL_USERNAME
+            - name: POSTGRES_DB
+              value: todoapp
+            - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
                   key: username
-            - name: POSTGRESQL_PASSWORD
+            - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
@@ -77,18 +64,18 @@ spec:
           # ★ Volume für persistente Daten
           volumeMounts:
             - name: postgres-data
-              mountPath: /bitnami/postgresql    # Bitnami data directory
+              mountPath: /var/lib/postgresql/data
 
           # ★ Readiness: pg_isready prüft ob Postgres Verbindungen annimmt
           readinessProbe:
             exec:
-              command: ["pg_isready", "-U", "up2daite"]
+              command: ["pg_isready", "-U", "todoapp"]
             initialDelaySeconds: 5
             periodSeconds: 10
 
           livenessProbe:
             exec:
-              command: ["pg_isready", "-U", "up2daite"]
+              command: ["pg_isready", "-U", "todoapp"]
             initialDelaySeconds: 30
             periodSeconds: 20
             failureThreshold: 3

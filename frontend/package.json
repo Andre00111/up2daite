@@ -1,8 +1,7 @@
 {
-  "name": "up2daite-frontend",
+  "name": "todo-app-frontend",
   "private": true,
-  "version": "0.2.0-dev",
-  "versionInfo": "0.2.0-dev = Entwicklungsversion, 0.2.0 = Release (npm nutzt -dev statt -SNAPSHOT)",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",

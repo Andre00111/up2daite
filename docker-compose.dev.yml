@@ -1,84 +1,94 @@
+name: todo-app
+
 # Lokale Entwicklungsumgebung — baut aus Source Code
 #
 # Starten:        docker compose -f docker-compose.dev.yml up --build
 # Nur Backend:    docker compose -f docker-compose.dev.yml up postgres backend
 # Frontend-Dev:   cd frontend && npm run dev  (mit Hot Reload, empfohlen)
+#
+# Ports (Präfix 5 zur Isolation von anderen lokalen Projekten):
+#   Frontend:   http://localhost:53000
+#   Backend:    http://localhost:58080
+#   Postgres:   localhost:55432
+#   Prometheus: http://localhost:59090
+#   Grafana:    http://localhost:53001
 
 services:
 
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: up2daite
-      POSTGRES_USER: up2daite
-      POSTGRES_PASSWORD: up2daite
+      POSTGRES_DB: todoapp
+      POSTGRES_USER: todoapp
+      POSTGRES_PASSWORD: todoapp
     ports:
-      - "5432:5432"
+      - "55432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./data/postgres:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U up2daite"]
+      test: ["CMD-SHELL", "pg_isready -U todoapp"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   backend:
+    image: todo-app/backend:latest
     build:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "58080:8080"
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_NAME: up2daite
-      DB_USER: up2daite
-      DB_PASSWORD: up2daite
+      DB_NAME: todoapp
+      DB_USER: todoapp
+      DB_PASSWORD: todoapp
     depends_on:
       postgres:
         condition: service_healthy
     restart: unless-stopped
 
   frontend:
+    image: todo-app/frontend:latest
     build:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:8080"
+      - "53000:8080"
     depends_on:
       - backend
     restart: unless-stopped
 
-  prometheus:
-    image: prom/prometheus:latest
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - prometheus_data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-    depends_on:
-      - backend
-    restart: unless-stopped
+  # prometheus:
+  #   profiles: ["monitoring"]
+  #   image: prom/prometheus:latest
+  #   ports:
+  #     - "59090:9090"
+  #   volumes:
+  #     - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  #     - prometheus_data:/prometheus
+  #   command:
+  #     - '--config.file=/etc/prometheus/prometheus.yml'
+  #     - '--storage.tsdb.path=/prometheus'
+  #   depends_on:
+  #     - backend
+  #   restart: unless-stopped
 
-  grafana:
-    image: grafana/grafana:latest
-    ports:
-      - "3001:3000"
-    environment:
-      GF_SECURITY_ADMIN_PASSWORD: admin
-      GF_USERS_ALLOW_SIGN_UP: "false"
-    volumes:
-      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
-      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
-      - grafana_data:/var/lib/grafana
-    depends_on:
-      - prometheus
-    restart: unless-stopped
+  # grafana:
+  #   profiles: ["monitoring"]
+  #   image: grafana/grafana:latest
+  #   ports:
+  #     - "53001:3000"
+  #   environment:
+  #     GF_SECURITY_ADMIN_PASSWORD: admin
+  #     GF_USERS_ALLOW_SIGN_UP: "false"
+  #   volumes:
+  #     - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+  #     - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+  #     - grafana_data:/var/lib/grafana
+  #   depends_on:
+  #     - prometheus
+  #   restart: unless-stopped
 
-volumes:
-  postgres_data:
-  prometheus_data:
-  grafana_data:
+volumes: {}

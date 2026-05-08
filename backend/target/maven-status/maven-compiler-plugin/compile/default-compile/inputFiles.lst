@@ -1,0 +1,8 @@
+/Users/andre.butkevich/Desktop/Projects/up2daite.com/backend/src/main/java/com/up2daite/backend/Up2daiteApplication.java
+/Users/andre.butkevich/Desktop/Projects/up2daite.com/backend/src/main/java/com/up2daite/backend/config/CorsConfig.java
+/Users/andre.butkevich/Desktop/Projects/up2daite.com/backend/src/main/java/com/up2daite/backend/controller/TodoController.java
+/Users/andre.butkevich/Desktop/Projects/up2daite.com/backend/src/main/java/com/up2daite/backend/dto/CreateTodoRequest.java
+/Users/andre.butkevich/Desktop/Projects/up2daite.com/backend/src/main/java/com/up2daite/backend/dto/TodoDto.java
+/Users/andre.butkevich/Desktop/Projects/up2daite.com/backend/src/main/java/com/up2daite/backend/dto/UpdateTodoRequest.java
+/Users/andre.butkevich/Desktop/Projects/up2daite.com/backend/src/main/java/com/up2daite/backend/entity/Todo.java
+/Users/andre.butkevich/Desktop/Projects/up2daite.com/backend/src/main/java/com/up2daite/backend/repository/TodoRepository.java

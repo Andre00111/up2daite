@@ -1,11 +1,11 @@
-# up2daite.com – Frontend-MVP-Spec
+# todoapp.com – Frontend-MVP-Spec
 > Erstellt: 19. April 2026 | Basis: v1-discussion.md + v1-spec.md
 
 ---
 
 ## 1. Produktziel
 
-up2daite.com bündelt kuratierte AI-News zu einem klaren Signal-Produkt.  
+todoapp.com bündelt kuratierte AI-News zu einem klaren Signal-Produkt.  
 V1 beweist, dass manuell kuratierte Inhalte mit redaktionellem Kommentar und sichtbarer Einordnungslogik einen echten Mehrwert gegenüber reinen Aggregatoren bieten.
 
 Das Frontend macht diesen Wert sichtbar und erlebbar – für Leser, die schnell verstehen wollen, was wirklich wichtig ist.

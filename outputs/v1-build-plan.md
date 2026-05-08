@@ -1,4 +1,4 @@
-# up2daite.com – Umsetzungsplan Frontend-MVP
+# todoapp.com – Umsetzungsplan Frontend-MVP
 > Basis: alle bisherigen Outputs | Erstellt: 19. April 2026
 > Solo-Developer · React · lokale Daten · kein Backend
 

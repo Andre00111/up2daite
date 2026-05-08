@@ -4,7 +4,7 @@
 # Ein Ingress macht einen Service von außen erreichbar — per Domain + HTTP.
 #
 # Ablauf einer Anfrage:
-#   Browser → up2daite.local → Ingress → Service "frontend" → Pod
+#   Browser → todoapp.local → Ingress → Service "frontend" → Pod
 #
 # Voraussetzung: ein Ingress-Controller muss im Cluster laufen.
 # Für minikube: minikube addons enable ingress
@@ -13,10 +13,10 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: frontend
-  namespace: up2daite-staging
+  namespace: todoapp-staging
   labels:
     app.kubernetes.io/name: frontend
-    app.kubernetes.io/part-of: up2daite
+    app.kubernetes.io/part-of: todoapp
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 
@@ -25,9 +25,9 @@ spec:
 
   rules:
     # ★ Auf welche Domain hört dieser Ingress?
-    # Für lokalen Zugriff: "up2daite.local" in /etc/hosts eintragen
-    # → z.B.: 127.0.0.1  up2daite.local
-    - host: up2daite.local
+    # Für lokalen Zugriff: "todoapp.local" in /etc/hosts eintragen
+    # → z.B.: 127.0.0.1  todoapp.local
+    - host: todoapp.local
       http:
         paths:
           - path: /

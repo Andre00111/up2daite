@@ -14,7 +14,17 @@
       "Bash(git commit -m ' *)",
       "Bash(git push *)",
       "Bash(npx tsc *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(docker compose *)",
+      "Bash(ls -la ~/.ssh/)",
+      "Read(//Users/andre.butkevich/.ssh/**)",
+      "Bash(./mvnw compile *)",
+      "Bash(mvn compile *)",
+      "Bash(npm install *)",
+      "Bash(sed -i '' 's/up2daite/todoapp/g; s/Up2daite/TodoApp/g; s/UP2DAITE/TODOAPP/g' outputs/*.md 2>/dev/null; echo \"Done\")"
+    ],
+    "additionalDirectories": [
+      "/Users/andre.butkevich/Desktop/Projects/up2daite.com/outputs"
     ]
   },
   "model": "claude-opus-4-5"

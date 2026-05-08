@@ -11,7 +11,7 @@
 
 set -e
 
-NAMESPACE="up2daite-staging"
+NAMESPACE="todoapp-staging"
 SECRET_NAME="gitlab-registry"
 REGISTRY="registry.gitlab.com"
 

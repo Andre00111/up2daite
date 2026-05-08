@@ -7,10 +7,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
-  namespace: up2daite-staging
+  namespace: todoapp-staging
   labels:
     app.kubernetes.io/name: backend
-    app.kubernetes.io/part-of: up2daite
+    app.kubernetes.io/part-of: todoapp
 spec:
   replicas: 1
   selector:
@@ -25,7 +25,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: backend
-        app.kubernetes.io/part-of: up2daite
+        app.kubernetes.io/part-of: todoapp
     spec:
       imagePullSecrets:
         - name: gitlab-registry
@@ -39,7 +39,7 @@ spec:
 
       containers:
         - name: backend
-          image: registry.gitlab.com/andre00111/up2daite/backend:latest
+          image: registry.gitlab.com/andre00111/todoapp/backend:latest
 
           # Security: Keine Privilege Escalation erlauben
           securityContext:
@@ -58,7 +58,7 @@ spec:
             - name: DB_PORT
               value: "5432"
             - name: DB_NAME
-              value: up2daite
+              value: todoapp
             - name: DB_USER
               valueFrom:
                 secretKeyRef:

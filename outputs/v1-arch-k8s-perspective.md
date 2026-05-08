@@ -134,7 +134,7 @@ metadata:
   namespace: staging
 spec:
   rules:
-    - host: up2daite.local
+    - host: todoapp.local
       http:
         paths:
           - path: /

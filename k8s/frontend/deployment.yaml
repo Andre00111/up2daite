@@ -8,13 +8,13 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
-  namespace: up2daite-staging
+  namespace: todoapp-staging
 
   # Labels sind reine Metadaten — wie Aufkleber auf einer Box.
   # Sie werden von Service und anderen Objekten genutzt um Pods zu finden.
   labels:
     app.kubernetes.io/name: frontend
-    app.kubernetes.io/part-of: up2daite
+    app.kubernetes.io/part-of: todoapp
 
 spec:
   # ★ Wie viele Kopien (Pods) sollen laufen?
@@ -42,7 +42,7 @@ spec:
       # ★ Diese Labels MÜSSEN mit selector.matchLabels übereinstimmen
       labels:
         app.kubernetes.io/name: frontend
-        app.kubernetes.io/part-of: up2daite
+        app.kubernetes.io/part-of: todoapp
 
     spec:
       # Zugangsdaten zur privaten GitLab Registry
@@ -58,7 +58,7 @@ spec:
 
       containers:
         - name: frontend
-          image: registry.gitlab.com/andre00111/up2daite/frontend:latest
+          image: registry.gitlab.com/andre00111/todoapp/frontend:latest
 
           # Security: Keine Privilege Escalation erlauben
           securityContext:

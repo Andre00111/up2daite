@@ -6,7 +6,7 @@ Dieses Setup ist ready für ein späteres Deployment auf einem Cloud-Kubernetes-
 
 ```
 k8s/
-├── namespace.yaml          # Namespace "up2daite-staging"
+├── namespace.yaml          # Namespace "todoapp-staging"
 ├── frontend/
 │   ├── deployment.yaml     # Frontend Pods (nginx + React)
 │   ├── service.yaml        # ClusterIP Service
@@ -45,8 +45,8 @@ kubectl apply -f k8s/backend/
 kubectl apply -f k8s/frontend/
 
 # 4. Status prüfen
-kubectl get pods -n up2daite-staging
-kubectl get ingress -n up2daite-staging
+kubectl get pods -n todoapp-staging
+kubectl get ingress -n todoapp-staging
 ```
 
 ## CI/CD aktivieren

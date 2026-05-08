@@ -1,4 +1,4 @@
-# up2daite.com – V1 Produkt-Spec
+# todoapp.com – V1 Produkt-Spec
 ## Phasen 1–4: UX-Spec · Informationsarchitektur · Domainmodell · React-Architektur
 
 > Grundlage: Agent-Diskussion `outputs/v1-discussion.md` (19. April 2026)
@@ -75,7 +75,7 @@ Keine weiteren Routes in V1.
 ## Navigation
 
 ```
-[up2daite]    Archiv    Methodik    [Newsletter abonnieren →]
+[todoapp]    Archiv    Methodik    [Newsletter abonnieren →]
 ```
 
 - Logo/Wordmark links
@@ -94,7 +94,7 @@ Keine weiteren Routes in V1.
 │                                                             │
 │  HERO                                                       │
 │  ┌───────────────────────────────────────────────────┐     │
-│  │  up2daite.com                                      │     │
+│  │  todoapp.com                                      │     │
 │  │  AI-Signal. Kein Rauschen.                         │     │
 │  │  3× pro Woche. Kuratiert. Transparent.             │     │
 │  │                                                    │     │
@@ -123,7 +123,7 @@ Keine weiteren Routes in V1.
 │  [→ Methodik lesen]                                         │
 │                                                             │
 ├─────────────────────────────────────────────────────────────┤
-│  FOOTER: Impressum | © 2026 up2daite.com                    │
+│  FOOTER: Impressum | © 2026 todoapp.com                    │
 └─────────────────────────────────────────────────────────────┘
 ```
 

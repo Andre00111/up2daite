@@ -1,4 +1,4 @@
-# up2daite.com – Informationsarchitektur & Seitenstruktur
+# todoapp.com – Informationsarchitektur & Seitenstruktur
 > Basis: v1-frontend-spec.md | Erstellt: 19. April 2026
 
 ---
@@ -6,7 +6,7 @@
 ## 1. Sitemap
 
 ```
-up2daite.com
+todoapp.com
 │
 ├── /                          Landingpage
 ├── /archiv                    Archivseite
@@ -29,7 +29,7 @@ up2daite.com
 
 | Position | Element | Ziel | Anmerkung |
 |----------|---------|------|-----------|
-| Links | Logo / Wordmark "up2daite" | `/` | Immer klickbar, führt zu Home |
+| Links | Logo / Wordmark "todoapp" | `/` | Immer klickbar, führt zu Home |
 | Mitte | Archiv | `/archiv` | Einziger regulärer Nav-Link |
 | Rechts | "Newsletter abonnieren" | Mailto-Link | Primärer CTA, visuell hervorgehoben (Button) |
 
