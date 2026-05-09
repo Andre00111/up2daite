@@ -6,11 +6,12 @@ spring:
     username: ${DB_USER:todoapp}
     password: ${DB_PASSWORD:todoapp}
     driver-class-name: org.postgresql.Driver
+    #31.70.75.157
 
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: none            # Flyway verwaltet das Schema
+      ddl-auto: none # Flyway verwaltet das Schema
     show-sql: false
     properties:
       hibernate:

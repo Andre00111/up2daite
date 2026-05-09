@@ -21,13 +21,11 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 
 spec:
-  ingressClassName: nginx   # welcher Ingress-Controller soll das verarbeiten
+  ingressClassName: traefik   # k3s verwendet Traefik
 
   rules:
-    # ★ Auf welche Domain hört dieser Ingress?
-    # Für lokalen Zugriff: "todoapp.local" in /etc/hosts eintragen
-    # → z.B.: 127.0.0.1  todoapp.local
-    - host: todoapp.local
+    # Ohne host = akzeptiert alle Anfragen (auch direkt per IP)
+    - http:
       http:
         paths:
           - path: /

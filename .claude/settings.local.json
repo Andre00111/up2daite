@@ -21,7 +21,10 @@
       "Bash(./mvnw compile *)",
       "Bash(mvn compile *)",
       "Bash(npm install *)",
-      "Bash(sed -i '' 's/up2daite/todoapp/g; s/Up2daite/TodoApp/g; s/UP2DAITE/TODOAPP/g' outputs/*.md 2>/dev/null; echo \"Done\")"
+      "Bash(sed -i '' 's/up2daite/todoapp/g; s/Up2daite/TodoApp/g; s/UP2DAITE/TODOAPP/g' outputs/*.md 2>/dev/null; echo \"Done\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:53000)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:58080/api/todos)",
+      "Bash(curl -s --connect-timeout 5 http://31.70.75.157)"
     ],
     "additionalDirectories": [
       "/Users/andre.butkevich/Desktop/Projects/up2daite.com/outputs"

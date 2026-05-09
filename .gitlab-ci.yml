@@ -2,11 +2,11 @@
 # Doku: docs/VERSIONING.md
 
 stages:
-  - security # NEU: Gitleaks + Semgrep (läuft ZUERST)
+  - security
   - build
   - package
-  - scan # Trivy Container-Scan
-  # - deploy
+  - scan
+  - deploy
 
 variables:
   FRONTEND_IMAGE: $CI_REGISTRY_IMAGE/frontend
