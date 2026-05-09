@@ -6,7 +6,7 @@ stages:
   - build
   - package
   - scan
-  # - deploy  # Aktivieren wenn KUBE_CONFIG und KUBE_NAMESPACE in GitLab gesetzt
+  - deploy  # Benötigt KUBE_CONFIG, KUBE_NAMESPACE, KUBE_CONFIG_PREPROD, KUBE_NAMESPACE_PREPROD in GitLab
 
 variables:
   FRONTEND_IMAGE: $CI_REGISTRY_IMAGE/frontend
@@ -229,3 +229,37 @@ deploy-backend:
     url: https://staging.todo.local
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
+
+# ─── DEPLOY PRE-PROD (Release Tags) ──────────────────────────────────────────
+
+deploy-preprod-frontend:
+  stage: deploy
+  image: dtzar/helm-kubectl:latest
+  before_script:
+    - mkdir -p ~/.kube
+    - echo "$KUBE_CONFIG_PREPROD" | base64 -d > ~/.kube/config
+  script:
+    - kubectl set image deployment/frontend frontend=$FRONTEND_IMAGE:$CI_COMMIT_TAG -n $KUBE_NAMESPACE_PREPROD
+    - kubectl rollout status deployment/frontend -n $KUBE_NAMESPACE_PREPROD --timeout=120s
+  environment:
+    name: preprod
+    url: https://preprod.todo.local
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/
+  when: manual
+
+deploy-preprod-backend:
+  stage: deploy
+  image: dtzar/helm-kubectl:latest
+  before_script:
+    - mkdir -p ~/.kube
+    - echo "$KUBE_CONFIG_PREPROD" | base64 -d > ~/.kube/config
+  script:
+    - kubectl set image deployment/backend backend=$BACKEND_IMAGE:$CI_COMMIT_TAG -n $KUBE_NAMESPACE_PREPROD
+    - kubectl rollout status deployment/backend -n $KUBE_NAMESPACE_PREPROD --timeout=180s
+  environment:
+    name: preprod
+    url: https://preprod.todo.local
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/
+  when: manual
