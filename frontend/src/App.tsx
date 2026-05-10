@@ -4,6 +4,8 @@ import AdminLayout from "./components/layout/AdminLayout";
 import LandingPage from "./pages/public/LandingPage";
 import ArchivPage from "./pages/public/ArchivPage";
 import EditionDetailPage from "./pages/public/EditionDetailPage";
+import AIJobsPage from "./pages/public/AIJobsPage";
+import AIModelsPage from "./pages/public/AIModelsPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import StoryFormPage from "./pages/admin/StoryFormPage";
 import EditionFormPage from "./pages/admin/EditionFormPage";
@@ -13,16 +15,11 @@ export default function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route
-          path="/"
-          element={
-            <>
-              HALLO <LandingPage />
-            </>
-          }
-        />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/archiv" element={<ArchivPage />} />
         <Route path="/ausgabe/:slug" element={<EditionDetailPage />} />
+        <Route path="/ki-jobs" element={<AIJobsPage />} />
+        <Route path="/ki-modelle" element={<AIModelsPage />} />
       </Route>
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminDashboardPage />} />

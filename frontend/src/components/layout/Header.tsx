@@ -29,6 +29,22 @@ export default function Header() {
             Archiv
           </Button>
           <Button
+            component={NavLink}
+            to="/ki-jobs"
+            color="inherit"
+            sx={{ fontWeight: 500, color: 'text.primary' }}
+          >
+            KI-Jobs
+          </Button>
+          <Button
+            component={NavLink}
+            to="/ki-modelle"
+            color="inherit"
+            sx={{ fontWeight: 500, color: 'text.primary' }}
+          >
+            KI-Modelle
+          </Button>
+          <Button
             href="mailto:hello@up2daite.com"
             variant="contained"
             color="secondary"
