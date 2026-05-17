@@ -21,7 +21,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 
 spec:
-  ingressClassName: nginx   # welcher Ingress-Controller soll das verarbeiten
+  ingressClassName: traefik  # K3s verwendet Traefik als Standard-Ingress-Controller
 
   rules:
     # ★ Kein Host = akzeptiert alle Anfragen (auch per IP)

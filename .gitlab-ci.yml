@@ -238,6 +238,9 @@ scan-backend:
 # Da sich der Tag bei jedem Commit ändert, erkennt K8s automatisch
 # ein neues Image → Pods werden neu gestartet → kein rollout restart nötig.
 
+# Wendet ALLE K8s-Manifeste an (Deployments, Services, Ingress etc.)
+# und setzt dann das frische Image-Tag. Dadurch werden auch Änderungen
+# an Ingress, Services oder anderen K8s-Ressourcen automatisch deployed.
 deploy-frontend:
   stage: deploy
   image: dtzar/helm-kubectl:latest
@@ -245,9 +248,11 @@ deploy-frontend:
     - mkdir -p ~/.kube
     - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
   script:
-    # Setzt das neue Image mit eindeutigem Commit-SHA Tag
+    # 1. Alle Frontend-Manifeste anwenden (Deployment, Service, Ingress)
+    - kubectl apply -f k8s/frontend/
+    # 2. Image-Tag auf aktuelle Commit-SHA setzen
     - kubectl set image deployment/frontend frontend=$FRONTEND_IMAGE:$IMAGE_TAG -n $KUBE_NAMESPACE
-    # Wartet bis der neue Pod läuft (K8s startet automatisch neu weil sich das Tag geändert hat)
+    # 3. Warten bis neue Pods laufen
     - kubectl rollout status deployment/frontend -n $KUBE_NAMESPACE --timeout=120s
   environment:
     name: staging
@@ -262,6 +267,7 @@ deploy-backend:
     - mkdir -p ~/.kube
     - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
   script:
+    - kubectl apply -f k8s/backend/
     - kubectl set image deployment/backend backend=$BACKEND_IMAGE:$IMAGE_TAG -n $KUBE_NAMESPACE
     - kubectl rollout status deployment/backend -n $KUBE_NAMESPACE --timeout=180s
   environment:
