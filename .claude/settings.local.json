@@ -18,8 +18,14 @@
       "Bash(curl -s http://localhost:5173)",
       "Bash(npm install *)",
       "Bash(chmod +x /Users/andre.butkevich/Desktop/Projects/AI-news-app/rebuild-frontend.sh)",
-      "Bash(git fetch *)"
+      "Bash(git fetch *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" https://gitlab.com/Andre00111/up2daite)",
+      "Bash(curl -s -I https://gitlab.com/Andre00111/up2daite)",
+      "Bash(cat ~/.docker/config.json 2>/dev/null | grep -A2 \"gitlab\" | head -5)",
+      "Read(//Users/andre.butkevich/.docker/**)",
+      "Bash(git status *)",
+      "Bash(curl -sk http://31.70.75.157)"
     ]
   },
-  "model": "claude-opus-4-5"
+  "model": "claude-opus-4-6"
 }

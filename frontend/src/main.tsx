@@ -6,15 +6,18 @@ import CssBaseline from '@mui/material/CssBaseline'
 import { theme } from './theme'
 import { LayoutProvider } from './context/LayoutContext'
 import App from './App'
+import PinLock from './components/PinLock'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <LayoutProvider>
-          <App />
-        </LayoutProvider>
+        <PinLock>
+          <LayoutProvider>
+            <App />
+          </LayoutProvider>
+        </PinLock>
       </ThemeProvider>
     </BrowserRouter>
   </React.StrictMode>
