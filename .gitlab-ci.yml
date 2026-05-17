@@ -124,7 +124,7 @@ package-frontend-branch:
       --context $CI_PROJECT_DIR/frontend
       --dockerfile $CI_PROJECT_DIR/frontend/Dockerfile
       --destination $FRONTEND_IMAGE:$CI_COMMIT_REF_SLUG
-      --cache=true --cache-ttl=24h
+      --no-cache
   rules:
     - if: $CI_COMMIT_BRANCH == "ai-news-app"
 
@@ -158,7 +158,7 @@ package-backend-branch:
       --context $CI_PROJECT_DIR/backend
       --dockerfile $CI_PROJECT_DIR/backend/Dockerfile
       --destination $BACKEND_IMAGE:$CI_COMMIT_REF_SLUG
-      --cache=true --cache-ttl=24h
+      --no-cache
   rules:
     - if: $CI_COMMIT_BRANCH == "ai-news-app"
 

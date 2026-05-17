@@ -14,7 +14,11 @@
       "Bash(git commit -m ' *)",
       "Bash(git push *)",
       "Bash(npx tsc *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(curl -s http://localhost:5173)",
+      "Bash(npm install *)",
+      "Bash(chmod +x /Users/andre.butkevich/Desktop/Projects/AI-news-app/rebuild-frontend.sh)",
+      "Bash(git fetch *)"
     ]
   },
   "model": "claude-opus-4-5"

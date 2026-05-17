@@ -24,17 +24,13 @@ spec:
   ingressClassName: nginx   # welcher Ingress-Controller soll das verarbeiten
 
   rules:
-    # ★ Auf welche Domain hört dieser Ingress?
-    # Für lokalen Zugriff: "up2daite.local" in /etc/hosts eintragen
-    # → z.B.: 127.0.0.1  up2daite.local
-    - host: up2daite.local
-      http:
+    # ★ Kein Host = akzeptiert alle Anfragen (auch per IP)
+    - http:
         paths:
           - path: /
             pathType: Prefix
             backend:
-              # ★ Welcher Service bekommt den Traffic?
               service:
-                name: frontend   # muss mit service.yaml name: übereinstimmen
+                name: frontend
                 port:
                   number: 80
