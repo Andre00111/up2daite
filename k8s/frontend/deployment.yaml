@@ -58,7 +58,7 @@ spec:
 
       containers:
         - name: frontend
-          image: registry.gitlab.com/andre00111/up2daite/frontend:latest
+          image: registry.gitlab.com/andre00111/up2daite/frontend:ai-news-app
 
           # Security: Keine Privilege Escalation erlauben
           securityContext:
