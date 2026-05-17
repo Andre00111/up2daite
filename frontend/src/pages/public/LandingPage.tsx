@@ -16,7 +16,7 @@ export default function LandingPage() {
 
   return (
     <Box>
-      {/* Hero */}
+      {/* Hero - auskommentiert
       <Box
         sx={{
           bgcolor: 'primary.main',
@@ -61,6 +61,7 @@ export default function LandingPage() {
           </Box>
         </Container>
       </Box>
+      */}
 
       {/* Letzte Ausgabe */}
       {latestEdition && (

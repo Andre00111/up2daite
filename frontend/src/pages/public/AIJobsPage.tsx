@@ -101,27 +101,54 @@ export default function AIJobsPage() {
     <Box>
       <Box
         sx={{
-          bgcolor: 'primary.main',
-          color: 'primary.contrastText',
-          py: { xs: 6, md: 8 },
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0d47a1 100%)',
+          color: 'white',
+          py: { xs: 8, md: 12 },
+          position: 'relative',
+          overflow: 'hidden',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(14, 165, 233, 0.3) 0%, transparent 50%)',
+            pointerEvents: 'none',
+          },
         }}
       >
-        <Container maxWidth="lg">
-          <Typography
-            variant="h3"
-            component="h1"
-            gutterBottom
-            sx={{ fontSize: { xs: '1.75rem', md: '2.5rem' } }}
-          >
-            AI Job-Risiko-Monitor
-          </Typography>
-          <Typography
-            variant="h6"
-            sx={{ color: 'rgba(255,255,255,0.8)', fontWeight: 400, maxWidth: 640 }}
-          >
-            Welche Berufe sind durch künstliche Intelligenz gefährdet?
-            Aktuelle Einschätzungen basierend auf technologischen Entwicklungen und Markttrends.
-          </Typography>
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography
+              variant="overline"
+              sx={{ color: 'rgba(255,255,255,0.7)', letterSpacing: 3, mb: 1, display: 'block' }}
+            >
+              Stand: Mai 2025
+            </Typography>
+            <Typography
+              variant="h2"
+              component="h1"
+              sx={{
+                fontWeight: 800,
+                fontSize: { xs: '2rem', md: '3.5rem' },
+                background: 'linear-gradient(90deg, #fff 0%, #93c5fd 50%, #38bdf8 100%)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                mb: 2,
+              }}
+            >
+              AI Job-Risiko-Monitor
+            </Typography>
+            <Typography
+              variant="h6"
+              sx={{ color: 'rgba(255,255,255,0.8)', fontWeight: 400, maxWidth: 640, mx: 'auto' }}
+            >
+              Welche Berufe sind durch künstliche Intelligenz gefährdet?
+              Aktuelle Einschätzungen basierend auf technologischen Entwicklungen und Markttrends.
+            </Typography>
+          </Box>
         </Container>
       </Box>
 
@@ -175,18 +202,27 @@ export default function AIJobsPage() {
           ))}
         </Grid>
 
-        <Box sx={{ mt: 6, p: 3, bgcolor: 'background.paper', borderRadius: 2, border: '1px solid #e2e8f0' }}>
-          <Typography variant="overline" color="text.secondary">
+      </Container>
+
+      <Box
+        sx={{
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)',
+          py: 6,
+          textAlign: 'center',
+        }}
+      >
+        <Container maxWidth="md">
+          <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.5)', letterSpacing: 2 }}>
             Hinweis zur Methodik
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+          <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)', mt: 1 }}>
             Die Risiko-Scores basieren auf einer Kombination aus aktuellen AI-Fähigkeiten, Markttrends,
             Automatisierungsgrad der Kernaufgaben und regulatorischen Faktoren. Die Einschätzungen sind
             keine Prognosen, sondern spiegeln den aktuellen Stand der Technologie wider.
             Individuelle Spezialisierungen können das persönliche Risiko erheblich beeinflussen.
           </Typography>
-        </Box>
-      </Container>
+        </Container>
+      </Box>
     </Box>
   )
 }

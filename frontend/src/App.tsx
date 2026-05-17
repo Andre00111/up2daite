@@ -6,6 +6,7 @@ import ArchivPage from "./pages/public/ArchivPage";
 import EditionDetailPage from "./pages/public/EditionDetailPage";
 import AIJobsPage from "./pages/public/AIJobsPage";
 import AIModelsPage from "./pages/public/AIModelsPage";
+import AboutPage from "./pages/public/AboutPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import StoryFormPage from "./pages/admin/StoryFormPage";
 import EditionFormPage from "./pages/admin/EditionFormPage";
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="/ausgabe/:slug" element={<EditionDetailPage />} />
         <Route path="/ki-jobs" element={<AIJobsPage />} />
         <Route path="/ki-modelle" element={<AIModelsPage />} />
+        <Route path="/about" element={<AboutPage />} />
       </Route>
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminDashboardPage />} />

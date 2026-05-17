@@ -8,7 +8,7 @@ export default defineConfig({
       // Im Dev-Modus (npm run dev) werden /api-Requests an das lokale Backend weitergeleitet.
       // Damit muss im Frontend keine absolute URL konfiguriert werden.
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:48080',
         changeOrigin: true,
       },
     },
