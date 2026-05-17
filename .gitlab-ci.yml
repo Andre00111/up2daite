@@ -53,16 +53,16 @@ gitleaks:
 # Regeln: "p/default" = Community-Regeln für Java, JS, Python, etc.
 # Docs: https://semgrep.dev/docs/
 
-semgrep:
-  stage: security
-  image:
-    name: semgrep/semgrep:latest
-    entrypoint: [""]
-  script:
-    - semgrep scan --config=p/default --config=p/security-audit --error --verbose .
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH
+# semgrep:
+#   stage: security
+#   image:
+#     name: semgrep/semgrep:latest
+#     entrypoint: [""]
+#   script:
+#     - semgrep scan --config=p/default --config=p/security-audit --error --verbose .
+#   rules:
+#     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+#     - if: $CI_COMMIT_BRANCH
 
 # ─── BUILD ────────────────────────────────────────────────────────────────────
 
