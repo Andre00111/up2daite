@@ -240,10 +240,11 @@ deploy-frontend:
     - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
   script:
     - kubectl set image deployment/frontend frontend=$FRONTEND_IMAGE:$CI_COMMIT_REF_SLUG -n up2daite-staging
+    - kubectl rollout restart deployment/frontend -n up2daite-staging
     - kubectl rollout status deployment/frontend -n up2daite-staging --timeout=120s
   environment:
     name: staging
-    url: https://staging.up2daite.com
+    url: http://31.70.75.157
   rules:
     - if: $CI_COMMIT_BRANCH == "ai-news-app"
 
@@ -255,9 +256,10 @@ deploy-backend:
     - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
   script:
     - kubectl set image deployment/backend backend=$BACKEND_IMAGE:$CI_COMMIT_REF_SLUG -n up2daite-staging
+    - kubectl rollout restart deployment/backend -n up2daite-staging
     - kubectl rollout status deployment/backend -n up2daite-staging --timeout=180s
   environment:
     name: staging
-    url: https://staging.up2daite.com
+    url: http://31.70.75.157
   rules:
     - if: $CI_COMMIT_BRANCH == "ai-news-app"
