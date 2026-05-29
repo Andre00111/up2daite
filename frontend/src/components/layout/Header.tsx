@@ -28,9 +28,12 @@ import {
   Psychology as PsychologyIcon,
   Info as InfoIcon,
   Person as PersonIcon,
+  Logout as LogoutIcon,
+  AdminPanelSettings as AdminIcon,
 } from '@mui/icons-material'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useLayout } from '../../context/LayoutContext'
+import { useAuth } from '../../context/AuthContext'
 
 const navItems = [
   { label: 'Archiv', path: '/archiv', icon: <ArchiveIcon /> },
@@ -43,6 +46,7 @@ export default function Header() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const location = useLocation()
   const { mode, toggleMode } = useLayout()
+  const { user, logout } = useAuth()
 
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -170,9 +174,22 @@ export default function Header() {
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             PaperProps={{
-              sx: { mt: 1, minWidth: 200, borderRadius: 2 },
+              sx: { mt: 1, minWidth: 220, borderRadius: 2 },
             }}
           >
+            {user && (
+              <Box sx={{ px: 2, py: 1 }}>
+                <Typography variant="body2" fontWeight={600}>{user.username}</Typography>
+                <Typography variant="caption" color="text.secondary">Admin</Typography>
+              </Box>
+            )}
+            {user && <Divider />}
+            {user && (
+              <MenuItem component={Link} to="/admin" onClick={handleProfileMenuClose}>
+                <ListItemIcon><AdminIcon fontSize="small" /></ListItemIcon>
+                Admin-Bereich
+              </MenuItem>
+            )}
             <MenuItem component={Link} to="/about" onClick={handleProfileMenuClose}>
               <ListItemIcon>
                 <InfoIcon fontSize="small" />
@@ -196,6 +213,16 @@ export default function Header() {
                 }
               />
             </Box>
+            {user && <Divider />}
+            {user && (
+              <MenuItem
+                onClick={() => { handleProfileMenuClose(); logout() }}
+                sx={{ color: 'error.main' }}
+              >
+                <ListItemIcon><LogoutIcon fontSize="small" color="error" /></ListItemIcon>
+                Abmelden
+              </MenuItem>
+            )}
           </Menu>
         </Box>
       </Toolbar>
