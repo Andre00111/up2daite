@@ -50,9 +50,3 @@ export interface Edition {
   storyIds: string[]
 }
 
-export interface Subscriber {
-  id: string
-  email: string
-  topics: TopicId[]
-  subscribedAt: string
-}

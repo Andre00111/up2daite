@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>up2daite – Anmeldung bestätigen</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 560px; margin: 0 auto; padding: 24px; color: #1e293b;">
+    <h1 style="font-size: 24px; margin-bottom: 16px;">Willkommen bei up2daite</h1>
+    <p>Hi,</p>
+    <p>Bitte bestätige deine E-Mail-Adresse, um den Newsletter zu erhalten:</p>
+    <p style="margin: 32px 0;">
+        <a th:href="${confirmUrl}"
+           style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+            Anmeldung bestätigen
+        </a>
+    </p>
+    <p style="color: #64748b; font-size: 14px;">
+        Falls du dich nicht angemeldet hast, kannst du diese Mail einfach ignorieren.
+    </p>
+    <p style="color: #64748b; font-size: 12px; margin-top: 32px;">
+        — up2daite Redaktion
+    </p>
+</body>
+</html>

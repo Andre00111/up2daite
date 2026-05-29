@@ -125,6 +125,44 @@ kubectl get deployment frontend -n up2daite-staging -o jsonpath='{.spec.template
 
 ---
 
+## Auth & Newsletter: Secrets anlegen
+
+**Einmalig beim ersten Deployment des Auth/Newsletter-Features.**
+
+```bash
+export KUBECONFIG=~/.kube/config-up2daite
+NAMESPACE=up2daite-staging
+
+# JWT-Secret (256-bit, kein Whitespace)
+JWT_SECRET=$(openssl rand -base64 48 | tr -d '\n')
+
+# Admin-Passwörter setzen (sicher wählen!)
+ANDRE_PW='dein-sicheres-pw-für-andre'
+MARTIN_PW='dein-sicheres-pw-für-martin'
+
+kubectl create secret generic app-auth-credentials \
+  --from-literal=jwt-secret="$JWT_SECRET" \
+  --from-literal=admin-andre-password="$ANDRE_PW" \
+  --from-literal=admin-martin-password="$MARTIN_PW" \
+  -n $NAMESPACE
+
+# Brevo API-Key (aus brevo.com → Account → SMTP & API)
+BREVO_API_KEY='xkeysib-...'
+
+kubectl create secret generic brevo-credentials \
+  --from-literal=api-key="$BREVO_API_KEY" \
+  -n $NAMESPACE
+```
+
+Rotation (Passwort ändern):
+```bash
+kubectl delete secret app-auth-credentials -n up2daite-staging
+# → dann obigen create-Befehl erneut ausführen
+kubectl rollout restart deployment/backend -n up2daite-staging
+```
+
+---
+
 ## Registry-Token erneuern (wenn ImagePullBackOff)
 
 Falls K8s keine Images mehr pullen kann:

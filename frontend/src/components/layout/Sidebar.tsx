@@ -20,9 +20,11 @@ import {
   Info as InfoIcon,
   Home as HomeIcon,
   Person as PersonIcon,
+  Logout as LogoutIcon,
 } from '@mui/icons-material'
 import { NavLink, useLocation } from 'react-router-dom'
 import { useLayout } from '../../context/LayoutContext'
+import { useAuth } from '../../context/AuthContext'
 
 const DRAWER_WIDTH = 260
 
@@ -40,6 +42,7 @@ const secondaryItems = [
 export default function Sidebar() {
   const location = useLocation()
   const { mode, toggleMode } = useLayout()
+  const { user, logout } = useAuth()
 
   const isActive = (path: string) => {
     if (path === '/') return location.pathname === '/'
@@ -167,22 +170,6 @@ export default function Sidebar() {
       </List>
 
       <Box sx={{ mt: 'auto', p: 2 }}>
-        <Button
-          href="mailto:hello@up2daite.com"
-          variant="contained"
-          fullWidth
-          disableElevation
-          sx={{
-            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-            borderRadius: 2,
-            textTransform: 'none',
-            fontWeight: 600,
-            mb: 2,
-          }}
-        >
-          Newsletter abonnieren
-        </Button>
-
         <Divider sx={{ mb: 2 }} />
 
         <Box
@@ -198,14 +185,24 @@ export default function Sidebar() {
           <Avatar sx={{ width: 36, height: 36, bgcolor: 'primary.main' }}>
             <PersonIcon sx={{ fontSize: 18 }} />
           </Avatar>
-          <Box sx={{ flex: 1 }}>
-            <Typography variant="body2" fontWeight={600}>
-              Gast
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography variant="body2" fontWeight={600} noWrap>
+              {user ? user.username : 'Gast'}
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              Nicht angemeldet
+              {user ? 'Admin' : 'Nicht angemeldet'}
             </Typography>
           </Box>
+          {user && (
+            <Button
+              size="small"
+              onClick={logout}
+              sx={{ minWidth: 0, p: 0.5, color: 'text.secondary' }}
+              title="Abmelden"
+            >
+              <LogoutIcon fontSize="small" />
+            </Button>
+          )}
         </Box>
 
         <FormControlLabel

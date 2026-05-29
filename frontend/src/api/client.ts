@@ -7,6 +7,15 @@ type RequestOptions = {
   params?: Record<string, string | boolean | undefined>
 }
 
+// Eigene Fehlerklasse, damit wir 401 (unauthorized) gezielt im UI abfangen können.
+export class ApiError extends Error {
+  status: number
+  constructor(status: number, message: string) {
+    super(message)
+    this.status = status
+  }
+}
+
 async function request<T>(method: string, path: string, options?: RequestOptions & { body?: unknown }): Promise<T> {
   let url = `${baseURL}${path}`
 
@@ -25,6 +34,7 @@ async function request<T>(method: string, path: string, options?: RequestOptions
 
   const response = await fetch(url, {
     method,
+    credentials: 'include', // HttpOnly Auth-Cookie mitschicken
     headers: {
       'Content-Type': 'application/json',
     },
@@ -32,7 +42,12 @@ async function request<T>(method: string, path: string, options?: RequestOptions
   })
 
   if (!response.ok) {
-    throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    throw new ApiError(response.status, `HTTP ${response.status}: ${response.statusText}`)
+  }
+
+  // 204 No Content (z.B. /logout, /confirm) hat keinen Body
+  if (response.status === 204) {
+    return undefined as T
   }
 
   return response.json()
@@ -43,7 +58,7 @@ export const apiClient = {
     return request<T>('GET', path, options)
   },
 
-  post<T>(path: string, body: unknown): Promise<T> {
+  post<T>(path: string, body?: unknown): Promise<T> {
     return request<T>('POST', path, { body })
   },
 

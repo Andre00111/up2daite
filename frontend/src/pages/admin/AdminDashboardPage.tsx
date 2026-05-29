@@ -41,6 +41,12 @@ export default function AdminDashboardPage() {
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button
             variant="outlined"
+            onClick={() => navigate('/admin/subscribers')}
+          >
+            Subscriber
+          </Button>
+          <Button
+            variant="outlined"
             onClick={() => navigate('/admin/story/neu')}
           >
             + Neue Story

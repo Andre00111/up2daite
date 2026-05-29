@@ -1,8 +1,9 @@
-import { Box, Container, Typography, Button, Divider, Grid2 as Grid } from '@mui/material'
+import { Box, Container, Typography, Button, Divider, Grid2 as Grid, Paper } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { useEditions } from '../../hooks/useEditions'
 import { useStories } from '../../hooks/useStories'
 import StoryCard from '../../components/features/StoryCard'
+import NewsletterSignupForm from '../../components/features/NewsletterSignupForm'
 
 export default function LandingPage() {
   const navigate = useNavigate()
@@ -135,6 +136,18 @@ export default function LandingPage() {
               </Box>
             ))}
           </Box>
+        </Container>
+      </Box>
+
+      {/* Newsletter-Anmeldung */}
+      <Box sx={{ py: 8 }}>
+        <Container maxWidth="sm">
+          <Paper
+            elevation={0}
+            sx={{ p: 4, borderRadius: 4, border: '1px solid', borderColor: 'divider' }}
+          >
+            <NewsletterSignupForm variant="hero" />
+          </Paper>
         </Container>
       </Box>
     </Box>
