@@ -43,8 +43,10 @@ export default function App() {
       >
         <Route index element={<AdminDashboardPage />} />
         <Route path="story/neu" element={<StoryFormPage />} />
+        <Route path="story/:id/edit" element={<StoryFormPage />} />
         <Route path="edition/neu" element={<EditionFormPage />} />
         <Route path="edition/:id" element={<EditionPreviewPage />} />
+        <Route path="edition/:id/edit" element={<EditionFormPage />} />
         <Route path="subscribers" element={<SubscriberListPage />} />
       </Route>
     </Routes>

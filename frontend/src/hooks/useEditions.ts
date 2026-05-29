@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { fetchEditions } from '../api/editions'
 import type { Edition, TopicId } from '../types'
 
@@ -7,12 +7,15 @@ export function useEditions() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetchEditions()
-      .then(setEditions)
+  const refresh = useCallback(() => {
+    setLoading(true)
+    return fetchEditions()
+      .then((e) => { setEditions(e); setError(null) })
       .catch(() => setError('Ausgaben konnten nicht geladen werden.'))
       .finally(() => setLoading(false))
   }, [])
+
+  useEffect(() => { refresh() }, [refresh])
 
   const publishedEditions = editions.filter((e) => e.status === 'published')
 
@@ -26,10 +29,6 @@ export function useEditions() {
 
   function getFilteredEditions(topicId: TopicId | null) {
     if (!topicId) return publishedEditions
-    // Filterung nach Topic-ID — storyIds werden vom Backend mitgeliefert
-    // Volle Story-Objekte für den Filter würden einen zweiten API-Call brauchen.
-    // Für V1 bleibt der Filter client-seitig auf Basis der storyIds (immer leer nach Migration,
-    // daher Topics direkt auf Edition-Ebene sinnvoller — TODO für V2)
     return publishedEditions
   }
 
@@ -46,6 +45,7 @@ export function useEditions() {
     publishedEditions,
     loading,
     error,
+    refresh,
     getEditionBySlug,
     getEditionById,
     getFilteredEditions,

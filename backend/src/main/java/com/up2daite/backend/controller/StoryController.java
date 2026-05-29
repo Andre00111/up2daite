@@ -2,9 +2,12 @@ package com.up2daite.backend.controller;
 
 import com.up2daite.backend.dto.CreateStoryRequest;
 import com.up2daite.backend.dto.StoryDto;
+import com.up2daite.backend.dto.UpdateStoryRequest;
 import com.up2daite.backend.service.StoryService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,5 +40,24 @@ public class StoryController {
     @ResponseStatus(HttpStatus.CREATED)
     public StoryDto create(@RequestBody CreateStoryRequest request) {
         return storyService.create(request);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<StoryDto> update(@PathVariable String id, @RequestBody UpdateStoryRequest request) {
+        try {
+            return ResponseEntity.ok(storyService.update(id, request));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable String id) {
+        try {
+            storyService.delete(id);
+            return ResponseEntity.noContent().build();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

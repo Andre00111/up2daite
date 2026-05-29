@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Box,
   Typography,
@@ -15,10 +15,14 @@ import {
   CardContent,
   Snackbar,
   Alert,
+  CircularProgress,
 } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { topics } from '../../data/topics'
-import type { SourceType, TopicId } from '../../types'
+import type { ScoreValue, SourceType, TopicId } from '../../types'
+import { createStory, updateStory, StoryWritePayload } from '../../api/stories'
+import { useStories } from '../../hooks/useStories'
+import { useEditions } from '../../hooks/useEditions'
 
 const sourceTypes: { value: SourceType; label: string }[] = [
   { value: 'primary', label: '🔵 Primärquelle' },
@@ -27,8 +31,11 @@ const sourceTypes: { value: SourceType; label: string }[] = [
 ]
 
 export default function StoryFormPage() {
+  const { id } = useParams<{ id: string }>()
+  const isEdit = Boolean(id)
   const navigate = useNavigate()
-  const [saved, setSaved] = useState(false)
+  const { getStoryById, loading: storiesLoading } = useStories()
+  const { editions } = useEditions()
 
   const [form, setForm] = useState({
     title: '',
@@ -37,24 +44,75 @@ export default function StoryFormPage() {
     sourceName: '',
     sourceType: 'primary' as SourceType,
     selectedTopics: [] as TopicId[],
-    impact: 3,
-    hypeLevel: 3,
-    sourceQuality: 3,
+    impact: 3 as ScoreValue,
+    hypeLevel: 3 as ScoreValue,
+    sourceQuality: 3 as ScoreValue,
+    editionId: '' as string,
   })
 
-  const handleSave = () => {
-    // MVP: kein echtes Speichern – visuelles Feedback
-    setSaved(true)
-    setTimeout(() => navigate('/admin'), 1500)
+  const [saved, setSaved] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  // Beim Edit: Form aus existierender Story füllen
+  useEffect(() => {
+    if (!isEdit) return
+    const story = getStoryById(id!)
+    if (story) {
+      setForm({
+        title: story.title,
+        editorialComment: story.editorialComment,
+        sourceUrl: story.source.url,
+        sourceName: story.source.name,
+        sourceType: story.source.type,
+        selectedTopics: story.topics,
+        impact: story.signalScore.impact,
+        hypeLevel: story.signalScore.hypeLevel,
+        sourceQuality: story.signalScore.sourceQuality,
+        editionId: story.editionId ?? '',
+      })
+    }
+  }, [isEdit, id, getStoryById])
+
+  async function handleSave() {
+    setSubmitting(true)
+    setError(null)
+    const payload: StoryWritePayload = {
+      title: form.title,
+      editorialComment: form.editorialComment,
+      source: { name: form.sourceName, url: form.sourceUrl, type: form.sourceType },
+      signalScore: {
+        impact: form.impact,
+        hypeLevel: form.hypeLevel,
+        sourceQuality: form.sourceQuality,
+      },
+      topicIds: form.selectedTopics,
+      publishedAt: new Date().toISOString().slice(0, 10),
+      editionId: form.editionId === '' ? null : form.editionId,
+    }
+    try {
+      if (isEdit && id) {
+        await updateStory(id, payload)
+      } else {
+        await createStory(payload)
+      }
+      setSaved(true)
+      setTimeout(() => navigate('/admin'), 1000)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Speichern fehlgeschlagen')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  if (isEdit && storiesLoading) {
+    return <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}><CircularProgress /></Box>
   }
 
   return (
     <Box>
       <Typography variant="h4" fontWeight={700} gutterBottom>
-        Neue Story
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-        Hinweis: Im MVP werden Daten nicht dauerhaft gespeichert.
+        {isEdit ? 'Story bearbeiten' : 'Neue Story'}
       </Typography>
 
       <Card>
@@ -115,18 +173,12 @@ export default function StoryFormPage() {
               <Select
                 multiple
                 value={form.selectedTopics}
-                onChange={(e) =>
-                  setForm({ ...form, selectedTopics: e.target.value as TopicId[] })
-                }
+                onChange={(e) => setForm({ ...form, selectedTopics: e.target.value as TopicId[] })}
                 input={<OutlinedInput label="Themen" />}
                 renderValue={(selected) => (
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                     {selected.map((v) => (
-                      <Chip
-                        key={v}
-                        label={topics.find((t) => t.id === v)?.label ?? v}
-                        size="small"
-                      />
+                      <Chip key={v} label={topics.find((t) => t.id === v)?.label ?? v} size="small" />
                     ))}
                   </Box>
                 )}
@@ -139,24 +191,29 @@ export default function StoryFormPage() {
               </Select>
             </FormControl>
 
-            {/* Signal-Score */}
+            <TextField
+              label="Edition (optional)"
+              select
+              value={form.editionId}
+              onChange={(e) => setForm({ ...form, editionId: e.target.value })}
+              helperText="Leer = unassigned"
+            >
+              <MenuItem value="">— keine —</MenuItem>
+              {editions.map((e) => (
+                <MenuItem key={e.id} value={e.id}>
+                  #{e.number} – {e.title}
+                </MenuItem>
+              ))}
+            </TextField>
+
             <Box>
               <Typography variant="subtitle1" fontWeight={600} gutterBottom>
                 Signal-Score
               </Typography>
               {[
-                {
-                  key: 'impact' as const,
-                  label: 'Impact (1 = gering, 5 = hoch)',
-                },
-                {
-                  key: 'hypeLevel' as const,
-                  label: 'Hype-Level (1 = kein Hype = gut, 5 = reiner Hype = schlecht)',
-                },
-                {
-                  key: 'sourceQuality' as const,
-                  label: 'Quellenqualität (1 = gering, 5 = Primärquelle)',
-                },
+                { key: 'impact' as const, label: 'Impact (1 = gering, 5 = hoch)' },
+                { key: 'hypeLevel' as const, label: 'Hype-Level (1 = kein Hype = gut, 5 = reiner Hype = schlecht)' },
+                { key: 'sourceQuality' as const, label: 'Quellenqualität (1 = gering, 5 = Primärquelle)' },
               ].map(({ key, label }) => (
                 <Box key={key} sx={{ mb: 2 }}>
                   <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -168,12 +225,14 @@ export default function StoryFormPage() {
                     step={1}
                     marks
                     value={form[key]}
-                    onChange={(_, v) => setForm({ ...form, [key]: v as number })}
+                    onChange={(_, v) => setForm({ ...form, [key]: v as ScoreValue })}
                     valueLabelDisplay="auto"
                   />
                 </Box>
               ))}
             </Box>
+
+            {error && <Alert severity="error">{error}</Alert>}
 
             <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
               <Button onClick={() => navigate('/admin')} color="inherit">
@@ -183,9 +242,9 @@ export default function StoryFormPage() {
                 onClick={handleSave}
                 variant="contained"
                 disableElevation
-                disabled={!form.title || !form.editorialComment}
+                disabled={!form.title || !form.editorialComment || submitting}
               >
-                Speichern
+                {submitting ? 'Speichern…' : isEdit ? 'Aktualisieren' : 'Anlegen'}
               </Button>
             </Box>
           </Box>
@@ -193,7 +252,7 @@ export default function StoryFormPage() {
       </Card>
 
       <Snackbar open={saved} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-        <Alert severity="success">Story gespeichert (MVP: nicht persistent)</Alert>
+        <Alert severity="success">Story gespeichert</Alert>
       </Snackbar>
     </Box>
   )
