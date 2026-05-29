@@ -1,128 +1,6 @@
-import { Box, Container, Typography, Grid2 as Grid, Chip, Avatar } from '@mui/material'
-
-interface AIModel {
-  id: string
-  name: string
-  company: string
-  logo: string
-  gradient: string
-  accentColor: string
-  rank: number
-  category: string
-  highlights: string[]
-  releaseYear: number
-}
-
-const models: AIModel[] = [
-  {
-    id: '1',
-    name: 'GPT-4o',
-    company: 'OpenAI',
-    logo: '✦',
-    gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-    accentColor: '#10b981',
-    rank: 1,
-    category: 'Multimodal',
-    highlights: ['Echtzeit-Voice', 'Vision', 'Reasoning'],
-    releaseYear: 2024,
-  },
-  {
-    id: '2',
-    name: 'Claude 4',
-    company: 'Anthropic',
-    logo: '◈',
-    gradient: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
-    accentColor: '#f97316',
-    rank: 2,
-    category: 'Reasoning',
-    highlights: ['200K Context', 'Coding', 'Sicherheit'],
-    releaseYear: 2025,
-  },
-  {
-    id: '3',
-    name: 'Gemini Ultra',
-    company: 'Google',
-    logo: '◆',
-    gradient: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-    accentColor: '#3b82f6',
-    rank: 3,
-    category: 'Multimodal',
-    highlights: ['1M Context', 'Video', 'Search'],
-    releaseYear: 2024,
-  },
-  {
-    id: '4',
-    name: 'Llama 3.1',
-    company: 'Meta',
-    logo: '🦙',
-    gradient: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
-    accentColor: '#8b5cf6',
-    rank: 4,
-    category: 'Open Source',
-    highlights: ['405B Parameter', 'Open Weights', 'Multilingual'],
-    releaseYear: 2024,
-  },
-  {
-    id: '5',
-    name: 'Mistral Large',
-    company: 'Mistral AI',
-    logo: '🌀',
-    gradient: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
-    accentColor: '#ec4899',
-    rank: 5,
-    category: 'Enterprise',
-    highlights: ['EU-basiert', 'Multilingual', 'Effizient'],
-    releaseYear: 2024,
-  },
-  {
-    id: '6',
-    name: 'Grok-2',
-    company: 'xAI',
-    logo: '⚡',
-    gradient: 'linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)',
-    accentColor: '#14b8a6',
-    rank: 6,
-    category: 'Realtime',
-    highlights: ['X-Integration', 'Echtzeit-Daten', 'Unzensiert'],
-    releaseYear: 2024,
-  },
-  {
-    id: '7',
-    name: 'DALL-E 3',
-    company: 'OpenAI',
-    logo: '🎨',
-    gradient: 'linear-gradient(135deg, #f43f5e 0%, #e11d48 100%)',
-    accentColor: '#f43f5e',
-    rank: 7,
-    category: 'Bildgenerierung',
-    highlights: ['Prompt-Treue', 'Text in Bildern', 'ChatGPT-integriert'],
-    releaseYear: 2023,
-  },
-  {
-    id: '8',
-    name: 'Midjourney v6',
-    company: 'Midjourney',
-    logo: '🖼️',
-    gradient: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
-    accentColor: '#6366f1',
-    rank: 8,
-    category: 'Bildgenerierung',
-    highlights: ['Fotorealismus', 'Stil-Kontrolle', 'Upscaling'],
-    releaseYear: 2024,
-  },
-  {
-    id: '9',
-    name: 'Sora',
-    company: 'OpenAI',
-    logo: '🎬',
-    gradient: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
-    accentColor: '#0ea5e9',
-    rank: 9,
-    category: 'Video',
-    highlights: ['Text-to-Video', '1 Min Clips', 'Physik-Verständnis'],
-    releaseYear: 2024,
-  },
-]
+import { useEffect, useState } from 'react'
+import { Box, Container, Typography, Grid2 as Grid, Chip, Avatar, CircularProgress, Alert } from '@mui/material'
+import { aiModelsApi, type AIModel } from '../../api/aiModels'
 
 function ModelCard({ model }: { model: AIModel }) {
   const isTop3 = model.rank <= 3
@@ -249,6 +127,17 @@ function ModelCard({ model }: { model: AIModel }) {
 }
 
 export default function AIModelsPage() {
+  const [models, setModels] = useState<AIModel[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    aiModelsApi.list()
+      .then(setModels)
+      .catch(() => setError('KI-Modelle konnten nicht geladen werden.'))
+      .finally(() => setLoading(false))
+  }, [])
+
   const top3 = models.filter((m) => m.rank <= 3)
   const rest = models.filter((m) => m.rank > 3)
 
@@ -313,6 +202,12 @@ export default function AIModelsPage() {
         }}
       >
         <Container maxWidth="lg">
+          {error && <Alert severity="error" sx={{ mb: 4 }}>{error}</Alert>}
+          {loading && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+              <CircularProgress sx={{ color: 'white' }} />
+            </Box>
+          )}
           <Typography
             variant="overline"
             sx={{ color: 'rgba(255,255,255,0.5)', letterSpacing: 2, mb: 3, display: 'block' }}

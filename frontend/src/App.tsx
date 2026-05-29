@@ -16,6 +16,10 @@ import StoryFormPage from "./pages/admin/StoryFormPage";
 import EditionFormPage from "./pages/admin/EditionFormPage";
 import EditionPreviewPage from "./pages/admin/EditionPreviewPage";
 import SubscriberListPage from "./pages/admin/SubscriberListPage";
+import AIJobListPage from "./pages/admin/AIJobListPage";
+import AIJobFormPage from "./pages/admin/AIJobFormPage";
+import AIModelListPage from "./pages/admin/AIModelListPage";
+import AIModelFormPage from "./pages/admin/AIModelFormPage";
 
 export default function App() {
   return (
@@ -48,6 +52,12 @@ export default function App() {
         <Route path="edition/:id" element={<EditionPreviewPage />} />
         <Route path="edition/:id/edit" element={<EditionFormPage />} />
         <Route path="subscribers" element={<SubscriberListPage />} />
+        <Route path="ki-jobs" element={<AIJobListPage />} />
+        <Route path="ki-jobs/neu" element={<AIJobFormPage />} />
+        <Route path="ki-jobs/:id/edit" element={<AIJobFormPage />} />
+        <Route path="ki-modelle" element={<AIModelListPage />} />
+        <Route path="ki-modelle/neu" element={<AIModelFormPage />} />
+        <Route path="ki-modelle/:id/edit" element={<AIModelFormPage />} />
       </Route>
     </Routes>
   );

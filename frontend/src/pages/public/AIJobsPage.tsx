@@ -1,97 +1,24 @@
-import { useState } from 'react'
-import { Box, Container, Typography, ToggleButtonGroup, ToggleButton, Grid2 as Grid } from '@mui/material'
+import { useEffect, useState } from 'react'
+import { Box, Container, Typography, ToggleButtonGroup, ToggleButton, Grid2 as Grid, CircularProgress, Alert } from '@mui/material'
 import JobRiskCard, { type JobRisk } from '../../components/features/JobRiskCard'
-
-const jobsData: JobRisk[] = [
-  {
-    id: '1',
-    title: 'Telefonischer Kundenservice',
-    category: 'Kundenservice',
-    riskScore: 85,
-    trend: 'rising',
-    reasoning: 'LLM-basierte Chatbots und Voice-AI übernehmen zunehmend First-Level-Support. Unternehmen wie Klarna haben bereits 700 Support-Stellen durch AI ersetzt.',
-    affectedTasks: ['Anfragen beantworten', 'Beschwerden aufnehmen', 'Termine vereinbaren'],
-  },
-  {
-    id: '2',
-    title: 'Datenerfassung & -eingabe',
-    category: 'Administration',
-    riskScore: 92,
-    trend: 'rising',
-    reasoning: 'OCR, Dokumenten-AI und automatisierte Workflows machen manuelle Dateneingabe obsolet. Die meisten repetitiven Aufgaben sind bereits automatisierbar.',
-    affectedTasks: ['Formulare digitalisieren', 'Daten übertragen', 'Rechnungen erfassen'],
-  },
-  {
-    id: '3',
-    title: 'Übersetzer:in',
-    category: 'Sprache & Medien',
-    riskScore: 78,
-    trend: 'rising',
-    reasoning: 'DeepL, GPT-4 und spezialisierte Übersetzungs-KI erreichen nahezu menschliche Qualität. Für Standardtexte ist professionelle Übersetzung oft nicht mehr nötig.',
-    affectedTasks: ['Dokumente übersetzen', 'Lokalisierung', 'Untertitel erstellen'],
-  },
-  {
-    id: '4',
-    title: 'Buchhalter:in',
-    category: 'Finanzen',
-    riskScore: 65,
-    trend: 'stable',
-    reasoning: 'Automatisierte Buchhaltungssoftware übernimmt Routineaufgaben. Strategische Beratung und komplexe Fälle bleiben vorerst menschlich.',
-    affectedTasks: ['Belege buchen', 'Kontenabstimmung', 'Standardreports'],
-  },
-  {
-    id: '5',
-    title: 'LKW-Fahrer:in',
-    category: 'Transport & Logistik',
-    riskScore: 45,
-    trend: 'stable',
-    reasoning: 'Autonomes Fahren macht Fortschritte, aber regulatorische und technische Hürden verzögern den breiten Einsatz. Langstrecke wird früher betroffen sein.',
-    affectedTasks: ['Langstreckentransport', 'Highway-Fahrten', 'Routenplanung'],
-  },
-  {
-    id: '6',
-    title: 'Softwareentwickler:in',
-    category: 'IT & Technik',
-    riskScore: 35,
-    trend: 'rising',
-    reasoning: 'AI-Coding-Assistenten steigern Produktivität enorm. Komplexe Architektur und kreative Problemlösung bleiben menschlich, aber Junior-Positionen werden weniger.',
-    affectedTasks: ['Boilerplate-Code', 'Bug-Fixes', 'Code-Reviews'],
-  },
-  {
-    id: '7',
-    title: 'Radiolog:in',
-    category: 'Gesundheit',
-    riskScore: 55,
-    trend: 'rising',
-    reasoning: 'AI-Diagnostik erkennt Muster in Bildgebung oft präziser als Menschen. Die Rolle verschiebt sich zur Qualitätskontrolle und Patientenkommunikation.',
-    affectedTasks: ['Bildanalyse', 'Mustererkennung', 'Screening'],
-  },
-  {
-    id: '8',
-    title: 'Lehrer:in',
-    category: 'Bildung',
-    riskScore: 25,
-    trend: 'stable',
-    reasoning: 'AI unterstützt bei Wissensvermittlung und Korrektur. Soziale, erzieherische und motivationale Aspekte bleiben fundamental menschlich.',
-    affectedTasks: ['Wissensabfrage', 'Korrektur', 'Lernmaterial erstellen'],
-  },
-  {
-    id: '9',
-    title: 'Grafikdesigner:in',
-    category: 'Kreativ',
-    riskScore: 60,
-    trend: 'rising',
-    reasoning: 'Midjourney, DALL-E und Adobe Firefly automatisieren viele visuelle Aufgaben. Konzeption und Markenarbeit bleiben wertvoll, aber Volumen sinkt.',
-    affectedTasks: ['Stock-Grafiken', 'Social-Media-Assets', 'Banner erstellen'],
-  },
-]
+import { aiJobsApi, type AIJob } from '../../api/aiJobs'
 
 type SortOption = 'risk-high' | 'risk-low' | 'alpha'
 
 export default function AIJobsPage() {
   const [sortBy, setSortBy] = useState<SortOption>('risk-high')
+  const [jobsData, setJobsData] = useState<AIJob[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const sortedJobs = [...jobsData].sort((a, b) => {
+  useEffect(() => {
+    aiJobsApi.list()
+      .then(setJobsData)
+      .catch(() => setError('KI-Jobs konnten nicht geladen werden.'))
+      .finally(() => setLoading(false))
+  }, [])
+
+  const sortedJobs: JobRisk[] = [...jobsData].sort((a, b) => {
     if (sortBy === 'risk-high') return b.riskScore - a.riskScore
     if (sortBy === 'risk-low') return a.riskScore - b.riskScore
     return a.title.localeCompare(b.title, 'de')
@@ -153,6 +80,12 @@ export default function AIJobsPage() {
       </Box>
 
       <Container maxWidth="lg" sx={{ py: 6 }}>
+        {error && <Alert severity="error" sx={{ mb: 4 }}>{error}</Alert>}
+        {loading && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+            <CircularProgress />
+          </Box>
+        )}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4, flexWrap: 'wrap', gap: 2 }}>
           <Box>
             <Typography variant="body2" color="text.secondary">

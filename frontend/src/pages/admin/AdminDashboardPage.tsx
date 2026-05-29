@@ -61,9 +61,15 @@ export default function AdminDashboardPage() {
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Typography variant="h4" fontWeight={700}>Dashboard</Typography>
-        <Box sx={{ display: 'flex', gap: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
           <Button variant="outlined" onClick={() => navigate('/admin/subscribers')}>
             Subscriber
+          </Button>
+          <Button variant="outlined" onClick={() => navigate('/admin/ki-jobs')}>
+            KI-Jobs
+          </Button>
+          <Button variant="outlined" onClick={() => navigate('/admin/ki-modelle')}>
+            KI-Modelle
           </Button>
           <Button variant="outlined" onClick={() => navigate('/admin/story/neu')}>
             + Neue Story
