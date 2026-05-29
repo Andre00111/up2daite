@@ -10,7 +10,9 @@ export function useEditions() {
   const refresh = useCallback(() => {
     setLoading(true)
     return fetchEditions()
-      .then((e) => { setEditions(e); setError(null) })
+      // Backend liefert findAll() unsortiert → wir sortieren clientseitig nach Nummer DESC,
+      // damit die neueste Ausgabe immer oben steht (Landing + Archiv).
+      .then((e) => { setEditions([...e].sort((a, b) => b.number - a.number)); setError(null) })
       .catch(() => setError('Ausgaben konnten nicht geladen werden.'))
       .finally(() => setLoading(false))
   }, [])

@@ -45,12 +45,10 @@ async function request<T>(method: string, path: string, options?: RequestOptions
     throw new ApiError(response.status, `HTTP ${response.status}: ${response.statusText}`)
   }
 
-  // 204 No Content (z.B. /logout, /confirm) hat keinen Body
-  if (response.status === 204) {
-    return undefined as T
-  }
-
-  return response.json()
+  // Robust gegen Empty-Body-Responses (204 No Content, 202 Accepted, ...).
+  // text() statt json() — falls leer, geben wir undefined zurück.
+  const text = await response.text()
+  return (text ? JSON.parse(text) : undefined) as T
 }
 
 export const apiClient = {
