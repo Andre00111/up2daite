@@ -1,29 +1,50 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import {
   Box, Typography, Grid2 as Grid, Card, CardContent, Button,
   Table, TableBody, TableCell, TableHead, TableRow, Chip, IconButton,
   Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert,
 } from '@mui/material'
-import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material'
+import { Edit as EditIcon, Delete as DeleteIcon, Instagram as InstagramIcon } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import { useEditions } from '../../hooks/useEditions'
 import { useStories } from '../../hooks/useStories'
 import { deleteStory } from '../../api/stories'
 import { deleteEdition } from '../../api/editions'
+import { topics } from '../../data/topics'
+import type { Story, Edition } from '../../types'
+import InstagramPreviewDialog from '../../components/features/InstagramPreviewDialog'
+import { drawStoryCard } from '../../utils/instagramCards/drawStoryCard'
+import { drawEditionCover } from '../../utils/instagramCards/drawEditionCover'
 
 type ConfirmTarget =
   | { type: 'story'; id: string; title: string }
   | { type: 'edition'; id: string; title: string }
   | null
 
+type InstaPreview =
+  | { type: 'story'; data: Story }
+  | { type: 'edition'; data: Edition }
+  | null
+
 export default function AdminDashboardPage() {
   const navigate = useNavigate()
   const { editions, refresh: refreshEditions } = useEditions()
-  const { stories, refresh: refreshStories } = useStories()
+  const { stories, refresh: refreshStories, getStoriesForEdition } = useStories()
 
   const [confirm, setConfirm] = useState<ConfirmTarget>(null)
   const [snack, setSnack] = useState<{ msg: string; severity: 'success' | 'error' } | null>(null)
   const [busy, setBusy] = useState(false)
+  const [instaPreview, setInstaPreview] = useState<InstaPreview>(null)
+
+  const instaDrawFn = useCallback((ctx: CanvasRenderingContext2D) => {
+    if (!instaPreview) return
+    if (instaPreview.type === 'story') {
+      drawStoryCard(ctx, instaPreview.data, topics)
+    } else {
+      const editionStories = getStoriesForEdition(instaPreview.data.storyIds)
+      drawEditionCover(ctx, instaPreview.data, editionStories)
+    }
+  }, [instaPreview, getStoriesForEdition])
 
   const publishedCount = editions.filter((e) => e.status === 'published').length
   const draftCount = editions.filter((e) => e.status === 'draft').length
@@ -123,6 +144,9 @@ export default function AdminDashboardPage() {
                   />
                 </TableCell>
                 <TableCell align="right">
+                  <IconButton size="small" onClick={() => setInstaPreview({ type: 'edition', data: edition })} title="Instagram Card">
+                    <InstagramIcon fontSize="small" />
+                  </IconButton>
                   <Button size="small" onClick={() => navigate(`/admin/edition/${edition.id}`)}>
                     Vorschau
                   </Button>
@@ -177,6 +201,9 @@ export default function AdminDashboardPage() {
                   )}
                 </TableCell>
                 <TableCell align="right">
+                  <IconButton size="small" onClick={() => setInstaPreview({ type: 'story', data: story })} title="Instagram Card">
+                    <InstagramIcon fontSize="small" />
+                  </IconButton>
                   <IconButton size="small" onClick={() => navigate(`/admin/story/${story.id}/edit`)} title="Bearbeiten">
                     <EditIcon fontSize="small" />
                   </IconButton>
@@ -221,6 +248,18 @@ export default function AdminDashboardPage() {
       >
         {snack ? <Alert severity={snack.severity}>{snack.msg}</Alert> : undefined}
       </Snackbar>
+
+      <InstagramPreviewDialog
+        open={instaPreview !== null}
+        onClose={() => setInstaPreview(null)}
+        title={instaPreview?.type === 'story' ? 'Story Card' : 'Edition Cover'}
+        filename={
+          instaPreview?.type === 'story'
+            ? `story-${(instaPreview.data as Story).id}`
+            : `edition-${(instaPreview?.data as Edition)?.number ?? ''}`
+        }
+        drawFn={instaDrawFn}
+      />
     </Box>
   )
 }

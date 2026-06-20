@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import {
   Box, Container, Typography, Button, Card, Table, TableBody, TableCell, TableHead, TableRow,
   IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert, CircularProgress,
 } from '@mui/material'
-import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material'
+import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon, Instagram as InstagramIcon } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import { aiModelsApi, type AIModel } from '../../api/aiModels'
+import InstagramPreviewDialog from '../../components/features/InstagramPreviewDialog'
+import { drawModelCard } from '../../utils/instagramCards/drawModelCard'
 
 export default function AIModelListPage() {
   const navigate = useNavigate()
@@ -14,6 +16,11 @@ export default function AIModelListPage() {
   const [confirm, setConfirm] = useState<AIModel | null>(null)
   const [snack, setSnack] = useState<{ msg: string; severity: 'success' | 'error' } | null>(null)
   const [busy, setBusy] = useState(false)
+  const [instaPreview, setInstaPreview] = useState<AIModel | null>(null)
+
+  const instaDrawFn = useCallback((ctx: CanvasRenderingContext2D) => {
+    if (instaPreview) drawModelCard(ctx, instaPreview)
+  }, [instaPreview])
 
   function load() {
     setLoading(true)
@@ -79,6 +86,9 @@ export default function AIModelListPage() {
                   <TableCell><Typography variant="caption">{m.category}</Typography></TableCell>
                   <TableCell>{m.releaseYear}</TableCell>
                   <TableCell align="right">
+                    <IconButton size="small" onClick={() => setInstaPreview(m)} title="Instagram Card">
+                      <InstagramIcon fontSize="small" />
+                    </IconButton>
                     <IconButton size="small" onClick={() => navigate(`/admin/ki-modelle/${m.id}/edit`)}>
                       <EditIcon fontSize="small" />
                     </IconButton>
@@ -108,6 +118,14 @@ export default function AIModelListPage() {
       <Snackbar open={!!snack} autoHideDuration={3000} onClose={() => setSnack(null)} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
         {snack ? <Alert severity={snack.severity}>{snack.msg}</Alert> : undefined}
       </Snackbar>
+
+      <InstagramPreviewDialog
+        open={instaPreview !== null}
+        onClose={() => setInstaPreview(null)}
+        title="KI-Modell Card"
+        filename={`model-${instaPreview?.id ?? ''}`}
+        drawFn={instaDrawFn}
+      />
     </Container>
   )
 }

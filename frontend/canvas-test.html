@@ -1,0 +1,271 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Canvas Draw Test</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background: #111;
+        color: white;
+        font-family: sans-serif;
+        padding: 20px;
+      }
+      canvas {
+        border: 1px solid #333;
+        max-width: 400px;
+      }
+      #log {
+        white-space: pre;
+        font-family: monospace;
+        color: #0f0;
+        margin-top: 16px;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Canvas Draw Function Test</h2>
+    <canvas id="c" width="1080" height="1350"></canvas>
+    <div id="log"></div>
+
+    <script type="module">
+      const log = (msg) => {
+        document.getElementById("log").textContent += msg + "\n";
+        console.log(msg);
+      };
+
+      log("1. Getting canvas...");
+      const canvas = document.getElementById("c");
+      const ctx = canvas.getContext("2d");
+      log(`2. Canvas: ${canvas.width}x${canvas.height}, ctx: ${!!ctx}`);
+
+      // Inline the draw utils to test independently
+      function roundRect(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+      }
+
+      function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+        const words = text.split(" ");
+        let line = "";
+        let ly = y;
+        for (const word of words) {
+          const test = line + word + " ";
+          if (ctx.measureText(test).width > maxWidth && line) {
+            ctx.fillText(line.trim(), x, ly);
+            line = word + " ";
+            ly += lineHeight;
+          } else {
+            line = test;
+          }
+        }
+        ctx.fillText(line.trim(), x, ly);
+        return ly;
+      }
+
+      // Wait for font
+      log("3. Loading Inter font...");
+      try {
+        await document.fonts.load("800 48px Inter");
+        log("4. Font loaded OK");
+      } catch (e) {
+        log("4. Font load error: " + e);
+      }
+
+      const W = 1080,
+        H = 1350,
+        PAD = 64;
+
+      // Test: draw a Story Card with mock data
+      try {
+        log("5. Drawing background...");
+        ctx.fillStyle = "#0a1628";
+        roundRect(ctx, 0, 0, W, H, 40);
+        ctx.fill();
+        log("   Background drawn");
+
+        // Glow
+        const grad = ctx.createRadialGradient(W - 60, -60, 0, W - 60, -60, 400);
+        grad.addColorStop(0, "rgba(99,102,241,0.12)");
+        grad.addColorStop(1, "transparent");
+        ctx.fillStyle = grad;
+        ctx.fillRect(W - 460, -460, 800, 800);
+        log("   Glow drawn");
+
+        // Border
+        roundRect(ctx, 0, 0, W, H, 40);
+        ctx.strokeStyle = "#1a2744";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        log("   Border drawn");
+
+        // Header
+        ctx.font = "800 28px Inter";
+        ctx.fillStyle = "#6366f1";
+        ctx.textBaseline = "top";
+        ctx.textAlign = "left";
+        ctx.fillText("UP2DAITE", PAD, PAD);
+        log("   Header drawn");
+
+        // KI-NEWS pill
+        const pillGrad = ctx.createLinearGradient(W - 220, 0, W - 60, 0);
+        pillGrad.addColorStop(0, "#6366f1");
+        pillGrad.addColorStop(1, "#8b5cf6");
+        roundRect(ctx, W - PAD - 180, PAD - 4, 180, 44, 22);
+        ctx.fillStyle = pillGrad;
+        ctx.fill();
+        ctx.font = "700 20px Inter";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.fillText("KI-NEWS", W - PAD - 90, PAD + 9);
+        ctx.textAlign = "left";
+        log("   Pill drawn");
+
+        // Topic tag
+        const tagY = 170;
+        roundRect(ctx, PAD, tagY, 260, 48, 10);
+        ctx.fillStyle = "#1a2744";
+        ctx.fill();
+        ctx.strokeStyle = "#2d3f6b";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(PAD + 20, tagY + 24, 8, 0, Math.PI * 2);
+        ctx.fillStyle = "#8b5cf6";
+        ctx.fill();
+        ctx.font = "700 20px Inter";
+        ctx.fillStyle = "#8b5cf6";
+        ctx.fillText("GESUNDHEIT · KI", PAD + 40, tagY + 14);
+        log("   Topic tag drawn");
+
+        // Title
+        ctx.font = "800 52px Inter";
+        ctx.fillStyle = "white";
+        ctx.textBaseline = "top";
+        const titleY = wrapText(
+          ctx,
+          "GPT-5 übertrifft menschliche Experten in der Medizindiagnose",
+          PAD,
+          260,
+          W - PAD * 2,
+          66,
+        );
+        log("   Title drawn, lastY=" + titleY);
+
+        // Editorial
+        ctx.font = "400 28px Inter";
+        ctx.fillStyle = "#94a3b8";
+        wrapText(
+          ctx,
+          "OpenAI veröffentlicht Benchmark-Ergebnisse, die zeigen dass das Modell in 94% der Fälle Ärzte übertrifft.",
+          PAD,
+          titleY + 80,
+          W - PAD * 2,
+          42,
+        );
+        log("   Editorial drawn");
+
+        // Signal score box
+        const ssY = 820;
+        roundRect(ctx, PAD, ssY, W - PAD * 2, 340, 24);
+        ctx.fillStyle = "#0f1f3d";
+        ctx.fill();
+        ctx.font = "700 18px Inter";
+        ctx.fillStyle = "#475569";
+        ctx.fillText("SIGNAL SCORE", PAD + 32, ssY + 28);
+
+        const bars = [
+          {
+            label: "Impact",
+            value: 0.9,
+            score: "4.5",
+            c1: "#22c55e",
+            c2: "#16a34a",
+            sc: "#22c55e",
+          },
+          {
+            label: "Hype ↓",
+            value: 0.25,
+            score: "1.2",
+            c1: "#22c55e",
+            c2: "#16a34a",
+            sc: "#22c55e",
+          },
+          {
+            label: "Quelle",
+            value: 1.0,
+            score: "5.0",
+            c1: "#6366f1",
+            c2: "#8b5cf6",
+            sc: "#6366f1",
+          },
+        ];
+        bars.forEach((bar, i) => {
+          const by = ssY + 70 + i * 85;
+          const barX = PAD + 180;
+          const barW = W - PAD * 2 - 280;
+          ctx.font = "500 24px Inter";
+          ctx.fillStyle = "#64748b";
+          ctx.textBaseline = "middle";
+          ctx.fillText(bar.label, PAD + 32, by + 14);
+          roundRect(ctx, barX, by, barW, 28, 14);
+          ctx.fillStyle = "#1e293b";
+          ctx.fill();
+          const bg = ctx.createLinearGradient(
+            barX,
+            0,
+            barX + barW * bar.value,
+            0,
+          );
+          bg.addColorStop(0, bar.c1);
+          bg.addColorStop(1, bar.c2);
+          roundRect(ctx, barX, by, barW * bar.value, 28, 14);
+          ctx.fillStyle = bg;
+          ctx.fill();
+          ctx.font = "700 28px Inter";
+          ctx.fillStyle = bar.sc;
+          ctx.textAlign = "right";
+          ctx.fillText(bar.score, W - PAD - 32, by + 14);
+          ctx.textAlign = "left";
+          ctx.textBaseline = "top";
+        });
+        log("   Signal bars drawn");
+
+        // Footer
+        ctx.font = "500 22px Inter";
+        ctx.fillStyle = "#334155";
+        ctx.textBaseline = "bottom";
+        ctx.fillText("up2daite.com", PAD, H - PAD);
+        ctx.textAlign = "right";
+        ctx.fillText("KW 24 · 2025", W - PAD, H - PAD);
+        log("   Footer drawn");
+
+        log("\n✅ ALL DRAWING COMPLETE — canvas should show Story Card");
+
+        // Verify pixels aren't all transparent
+        const pixel = ctx.getImageData(100, 100, 1, 1).data;
+        log(
+          `\n6. Pixel check at (100,100): rgba(${pixel[0]},${pixel[1]},${pixel[2]},${pixel[3]})`,
+        );
+        if (pixel[3] === 0) log("⚠️  Pixel is TRANSPARENT — drawing failed!");
+        else log("✅ Pixel has content — drawing succeeded");
+      } catch (e) {
+        log("❌ ERROR: " + e.message);
+        log(e.stack);
+      }
+    </script>
+  </body>
+</html>

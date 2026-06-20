@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import {
   Box, Container, Typography, Button, Card, Table, TableBody, TableCell, TableHead, TableRow,
   IconButton, Chip, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert, CircularProgress,
 } from '@mui/material'
-import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material'
+import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon, Instagram as InstagramIcon } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import { aiJobsApi, type AIJob } from '../../api/aiJobs'
+import InstagramPreviewDialog from '../../components/features/InstagramPreviewDialog'
+import { drawJobRiskCard } from '../../utils/instagramCards/drawJobRiskCard'
 
 export default function AIJobListPage() {
   const navigate = useNavigate()
@@ -14,6 +16,11 @@ export default function AIJobListPage() {
   const [confirm, setConfirm] = useState<AIJob | null>(null)
   const [snack, setSnack] = useState<{ msg: string; severity: 'success' | 'error' } | null>(null)
   const [busy, setBusy] = useState(false)
+  const [instaPreview, setInstaPreview] = useState<AIJob | null>(null)
+
+  const instaDrawFn = useCallback((ctx: CanvasRenderingContext2D) => {
+    if (instaPreview) drawJobRiskCard(ctx, instaPreview)
+  }, [instaPreview])
 
   function load() {
     setLoading(true)
@@ -83,6 +90,9 @@ export default function AIJobListPage() {
                   </TableCell>
                   <TableCell><Typography variant="caption">{job.trend}</Typography></TableCell>
                   <TableCell align="right">
+                    <IconButton size="small" onClick={() => setInstaPreview(job)} title="Instagram Card">
+                      <InstagramIcon fontSize="small" />
+                    </IconButton>
                     <IconButton size="small" onClick={() => navigate(`/admin/ki-jobs/${job.id}/edit`)}>
                       <EditIcon fontSize="small" />
                     </IconButton>
@@ -112,6 +122,14 @@ export default function AIJobListPage() {
       <Snackbar open={!!snack} autoHideDuration={3000} onClose={() => setSnack(null)} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
         {snack ? <Alert severity={snack.severity}>{snack.msg}</Alert> : undefined}
       </Snackbar>
+
+      <InstagramPreviewDialog
+        open={instaPreview !== null}
+        onClose={() => setInstaPreview(null)}
+        title="Job Risk Card"
+        filename={`job-risk-${instaPreview?.id ?? ''}`}
+        drawFn={instaDrawFn}
+      />
     </Container>
   )
 }

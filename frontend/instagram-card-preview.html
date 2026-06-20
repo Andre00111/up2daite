@@ -1,0 +1,1134 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UP2DAITE — Instagram Card Preview</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: #030712;
+        font-family: "Inter", sans-serif;
+        color: white;
+        min-height: 100vh;
+        padding: 40px 20px;
+      }
+      h1 {
+        text-align: center;
+        font-size: 28px;
+        font-weight: 800;
+        margin-bottom: 8px;
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .subtitle {
+        text-align: center;
+        color: #64748b;
+        font-size: 14px;
+        margin-bottom: 48px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .preview-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+      }
+      .preview-wrapper h2 {
+        font-size: 16px;
+        font-weight: 700;
+        color: #94a3b8;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+      .preview-wrapper p {
+        font-size: 13px;
+        color: #475569;
+        text-align: center;
+        max-width: 400px;
+        line-height: 1.5;
+      }
+      .card-frame {
+        width: 405px;
+        height: 506px;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow:
+          0 0 60px rgba(99, 102, 241, 0.15),
+          0 4px 30px rgba(0, 0, 0, 0.5);
+        border: 1px solid #1e293b;
+        position: relative;
+      }
+      .card-frame canvas {
+        width: 100%;
+        height: 100%;
+      }
+      .badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        margin-top: 4px;
+      }
+      .badge-story {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+      }
+      .badge-job {
+        background: #2d1a1a;
+        border: 1px solid #7f1d1d;
+        color: #f87171;
+      }
+      .badge-edition {
+        background: #1a2744;
+        border: 1px solid #2d3f6b;
+        color: #94a3b8;
+      }
+      .badge-model {
+        background: #1a2744;
+        border: 1px solid #2d3f6b;
+        color: #8b5cf6;
+      }
+
+      .admin-hint {
+        max-width: 1200px;
+        margin: 60px auto 0;
+        background: #0f172a;
+        border: 1px solid #1e293b;
+        border-radius: 16px;
+        padding: 32px;
+      }
+      .admin-hint h2 {
+        font-size: 18px;
+        font-weight: 800;
+        margin-bottom: 16px;
+        color: #e2e8f0;
+      }
+      .admin-hint-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .admin-hint-item {
+        background: #1a2744;
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      .admin-hint-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        flex-shrink: 0;
+      }
+      .admin-hint-item h3 {
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 4px;
+        color: #e2e8f0;
+      }
+      .admin-hint-item p {
+        font-size: 12px;
+        color: #64748b;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>UP2DAITE Instagram Cards</h1>
+    <p class="subtitle">
+      4:5 Portrait (1080 x 1350px) — Dark Tech Style — Preview in 0.375x
+      Skalierung
+    </p>
+
+    <div class="grid">
+      <!-- STORY CARD -->
+      <div class="preview-wrapper">
+        <h2>1 — Story Card</h2>
+        <span class="badge badge-story">KI-NEWS</span>
+        <div class="card-frame">
+          <canvas id="storyCanvas" width="1080" height="1350"></canvas>
+        </div>
+        <p>
+          Titel, Editorial-Snippet, Signal-Score-Bars mit Farben, Topic-Tag,
+          KW-Datum
+        </p>
+      </div>
+
+      <!-- JOB RISK CARD -->
+      <div class="preview-wrapper">
+        <h2>2 — Job Risk Card</h2>
+        <span class="badge badge-job">⚠ JOBRISIKO</span>
+        <div class="card-frame">
+          <canvas id="jobCanvas" width="1080" height="1350"></canvas>
+        </div>
+        <p>
+          SVG-Kreisdiagramm mit Risiko%, Gradient-Bar, Trend-Indikator,
+          betroffene Tasks
+        </p>
+      </div>
+
+      <!-- EDITION COVER -->
+      <div class="preview-wrapper">
+        <h2>3 — Edition Cover</h2>
+        <span class="badge badge-edition">Ausgabe #12</span>
+        <div class="card-frame">
+          <canvas id="editionCanvas" width="1080" height="1350"></canvas>
+        </div>
+        <p>Ausgaben-Titel, Story-Liste mit Emoji-Icons, CTA-Button</p>
+      </div>
+
+      <!-- AI MODEL CARD -->
+      <div class="preview-wrapper">
+        <h2>4 — KI-Modell Card</h2>
+        <span class="badge badge-model">✦ KI-MODELL</span>
+        <div class="card-frame">
+          <canvas id="modelCanvas" width="1080" height="1350"></canvas>
+        </div>
+        <p>Logo/Emoji, Modellname, Hersteller, Kategorie-Tags, Highlights</p>
+      </div>
+    </div>
+
+    <!-- Admin Integration Hint -->
+    <div class="admin-hint">
+      <h2>So sieht es in der Admin-Ansicht aus</h2>
+      <div class="admin-hint-grid">
+        <div class="admin-hint-item">
+          <div
+            class="admin-hint-icon"
+            style="background: linear-gradient(135deg, #6366f1, #8b5cf6)"
+          >
+            📰
+          </div>
+          <div>
+            <h3>Stories-Tabelle</h3>
+            <p>
+              Instagram-Icon neben jeder Story → Klick öffnet Preview-Modal →
+              Download als PNG
+            </p>
+          </div>
+        </div>
+        <div class="admin-hint-item">
+          <div
+            class="admin-hint-icon"
+            style="background: linear-gradient(135deg, #ef4444, #dc2626)"
+          >
+            ⚠️
+          </div>
+          <div>
+            <h3>KI-Jobs-Tabelle</h3>
+            <p>
+              Instagram-Icon in der Actions-Spalte → Generiert Job Risk Card mit
+              Live-Daten
+            </p>
+          </div>
+        </div>
+        <div class="admin-hint-item">
+          <div
+            class="admin-hint-icon"
+            style="background: linear-gradient(135deg, #3b82f6, #1d4ed8)"
+          >
+            📋
+          </div>
+          <div>
+            <h3>Edition-Preview</h3>
+            <p>
+              Button neben Publish → Generiert Edition Cover + alle Story Cards
+              der Ausgabe
+            </p>
+          </div>
+        </div>
+        <div class="admin-hint-item">
+          <div
+            class="admin-hint-icon"
+            style="background: linear-gradient(135deg, #10b981, #059669)"
+          >
+            ✦
+          </div>
+          <div>
+            <h3>KI-Modelle-Tabelle</h3>
+            <p>
+              Instagram-Icon pro Modell → Model Card mit Logo, Gradient und
+              Highlights
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ============================================
+      // SHARED DRAWING UTILITIES
+      // ============================================
+
+      function roundRect(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+      }
+
+      function drawGlowOrb(ctx, x, y, radius, color, opacity) {
+        const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
+        grad.addColorStop(
+          0,
+          color.replace(")", `,${opacity})`).replace("rgb", "rgba"),
+        );
+        grad.addColorStop(1, "transparent");
+        ctx.fillStyle = grad;
+        ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+      }
+
+      function drawPill(
+        ctx,
+        x,
+        y,
+        text,
+        bgColor,
+        textColor,
+        fontSize,
+        borderColor,
+      ) {
+        ctx.font = `700 ${fontSize}px Inter`;
+        const tw = ctx.measureText(text).width;
+        const px = 24,
+          py = 8;
+        const w = tw + px * 2,
+          h = fontSize + py * 2;
+        roundRect(ctx, x, y, w, h, h / 2);
+        ctx.fillStyle = bgColor;
+        ctx.fill();
+        if (borderColor) {
+          ctx.strokeStyle = borderColor;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+        ctx.fillStyle = textColor;
+        ctx.textBaseline = "middle";
+        ctx.fillText(text, x + px, y + h / 2);
+        return { w, h };
+      }
+
+      function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+        const words = text.split(" ");
+        let line = "";
+        let ly = y;
+        for (const word of words) {
+          const test = line + word + " ";
+          if (ctx.measureText(test).width > maxWidth && line) {
+            ctx.fillText(line.trim(), x, ly);
+            line = word + " ";
+            ly += lineHeight;
+          } else {
+            line = test;
+          }
+        }
+        ctx.fillText(line.trim(), x, ly);
+        return ly;
+      }
+
+      // ============================================
+      // 1) STORY CARD
+      // ============================================
+      function drawStoryCard(canvasId) {
+        const c = document.getElementById(canvasId);
+        const ctx = c.getContext("2d");
+        const W = 1080,
+          H = 1350;
+
+        // background
+        ctx.fillStyle = "#0a1628";
+        roundRect(ctx, 0, 0, W, H, 40);
+        ctx.fill();
+
+        // glow orbs
+        drawGlowOrb(ctx, W - 60, -60, 400, "rgb(99,102,241)", 0.12);
+        drawGlowOrb(ctx, 100, H, 350, "rgb(139,92,246)", 0.06);
+
+        // border
+        roundRect(ctx, 0, 0, W, H, 40);
+        ctx.strokeStyle = "#1a2744";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        const pad = 64;
+
+        // --- HEADER ---
+        ctx.font = "800 28px Inter";
+        ctx.fillStyle = "#6366f1";
+        ctx.letterSpacing = "6px";
+        ctx.textBaseline = "top";
+        ctx.fillText("UP2DAITE", pad, pad);
+        ctx.letterSpacing = "0px";
+
+        // KI-NEWS pill
+        const pillGrad = ctx.createLinearGradient(W - 220, 0, W - 60, 0);
+        pillGrad.addColorStop(0, "#6366f1");
+        pillGrad.addColorStop(1, "#8b5cf6");
+        roundRect(ctx, W - pad - 180, pad - 4, 180, 44, 22);
+        ctx.fillStyle = pillGrad;
+        ctx.fill();
+        ctx.font = "700 20px Inter";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.fillText("KI-NEWS", W - pad - 90, pad + 9);
+        ctx.textAlign = "left";
+
+        // --- TOPIC TAG ---
+        const tagY = 170;
+        roundRect(ctx, pad, tagY, 260, 48, 10);
+        ctx.fillStyle = "#1a2744";
+        ctx.fill();
+        ctx.strokeStyle = "#2d3f6b";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // dot
+        ctx.beginPath();
+        ctx.arc(pad + 20, tagY + 24, 8, 0, Math.PI * 2);
+        ctx.fillStyle = "#8b5cf6";
+        ctx.fill();
+
+        ctx.font = "700 20px Inter";
+        ctx.fillStyle = "#8b5cf6";
+        ctx.fillText("GESUNDHEIT · KI", pad + 40, tagY + 14);
+
+        // --- TITLE ---
+        ctx.font = "800 52px Inter";
+        ctx.fillStyle = "white";
+        ctx.textBaseline = "top";
+        const titleY = wrapText(
+          ctx,
+          "GPT-5 übertrifft menschliche Experten in der Medizindiagnose",
+          pad,
+          260,
+          W - pad * 2,
+          66,
+        );
+
+        // --- EDITORIAL COMMENT ---
+        ctx.font = "400 28px Inter";
+        ctx.fillStyle = "#94a3b8";
+        const commentY = wrapText(
+          ctx,
+          "OpenAI veröffentlicht Benchmark-Ergebnisse, die zeigen dass das Modell in 94% der Fälle Ärzte übertrifft — und was das für das Gesundheitswesen bedeutet.",
+          pad,
+          titleY + 80,
+          W - pad * 2,
+          42,
+        );
+
+        // --- SIGNAL SCORE BOX ---
+        const ssY = 820;
+        const ssH = 340;
+        roundRect(ctx, pad, ssY, W - pad * 2, ssH, 24);
+        ctx.fillStyle = "#0f1f3d";
+        ctx.fill();
+
+        ctx.font = "700 18px Inter";
+        ctx.fillStyle = "#475569";
+        ctx.fillText("SIGNAL SCORE", pad + 32, ssY + 28);
+
+        const bars = [
+          {
+            label: "Impact",
+            value: 0.9,
+            score: "4.5",
+            color1: "#22c55e",
+            color2: "#16a34a",
+            scoreColor: "#22c55e",
+          },
+          {
+            label: "Hype ↓",
+            value: 0.25,
+            score: "1.2",
+            color1: "#22c55e",
+            color2: "#16a34a",
+            scoreColor: "#22c55e",
+          },
+          {
+            label: "Quelle",
+            value: 1.0,
+            score: "5.0",
+            color1: "#6366f1",
+            color2: "#8b5cf6",
+            scoreColor: "#6366f1",
+          },
+        ];
+
+        bars.forEach((bar, i) => {
+          const by = ssY + 70 + i * 85;
+          const barX = pad + 180;
+          const barW = W - pad * 2 - 280;
+
+          ctx.font = "500 24px Inter";
+          ctx.fillStyle = "#64748b";
+          ctx.textBaseline = "middle";
+          ctx.fillText(bar.label, pad + 32, by + 14);
+
+          // track
+          roundRect(ctx, barX, by, barW, 28, 14);
+          ctx.fillStyle = "#1e293b";
+          ctx.fill();
+
+          // fill
+          const grad = ctx.createLinearGradient(
+            barX,
+            0,
+            barX + barW * bar.value,
+            0,
+          );
+          grad.addColorStop(0, bar.color1);
+          grad.addColorStop(1, bar.color2);
+          roundRect(ctx, barX, by, barW * bar.value, 28, 14);
+          ctx.fillStyle = grad;
+          ctx.fill();
+
+          // score
+          ctx.font = "700 28px Inter";
+          ctx.fillStyle = bar.scoreColor;
+          ctx.textAlign = "right";
+          ctx.fillText(bar.score, W - pad - 32, by + 14);
+          ctx.textAlign = "left";
+        });
+
+        // --- FOOTER ---
+        ctx.font = "500 22px Inter";
+        ctx.fillStyle = "#334155";
+        ctx.textBaseline = "bottom";
+        ctx.fillText("up2daite.com", pad, H - pad);
+        ctx.textAlign = "right";
+        ctx.fillText("KW 24 · 2025", W - pad, H - pad);
+        ctx.textAlign = "left";
+      }
+
+      // ============================================
+      // 2) JOB RISK CARD
+      // ============================================
+      function drawJobRiskCard(canvasId) {
+        const c = document.getElementById(canvasId);
+        const ctx = c.getContext("2d");
+        const W = 1080,
+          H = 1350;
+
+        // background
+        ctx.fillStyle = "#0a1628";
+        roundRect(ctx, 0, 0, W, H, 40);
+        ctx.fill();
+
+        // red glow
+        drawGlowOrb(ctx, W - 80, -80, 400, "rgb(239,68,68)", 0.08);
+        drawGlowOrb(ctx, 60, H, 300, "rgb(239,68,68)", 0.04);
+
+        // border
+        roundRect(ctx, 0, 0, W, H, 40);
+        ctx.strokeStyle = "#2d1a1a";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        const pad = 64;
+
+        // --- HEADER ---
+        ctx.font = "800 28px Inter";
+        ctx.fillStyle = "#6366f1";
+        ctx.textBaseline = "top";
+        ctx.fillText("UP2DAITE", pad, pad);
+
+        // JOBRISIKO pill
+        roundRect(ctx, W - pad - 230, pad - 6, 230, 48, 24);
+        ctx.fillStyle = "#2d1a1a";
+        ctx.fill();
+        ctx.strokeStyle = "#7f1d1d";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.font = "700 22px Inter";
+        ctx.fillStyle = "#f87171";
+        ctx.textAlign = "center";
+        ctx.fillText("⚠ JOBRISIKO", W - pad - 115, pad + 6);
+        ctx.textAlign = "left";
+
+        // --- RISK CIRCLE ---
+        const cx = pad + 120,
+          cy = 310;
+        const radius = 100;
+
+        // track
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.strokeStyle = "#1e293b";
+        ctx.lineWidth = 16;
+        ctx.stroke();
+
+        // arc
+        const riskPct = 0.87;
+        const startAngle = -Math.PI / 2;
+        const endAngle = startAngle + Math.PI * 2 * riskPct;
+        const arcGrad = ctx.createLinearGradient(
+          cx - radius,
+          cy,
+          cx + radius,
+          cy,
+        );
+        arcGrad.addColorStop(0, "#f59e0b");
+        arcGrad.addColorStop(1, "#dc2626");
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, startAngle, endAngle);
+        ctx.strokeStyle = arcGrad;
+        ctx.lineWidth = 16;
+        ctx.lineCap = "round";
+        ctx.stroke();
+        ctx.lineCap = "butt";
+
+        // percentage
+        ctx.font = "900 56px Inter";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("87", cx, cy - 6);
+        ctx.font = "500 24px Inter";
+        ctx.fillStyle = "#94a3b8";
+        ctx.fillText("%", cx, cy + 30);
+        ctx.textAlign = "left";
+        ctx.textBaseline = "top";
+
+        // --- JOB TITLE ---
+        ctx.font = "900 64px Inter";
+        ctx.fillStyle = "white";
+        ctx.fillText("Buchhalter", cx + radius + 50, cy - 60);
+
+        ctx.font = "700 24px Inter";
+        ctx.fillStyle = "#ef4444";
+        ctx.fillText("↑ RISIKO STEIGEND", cx + radius + 50, cy + 10);
+
+        ctx.font = "500 24px Inter";
+        ctx.fillStyle = "#64748b";
+        ctx.fillText("Finanz & Controlling", cx + radius + 50, cy + 50);
+
+        // --- RISK BAR SECTION ---
+        const boxY = 480;
+        const boxH = 420;
+        roundRect(ctx, pad, boxY, W - pad * 2, boxH, 24);
+        ctx.fillStyle = "#0f1f3d";
+        ctx.fill();
+
+        // label + level
+        ctx.font = "600 20px Inter";
+        ctx.fillStyle = "#64748b";
+        ctx.fillText("AUTOMATISIERUNGSRISIKO", pad + 32, boxY + 28);
+        ctx.font = "700 26px Inter";
+        ctx.fillStyle = "#f87171";
+        ctx.textAlign = "right";
+        ctx.fillText("Kritisch", W - pad - 32, boxY + 24);
+        ctx.textAlign = "left";
+
+        // bar track
+        const barY = boxY + 70;
+        roundRect(ctx, pad + 32, barY, W - pad * 2 - 64, 32, 16);
+        ctx.fillStyle = "#1e293b";
+        ctx.fill();
+
+        // bar fill
+        const barGrad = ctx.createLinearGradient(pad + 32, 0, W - pad - 32, 0);
+        barGrad.addColorStop(0, "#f59e0b");
+        barGrad.addColorStop(0.5, "#ef4444");
+        barGrad.addColorStop(1, "#dc2626");
+        roundRect(ctx, pad + 32, barY, (W - pad * 2 - 64) * 0.87, 32, 16);
+        ctx.fillStyle = barGrad;
+        ctx.fill();
+
+        // reasoning
+        ctx.font = "400 26px Inter";
+        ctx.fillStyle = "#94a3b8";
+        wrapText(
+          ctx,
+          "Manuelle Buchführung, Rechnungswesen und Reporting werden in den nächsten 3 Jahren weitgehend automatisiert.",
+          pad + 32,
+          barY + 60,
+          W - pad * 2 - 64,
+          40,
+        );
+
+        // task pills
+        const tasks = ["Dateneingabe", "Rechnungswesen", "Reporting"];
+        let tx = pad + 32;
+        const tpY = barY + 200;
+        tasks.forEach((task) => {
+          ctx.font = "600 22px Inter";
+          const tw = ctx.measureText(task).width;
+          const pw = tw + 32,
+            ph = 40;
+          roundRect(ctx, tx, tpY, pw, ph, 8);
+          ctx.fillStyle = "#1e293b";
+          ctx.fill();
+          ctx.strokeStyle = "#334155";
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+          ctx.fillStyle = "#64748b";
+          ctx.textBaseline = "middle";
+          ctx.fillText(task, tx + 16, tpY + ph / 2);
+          ctx.textBaseline = "top";
+          tx += pw + 16;
+        });
+
+        // --- KEY INSIGHT ---
+        const insY = 960;
+        roundRect(ctx, pad, insY, W - pad * 2, 220, 24);
+        ctx.fillStyle = "#111c36";
+        ctx.fill();
+        ctx.strokeStyle = "#2d1a1a";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.font = "700 20px Inter";
+        ctx.fillStyle = "#64748b";
+        ctx.fillText("EINSCHÄTZUNG", pad + 32, insY + 24);
+
+        ctx.font = "500 26px Inter";
+        ctx.fillStyle = "#cbd5e1";
+        wrapText(
+          ctx,
+          "Besonders gefährdet sind repetitive Prozesse wie Dateneingabe und standardisiertes Reporting. Umschulung auf KI-gestützte Analyse wird empfohlen.",
+          pad + 32,
+          insY + 65,
+          W - pad * 2 - 64,
+          40,
+        );
+
+        // --- FOOTER ---
+        ctx.font = "500 22px Inter";
+        ctx.fillStyle = "#334155";
+        ctx.textBaseline = "bottom";
+        ctx.fillText("up2daite.com", pad, H - pad);
+        ctx.textAlign = "right";
+        ctx.fillText("KI-Jobs · 2025", W - pad, H - pad);
+        ctx.textAlign = "left";
+      }
+
+      // ============================================
+      // 3) EDITION COVER
+      // ============================================
+      function drawEditionCover(canvasId) {
+        const c = document.getElementById(canvasId);
+        const ctx = c.getContext("2d");
+        const W = 1080,
+          H = 1350;
+
+        // background
+        ctx.fillStyle = "#0a1628";
+        roundRect(ctx, 0, 0, W, H, 40);
+        ctx.fill();
+
+        // glow orbs
+        drawGlowOrb(ctx, 200, H - 100, 500, "rgb(139,92,246)", 0.06);
+        drawGlowOrb(ctx, W - 100, 100, 350, "rgb(99,102,241)", 0.08);
+
+        // border
+        roundRect(ctx, 0, 0, W, H, 40);
+        ctx.strokeStyle = "#1a2744";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        const pad = 64;
+
+        // --- HEADER ---
+        ctx.font = "800 28px Inter";
+        ctx.fillStyle = "#6366f1";
+        ctx.textBaseline = "top";
+        ctx.fillText("UP2DAITE", pad, pad);
+
+        // Ausgabe pill
+        roundRect(ctx, W - pad - 210, pad - 6, 210, 48, 24);
+        ctx.fillStyle = "#1a2744";
+        ctx.fill();
+        ctx.strokeStyle = "#2d3f6b";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.font = "600 22px Inter";
+        ctx.fillStyle = "#94a3b8";
+        ctx.textAlign = "center";
+        ctx.fillText("Ausgabe #12", W - pad - 105, pad + 7);
+        ctx.textAlign = "left";
+
+        // --- EDITION TITLE ---
+        ctx.font = "700 22px Inter";
+        ctx.fillStyle = "#8b5cf6";
+        ctx.fillText("DIESE WOCHE", pad, 180);
+
+        ctx.font = "900 62px Inter";
+        ctx.fillStyle = "white";
+        wrapText(ctx, "KI verändert alles — wieder", pad, 220, W - pad * 2, 76);
+
+        // --- DECORATIVE LINE ---
+        const lineY = 340;
+        const lineGrad = ctx.createLinearGradient(pad, 0, W - pad, 0);
+        lineGrad.addColorStop(0, "#6366f1");
+        lineGrad.addColorStop(0.5, "#8b5cf6");
+        lineGrad.addColorStop(1, "transparent");
+        ctx.fillStyle = lineGrad;
+        ctx.fillRect(pad, lineY, W - pad * 2, 2);
+
+        // --- STORY LIST ---
+        const stories = [
+          {
+            emoji: "🏥",
+            color1: "#22c55e",
+            color2: "#16a34a",
+            title: "GPT-5 übertrifft Ärzte in Medizindiagnose",
+            tag: "Gesundheit",
+          },
+          {
+            emoji: "💬",
+            color1: "#3b82f6",
+            color2: "#1d4ed8",
+            title: "Meta AI kommt in WhatsApp und Instagram",
+            tag: "Produkte",
+          },
+          {
+            emoji: "⚖️",
+            color1: "#f59e0b",
+            color2: "#d97706",
+            title: "EU AI Act tritt offiziell in Kraft",
+            tag: "Regulierung",
+          },
+          {
+            emoji: "🤖",
+            color1: "#8b5cf6",
+            color2: "#6366f1",
+            title: "Google DeepMind zeigt Gemini 2.0 Demo",
+            tag: "Forschung",
+          },
+          {
+            emoji: "💼",
+            color1: "#ef4444",
+            color2: "#dc2626",
+            title: "McKinsey: 30% der Jobs betroffen bis 2030",
+            tag: "Arbeitswelt",
+          },
+        ];
+
+        stories.forEach((story, i) => {
+          const sy = 380 + i * 140;
+
+          // row background
+          roundRect(ctx, pad, sy, W - pad * 2, 120, 18);
+          ctx.fillStyle = "#0f1f3d";
+          ctx.fill();
+
+          // emoji icon box
+          const iconGrad = ctx.createLinearGradient(
+            pad + 20,
+            sy + 20,
+            pad + 100,
+            sy + 100,
+          );
+          iconGrad.addColorStop(0, story.color1);
+          iconGrad.addColorStop(1, story.color2);
+          roundRect(ctx, pad + 20, sy + 20, 80, 80, 16);
+          ctx.fillStyle = iconGrad;
+          ctx.fill();
+
+          ctx.font = "40px serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(story.emoji, pad + 60, sy + 62);
+          ctx.textAlign = "left";
+          ctx.textBaseline = "top";
+
+          // story title
+          ctx.font = "700 28px Inter";
+          ctx.fillStyle = "#e2e8f0";
+          wrapText(ctx, story.title, pad + 120, sy + 24, W - pad * 2 - 160, 36);
+
+          // tag
+          ctx.font = "600 18px Inter";
+          ctx.fillStyle = "#64748b";
+          ctx.fillText(story.tag, pad + 120, sy + 88);
+        });
+
+        // --- CTA FOOTER ---
+        const ctaY = H - 180;
+        ctx.beginPath();
+        ctx.moveTo(pad, ctaY);
+        ctx.lineTo(W - pad, ctaY);
+        ctx.strokeStyle = "#1a2744";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.font = "500 22px Inter";
+        ctx.fillStyle = "#334155";
+        ctx.textBaseline = "top";
+        ctx.fillText("up2daite.com", pad, ctaY + 30);
+
+        // CTA button
+        const btnW = 260,
+          btnH = 56;
+        const btnX = W - pad - btnW,
+          btnY = ctaY + 16;
+        const btnGrad = ctx.createLinearGradient(btnX, 0, btnX + btnW, 0);
+        btnGrad.addColorStop(0, "#6366f1");
+        btnGrad.addColorStop(1, "#8b5cf6");
+        roundRect(ctx, btnX, btnY, btnW, btnH, 28);
+        ctx.fillStyle = btnGrad;
+        ctx.fill();
+        ctx.font = "700 24px Inter";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.fillText("Jetzt lesen →", btnX + btnW / 2, btnY + 16);
+        ctx.textAlign = "left";
+
+        // footer
+        ctx.font = "500 22px Inter";
+        ctx.fillStyle = "#334155";
+        ctx.textBaseline = "bottom";
+        ctx.textAlign = "right";
+        ctx.fillText("5 Stories · KW 24", W - pad, H - pad);
+        ctx.textAlign = "left";
+        ctx.fillText("up2daite.com", pad, H - pad);
+      }
+
+      // ============================================
+      // 4) AI MODEL CARD
+      // ============================================
+      function drawModelCard(canvasId) {
+        const c = document.getElementById(canvasId);
+        const ctx = c.getContext("2d");
+        const W = 1080,
+          H = 1350;
+
+        // background
+        ctx.fillStyle = "#0a1628";
+        roundRect(ctx, 0, 0, W, H, 40);
+        ctx.fill();
+
+        // glow orbs
+        drawGlowOrb(ctx, 100, 200, 400, "rgb(139,92,246)", 0.08);
+        drawGlowOrb(ctx, W - 150, H - 200, 350, "rgb(16,185,129)", 0.06);
+
+        // border
+        roundRect(ctx, 0, 0, W, H, 40);
+        ctx.strokeStyle = "#1a2744";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        const pad = 64;
+
+        // --- HEADER ---
+        ctx.font = "800 28px Inter";
+        ctx.fillStyle = "#6366f1";
+        ctx.textBaseline = "top";
+        ctx.fillText("UP2DAITE", pad, pad);
+
+        // KI-MODELL pill
+        roundRect(ctx, W - pad - 250, pad - 6, 250, 48, 24);
+        ctx.fillStyle = "#1a2744";
+        ctx.fill();
+        ctx.strokeStyle = "#2d3f6b";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.font = "700 22px Inter";
+        ctx.fillStyle = "#8b5cf6";
+        ctx.textAlign = "center";
+        ctx.fillText("✦ KI-MODELL #1", W - pad - 125, pad + 7);
+        ctx.textAlign = "left";
+
+        // --- MODEL IDENTITY ---
+        const logoY = 180;
+
+        // logo box
+        const logoGrad = ctx.createLinearGradient(
+          pad,
+          logoY,
+          pad + 160,
+          logoY + 160,
+        );
+        logoGrad.addColorStop(0, "#10b981");
+        logoGrad.addColorStop(1, "#059669");
+        roundRect(ctx, pad, logoY, 160, 160, 32);
+        ctx.fillStyle = logoGrad;
+        ctx.fill();
+
+        // shadow under logo
+        ctx.shadowColor = "rgba(16, 185, 129, 0.3)";
+        ctx.shadowBlur = 40;
+        roundRect(ctx, pad, logoY, 160, 160, 32);
+        ctx.fillStyle = logoGrad;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        ctx.font = "72px serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "white";
+        ctx.fillText("✦", pad + 80, logoY + 84);
+        ctx.textAlign = "left";
+        ctx.textBaseline = "top";
+
+        // model name
+        ctx.font = "900 64px Inter";
+        ctx.fillStyle = "white";
+        ctx.fillText("Claude 3.5", pad + 190, logoY + 10);
+
+        // company + year
+        ctx.font = "500 28px Inter";
+        ctx.fillStyle = "#94a3b8";
+        ctx.fillText("Anthropic · 2024", pad + 190, logoY + 85);
+
+        // category tags
+        const tags = ["LLM", "Multimodal", "Coding"];
+        let tagX = pad + 190;
+        const tagTY = logoY + 130;
+        tags.forEach((tag) => {
+          ctx.font = "700 20px Inter";
+          const tw = ctx.measureText(tag).width;
+          const pw = tw + 28;
+          roundRect(ctx, tagX, tagTY, pw, 36, 8);
+          ctx.fillStyle = "#1a2744";
+          ctx.fill();
+          ctx.strokeStyle = "#2d3f6b";
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+          ctx.fillStyle = "#8b5cf6";
+          ctx.textBaseline = "middle";
+          ctx.fillText(tag, tagX + 14, tagTY + 18);
+          ctx.textBaseline = "top";
+          tagX += pw + 12;
+        });
+
+        // --- HIGHLIGHTS BOX ---
+        const hlY = 420;
+        const hlH = 360;
+        roundRect(ctx, pad, hlY, W - pad * 2, hlH, 24);
+        ctx.fillStyle = "#0f1f3d";
+        ctx.fill();
+
+        ctx.font = "700 18px Inter";
+        ctx.fillStyle = "#475569";
+        ctx.fillText("HIGHLIGHTS", pad + 32, hlY + 28);
+
+        const highlights = [
+          "State-of-the-art Coding & Analyse",
+          "Übertrifft GPT-4 in 8 von 10 Benchmarks",
+          "200K Token Kontextfenster",
+          "Natives Tool-Use und Function Calling",
+        ];
+
+        highlights.forEach((hl, i) => {
+          const hy = hlY + 70 + i * 68;
+
+          // dot
+          ctx.beginPath();
+          ctx.arc(pad + 48, hy + 10, 8, 0, Math.PI * 2);
+          ctx.fillStyle = "#8b5cf6";
+          ctx.fill();
+
+          // text
+          ctx.font = "500 28px Inter";
+          ctx.fillStyle = "#cbd5e1";
+          ctx.fillText(hl, pad + 72, hy - 4);
+        });
+
+        // --- BENCHMARK SCORES ---
+        const benchY = 830;
+        const benchH = 320;
+        roundRect(ctx, pad, benchY, W - pad * 2, benchH, 24);
+        ctx.fillStyle = "#111c36";
+        ctx.fill();
+        ctx.strokeStyle = "#1a2744";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.font = "700 18px Inter";
+        ctx.fillStyle = "#475569";
+        ctx.fillText("BENCHMARK VERGLEICH", pad + 32, benchY + 28);
+
+        const benchmarks = [
+          { label: "Coding", value: 0.95, color: "#10b981" },
+          { label: "Reasoning", value: 0.88, color: "#8b5cf6" },
+          { label: "Math", value: 0.82, color: "#6366f1" },
+          { label: "Multilingual", value: 0.91, color: "#3b82f6" },
+        ];
+
+        benchmarks.forEach((bm, i) => {
+          const by = benchY + 70 + i * 58;
+          const barX = pad + 200;
+          const barW = W - pad * 2 - 300;
+
+          ctx.font = "500 22px Inter";
+          ctx.fillStyle = "#64748b";
+          ctx.textBaseline = "middle";
+          ctx.fillText(bm.label, pad + 32, by + 12);
+
+          // track
+          roundRect(ctx, barX, by, barW, 24, 12);
+          ctx.fillStyle = "#1e293b";
+          ctx.fill();
+
+          // fill
+          roundRect(ctx, barX, by, barW * bm.value, 24, 12);
+          ctx.fillStyle = bm.color;
+          ctx.fill();
+
+          // score
+          ctx.font = "700 22px Inter";
+          ctx.fillStyle = bm.color;
+          ctx.textAlign = "right";
+          ctx.fillText(
+            (bm.value * 100).toFixed(0) + "%",
+            W - pad - 32,
+            by + 12,
+          );
+          ctx.textAlign = "left";
+          ctx.textBaseline = "top";
+        });
+
+        // --- FOOTER ---
+        ctx.font = "500 22px Inter";
+        ctx.fillStyle = "#334155";
+        ctx.textBaseline = "bottom";
+        ctx.fillText("up2daite.com", pad, H - pad);
+        ctx.textAlign = "right";
+        ctx.fillText("KI-Modelle · 2025", W - pad, H - pad);
+        ctx.textAlign = "left";
+      }
+
+      // ============================================
+      // DRAW ALL CARDS
+      // ============================================
+      window.addEventListener("load", () => {
+        drawStoryCard("storyCanvas");
+        drawJobRiskCard("jobCanvas");
+        drawEditionCover("editionCanvas");
+        drawModelCard("modelCanvas");
+      });
+    </script>
+  </body>
+</html>

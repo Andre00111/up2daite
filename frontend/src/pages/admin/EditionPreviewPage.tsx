@@ -1,14 +1,17 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import {
   Box, Typography, Button, Chip, Alert, Snackbar, Divider,
   Dialog, DialogTitle, DialogContent, DialogActions,
 } from '@mui/material'
+import { Instagram as InstagramIcon } from '@mui/icons-material'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useEditions } from '../../hooks/useEditions'
 import { useStories } from '../../hooks/useStories'
 import EditionHeader from '../../components/features/EditionHeader'
 import StoryCard from '../../components/features/StoryCard'
 import { publishEdition, unpublishEdition, deleteEdition } from '../../api/editions'
+import InstagramPreviewDialog from '../../components/features/InstagramPreviewDialog'
+import { drawEditionCover } from '../../utils/instagramCards/drawEditionCover'
 
 export default function EditionPreviewPage() {
   const { id } = useParams<{ id: string }>()
@@ -20,6 +23,7 @@ export default function EditionPreviewPage() {
   const [snack, setSnack] = useState<{ msg: string; severity: 'success' | 'error' } | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [instaOpen, setInstaOpen] = useState(false)
 
   if (!edition) {
     return (
@@ -33,6 +37,10 @@ export default function EditionPreviewPage() {
   }
 
   const stories = getStoriesForEdition(edition.storyIds)
+
+  const instaDrawFn = useCallback((ctx: CanvasRenderingContext2D) => {
+    drawEditionCover(ctx, edition, stories)
+  }, [edition, stories])
 
   async function handlePublish() {
     if (!id) return
@@ -92,6 +100,9 @@ export default function EditionPreviewPage() {
           />
         </Box>
         <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button onClick={() => setInstaOpen(true)} color="inherit" startIcon={<InstagramIcon />}>
+            Instagram
+          </Button>
           <Button onClick={() => navigate(`/admin/edition/${edition.id}/edit`)} color="inherit">
             Bearbeiten
           </Button>
@@ -143,6 +154,14 @@ export default function EditionPreviewPage() {
       >
         {snack ? <Alert severity={snack.severity}>{snack.msg}</Alert> : undefined}
       </Snackbar>
+
+      <InstagramPreviewDialog
+        open={instaOpen}
+        onClose={() => setInstaOpen(false)}
+        title="Edition Cover"
+        filename={`edition-${edition.number}`}
+        drawFn={instaDrawFn}
+      />
     </Box>
   )
 }
