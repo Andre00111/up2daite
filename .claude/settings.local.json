@@ -30,7 +30,36 @@
       "Bash(docker run *)",
       "Bash(echo \"---EXIT: $?---\")",
       "Bash(python3 -c \"import yaml; yaml.safe_load\\(open\\('.gitlab-ci.yml'\\)\\); print\\('YAML OK'\\)\")",
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "Bash(ls ~/.ssh/*.pub 2>/dev/null)",
+      "Read(//Users/andre.butkevich/.ssh/**)",
+      "Bash(bash /Users/andre.butkevich/.claude/plugins/cache/superpowers-marketplace/superpowers/5.1.0/skills/brainstorming/scripts/start-server.sh --project-dir /Users/andre.butkevich/Desktop/Projects/AI-news-app)",
+      "Bash(find /usr /opt /Users/andre.butkevich/.nvm /Users/andre.butkevich/.volta -name \"node\" -type f 2>/dev/null | head -5)",
+      "Read(//usr/**)",
+      "Bash(open /Users/andre.butkevich/Desktop/Projects/AI-news-app/frontend/instagram-card-preview.html)",
+      "Bash(mkdir -p /Users/andre.butkevich/Desktop/Projects/AI-news-app/frontend/src/utils/instagramCards)",
+      "Bash(./node_modules/.bin/tsc --noEmit)",
+      "Bash(which node; which npm 2>/dev/null; ls /Users/andre.butkevich/.nvm/versions/node/ 2>/dev/null)",
+      "Read(//Users/andre.butkevich/.nvm/versions/node/**)",
+      "Bash(lsof -ti:5173)",
+      "Bash(xargs kill)",
+      "Bash(/usr/local/bin/docker ps *)",
+      "Bash(/opt/homebrew/bin/docker ps *)",
+      "Bash(curl -sI http://localhost:43000)",
+      "Bash(curl -v http://localhost:43000)",
+      "Bash(python3 -c ' *)",
+      "Bash(pip3 install *)",
+      "Bash(PGPASSWORD=up2daite psql -h localhost -p 45432 -U up2daite -d up2daite -c ' *)",
+      "Bash(/opt/homebrew/bin/docker exec ai-news-app-postgres-1 psql -U up2daite -d up2daite -c ' *)",
+      "Bash(which docker *)",
+      "Read(//Applications/**)",
+      "Bash(open /Users/andre.butkevich/Desktop/Projects/AI-news-app/frontend/canvas-test.html)",
+      "WebSearch",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:48080/api/editions)",
+      "Bash(docker compose *)"
+    ],
+    "additionalDirectories": [
+      "/Users/andre.butkevich/Desktop/Projects/AI-news-app/frontend/src/utils"
     ]
   },
   "model": "claude-opus-4-6"

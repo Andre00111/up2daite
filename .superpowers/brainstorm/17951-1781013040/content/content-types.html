@@ -1,0 +1,592 @@
+<h2>Welche Post-Typen willst du generieren?</h2>
+<p class="subtitle">
+  Mehrere auswählbar — Dark Tech Style. Was postest du auf Instagram?
+</p>
+
+<div class="cards" data-multiselect>
+  <!-- TYPE 1: Story Card -->
+  <div class="card" data-choice="story" onclick="toggleSelect(this)">
+    <div
+      class="card-image"
+      style="
+        background: #0f172a;
+        padding: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 240px;
+      "
+    >
+      <div
+        style="
+          width: 200px;
+          height: 200px;
+          background: #0f172a;
+          border: 1px solid #1e293b;
+          border-radius: 10px;
+          padding: 14px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          box-shadow: 0 0 20px rgba(99, 102, 241, 0.25);
+        "
+      >
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <span
+            style="
+              color: #6366f1;
+              font-size: 8px;
+              font-weight: 700;
+              letter-spacing: 2px;
+              font-family: monospace;
+            "
+            >UP2DAITE</span
+          >
+          <span
+            style="
+              background: linear-gradient(135deg, #6366f1, #8b5cf6);
+              color: white;
+              font-size: 6px;
+              padding: 2px 6px;
+              border-radius: 20px;
+              font-weight: 700;
+            "
+            >KI-NEWS</span
+          >
+        </div>
+        <div>
+          <div
+            style="
+              font-size: 8px;
+              color: #8b5cf6;
+              font-weight: 700;
+              margin-bottom: 5px;
+              text-transform: uppercase;
+              letter-spacing: 1px;
+            "
+          >
+            Story
+          </div>
+          <div
+            style="
+              font-size: 10px;
+              color: white;
+              font-weight: 700;
+              line-height: 1.35;
+              margin-bottom: 6px;
+            "
+          >
+            GPT-5 übertrifft menschliche Experten in Medizindiagnose
+          </div>
+          <div style="font-size: 7px; color: #94a3b8; line-height: 1.5">
+            OpenAI veröffentlicht Benchmark-Ergebnisse, die zeigen dass das
+            Modell 94% der Ärzte übertrifft...
+          </div>
+        </div>
+        <div style="display: flex; gap: 4px; align-items: center">
+          <div
+            style="
+              flex: 1;
+              background: #1e293b;
+              border-radius: 4px;
+              padding: 3px 5px;
+            "
+          >
+            <div style="font-size: 5px; color: #64748b; margin-bottom: 1px">
+              Impact
+            </div>
+            <div
+              style="
+                background: linear-gradient(90deg, #22c55e, #16a34a);
+                height: 3px;
+                border-radius: 2px;
+                width: 85%;
+              "
+            ></div>
+          </div>
+          <div
+            style="
+              flex: 1;
+              background: #1e293b;
+              border-radius: 4px;
+              padding: 3px 5px;
+            "
+          >
+            <div style="font-size: 5px; color: #64748b; margin-bottom: 1px">
+              Hype ↓
+            </div>
+            <div
+              style="
+                background: linear-gradient(90deg, #22c55e, #16a34a);
+                height: 3px;
+                border-radius: 2px;
+                width: 30%;
+              "
+            ></div>
+          </div>
+          <span style="font-size: 5px; color: #475569">up2daite.com</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>1 — Story Card</h3>
+      fu
+      <p>
+        Einzelne Story mit Titel, Editorial-Kommentar-Snippet und Signal-Score
+        als Balken. 1:1 Square für Feed.
+      </p>
+    </div>
+  </div>
+
+  <!-- TYPE 2: Job Risk Card -->
+  <div class="card" data-choice="job-risk" onclick="toggleSelect(this)">
+    <div
+      class="card-image"
+      style="
+        background: #0f172a;
+        padding: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 240px;
+      "
+    >
+      <div
+        style="
+          width: 200px;
+          height: 200px;
+          background: #0f172a;
+          border: 1px solid #1e293b;
+          border-radius: 10px;
+          padding: 14px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+        "
+      >
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <span
+            style="
+              color: #6366f1;
+              font-size: 8px;
+              font-weight: 700;
+              letter-spacing: 2px;
+              font-family: monospace;
+            "
+            >UP2DAITE</span
+          >
+          <span
+            style="
+              background: #dc2626;
+              color: white;
+              font-size: 6px;
+              padding: 2px 6px;
+              border-radius: 20px;
+              font-weight: 700;
+            "
+            >⚠ RISIKO</span
+          >
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px">
+          <div
+            style="
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              background: linear-gradient(135deg, #dc2626, #ef4444);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              color: white;
+              font-weight: 800;
+              font-size: 10px;
+              flex-shrink: 0;
+            "
+          >
+            87%
+          </div>
+          <div>
+            <div
+              style="
+                font-size: 10px;
+                color: white;
+                font-weight: 700;
+                line-height: 1.2;
+              "
+            >
+              Buchhalter
+            </div>
+            <div style="font-size: 7px; color: #f87171; margin-top: 2px">
+              ↑ Steigend
+            </div>
+          </div>
+        </div>
+        <div>
+          <div
+            style="
+              background: #1e293b;
+              border-radius: 4px;
+              padding: 5px 8px;
+              margin-bottom: 6px;
+            "
+          >
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 2px;
+              "
+            >
+              <span style="font-size: 5px; color: #94a3b8"
+                >Automatisierungsrisiko</span
+              >
+              <span style="font-size: 5px; color: white; font-weight: 700"
+                >87%</span
+              >
+            </div>
+            <div style="background: #374151; border-radius: 2px; height: 4px">
+              <div
+                style="
+                  background: linear-gradient(90deg, #f59e0b, #dc2626);
+                  height: 4px;
+                  border-radius: 2px;
+                  width: 87%;
+                "
+              ></div>
+            </div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 2px">
+            <span
+              style="
+                background: #1e293b;
+                border: 1px solid #374151;
+                color: #94a3b8;
+                font-size: 5px;
+                padding: 1px 4px;
+                border-radius: 3px;
+              "
+              >Dateneingabe</span
+            >
+            <span
+              style="
+                background: #1e293b;
+                border: 1px solid #374151;
+                color: #94a3b8;
+                font-size: 5px;
+                padding: 1px 4px;
+                border-radius: 3px;
+              "
+              >Rechnungswesen</span
+            >
+            <span
+              style="
+                background: #1e293b;
+                border: 1px solid #374151;
+                color: #94a3b8;
+                font-size: 5px;
+                padding: 1px 4px;
+                border-radius: 3px;
+              "
+              >Reporting</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>2 — Job Risk Card</h3>
+      <p>
+        Automatisierungsrisiko eines Berufs mit Prozentzahl, Trend-Pfeil und
+        betroffenen Aufgaben. Hohe Engagement-Rate auf Social Media.
+      </p>
+    </div>
+  </div>
+
+  <!-- TYPE 3: Edition Cover -->
+  <div class="card" data-choice="edition" onclick="toggleSelect(this)">
+    <div
+      class="card-image"
+      style="
+        background: #0f172a;
+        padding: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 240px;
+      "
+    >
+      <div
+        style="
+          width: 200px;
+          height: 200px;
+          background: #0f172a;
+          border: 1px solid #1e293b;
+          border-radius: 10px;
+          padding: 14px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          box-shadow: 0 0 20px rgba(99, 102, 241, 0.25);
+        "
+      >
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <span
+            style="
+              color: #6366f1;
+              font-size: 8px;
+              font-weight: 700;
+              letter-spacing: 2px;
+              font-family: monospace;
+            "
+            >UP2DAITE</span
+          >
+          <span
+            style="
+              background: #1e293b;
+              border: 1px solid #334155;
+              color: #94a3b8;
+              font-size: 6px;
+              padding: 2px 6px;
+              border-radius: 20px;
+            "
+            >Ausgabe #12</span
+          >
+        </div>
+        <div>
+          <div
+            style="
+              font-size: 7px;
+              color: #8b5cf6;
+              font-weight: 700;
+              margin-bottom: 4px;
+              text-transform: uppercase;
+              letter-spacing: 1px;
+            "
+          >
+            Diese Woche
+          </div>
+          <div
+            style="
+              font-size: 9px;
+              color: white;
+              font-weight: 700;
+              margin-bottom: 3px;
+              line-height: 1.2;
+            "
+          >
+            • GPT-5 schlägt Ärzte
+          </div>
+          <div
+            style="
+              font-size: 9px;
+              color: white;
+              font-weight: 700;
+              margin-bottom: 3px;
+              line-height: 1.2;
+            "
+          >
+            • Meta AI in WhatsApp
+          </div>
+          <div
+            style="
+              font-size: 9px;
+              color: white;
+              font-weight: 700;
+              line-height: 1.2;
+            "
+          >
+            • EU AI Act tritt in Kraft
+          </div>
+        </div>
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #1e293b;
+            padding-top: 6px;
+          "
+        >
+          <span style="font-size: 6px; color: #475569">3 Stories · KW 23</span>
+          <span
+            style="
+              background: linear-gradient(135deg, #6366f1, #8b5cf6);
+              color: white;
+              font-size: 6px;
+              padding: 2px 6px;
+              border-radius: 20px;
+              font-weight: 700;
+            "
+            >Jetzt lesen →</span
+          >
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>3 — Edition Cover</h3>
+      <p>
+        Wochenüberblick mit allen Story-Headlines. Ideal als Ankündigungs-Post
+        wenn eine neue Ausgabe erscheint.
+      </p>
+    </div>
+  </div>
+
+  <!-- TYPE 4: AI Model Card -->
+  <div class="card" data-choice="ai-model" onclick="toggleSelect(this)">
+    <div
+      class="card-image"
+      style="
+        background: #0f172a;
+        padding: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 240px;
+      "
+    >
+      <div
+        style="
+          width: 200px;
+          height: 200px;
+          background: #0f172a;
+          border: 1px solid #1e293b;
+          border-radius: 10px;
+          padding: 14px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+        "
+      >
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <span
+            style="
+              color: #6366f1;
+              font-size: 8px;
+              font-weight: 700;
+              letter-spacing: 2px;
+              font-family: monospace;
+            "
+            >UP2DAITE</span
+          >
+          <span
+            style="
+              background: #1e293b;
+              border: 1px solid #334155;
+              color: #94a3b8;
+              font-size: 6px;
+              padding: 2px 6px;
+              border-radius: 20px;
+            "
+            >#1 Modell</span
+          >
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px">
+          <div
+            style="
+              width: 36px;
+              height: 36px;
+              border-radius: 8px;
+              background: linear-gradient(135deg, #10b981, #059669);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 18px;
+              flex-shrink: 0;
+            "
+          >
+            ✦
+          </div>
+          <div>
+            <div style="font-size: 11px; color: white; font-weight: 800">
+              Claude 3.5
+            </div>
+            <div style="font-size: 7px; color: #94a3b8">Anthropic · 2024</div>
+          </div>
+        </div>
+        <div>
+          <div
+            style="display: flex; flex-wrap: wrap; gap: 2px; margin-bottom: 6px"
+          >
+            <span
+              style="
+                background: #1e293b;
+                border: 1px solid #334155;
+                color: #8b5cf6;
+                font-size: 5px;
+                padding: 1px 5px;
+                border-radius: 3px;
+                font-weight: 600;
+              "
+              >Coding</span
+            >
+            <span
+              style="
+                background: #1e293b;
+                border: 1px solid #334155;
+                color: #8b5cf6;
+                font-size: 5px;
+                padding: 1px 5px;
+                border-radius: 3px;
+                font-weight: 600;
+              "
+              >Reasoning</span
+            >
+            <span
+              style="
+                background: #1e293b;
+                border: 1px solid #334155;
+                color: #8b5cf6;
+                font-size: 5px;
+                padding: 1px 5px;
+                border-radius: 3px;
+                font-weight: 600;
+              "
+              >Multimodal</span
+            >
+          </div>
+          <div style="font-size: 6px; color: #64748b; line-height: 1.5">
+            State-of-the-art Coding & Analyse. Übertrifft GPT-4 in 8 von 10
+            Benchmarks.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>4 — KI-Modell Card</h3>
+      <p>
+        Spotlight auf ein KI-Modell mit Logo, Highlights und Ranking. Gut für
+        "Model of the Week" Posts.
+      </p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top: 16px; text-align: center">
+  Mehrfachauswahl möglich — klick alle die du willst.
+</p>

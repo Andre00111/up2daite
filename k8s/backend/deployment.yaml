@@ -86,15 +86,15 @@ spec:
                 secretKeyRef:
                   name: app-auth-credentials
                   key: admin-martin-password
-            # HTTPS aktiv (hansestack.com) → Secure-Cookie an.
+            # HTTPS aktiv (up2daite.com) → Secure-Cookie an.
             - name: COOKIE_SECURE
               value: "true"
 
             # ── CORS & App-URL ──────────────────────────────────────────
             - name: CORS_ALLOWED_ORIGINS
-              value: "https://hansestack.com,http://31.70.75.157"
+              value: "https://up2daite.com,http://31.70.75.157"
             - name: APP_BASE_URL
-              value: "https://hansestack.com"
+              value: "https://up2daite.com"
 
             # ── Newsletter (Brevo) ──────────────────────────────────────
             - name: BREVO_API_KEY
