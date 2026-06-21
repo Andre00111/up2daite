@@ -6,6 +6,7 @@ import {
   roundRect,
   drawGlowOrb,
   wrapText,
+  wrapTextClamped,
   drawBackground,
   drawBorder,
   drawHeader,
@@ -70,44 +71,57 @@ export function drawEditionCover(
   ctx.fillStyle = lineGrad;
   ctx.fillRect(PAD, 340, W - PAD * 2, 2);
 
-  // Story list (max 5)
+  // Story list — dynamische Kartenhöhe je nach Anzahl
   const visibleStories = stories.slice(0, 5);
+  const N = visibleStories.length || 1;
+  const storiesStartY = 380;
+  const ctaY = H - 180;
+  const GAP = 14;
+  const cardH = Math.min(148, Math.max(100,
+    Math.floor((ctaY - storiesStartY - 16 - GAP * (N - 1)) / N),
+  ));
+  const stride = cardH + GAP;
+  const iconSz = Math.min(80, cardH - 24);
+  const iconPad = Math.round((cardH - iconSz) / 2);
+  const emojiSz = Math.round(iconSz * 0.5);
+  const titleFontSz = cardH >= 130 ? 27 : 22;
+  const titleLineH = titleFontSz + 9;
+
   visibleStories.forEach((story, i) => {
-    const sy = 380 + i * 140;
+    const sy = storiesStartY + i * stride;
     const [c1, c2] = STORY_COLORS[i % STORY_COLORS.length];
 
-    roundRect(ctx, PAD, sy, W - PAD * 2, 120, 18);
+    roundRect(ctx, PAD, sy, W - PAD * 2, cardH, 18);
     ctx.fillStyle = "#0f1f3d";
     ctx.fill();
 
     // Emoji icon box
-    const iconGrad = ctx.createLinearGradient(
-      PAD + 20,
-      sy + 20,
-      PAD + 100,
-      sy + 100,
-    );
+    const iconX = PAD + 20;
+    const iconY = sy + iconPad;
+    const iconGrad = ctx.createLinearGradient(iconX, iconY, iconX + iconSz, iconY + iconSz);
     iconGrad.addColorStop(0, c1);
     iconGrad.addColorStop(1, c2);
-    roundRect(ctx, PAD + 20, sy + 20, 80, 80, 16);
+    roundRect(ctx, iconX, iconY, iconSz, iconSz, 14);
     ctx.fillStyle = iconGrad;
     ctx.fill();
 
-    ctx.font = "40px serif";
+    ctx.font = `${emojiSz}px serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(STORY_EMOJIS[i % STORY_EMOJIS.length], PAD + 60, sy + 62);
+    ctx.fillText(STORY_EMOJIS[i % STORY_EMOJIS.length], iconX + iconSz / 2, iconY + iconSz / 2);
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
 
-    // Story title
-    ctx.font = "700 28px Inter";
+    // Story title — max 2 Zeilen
+    const titleX = PAD + 20 + iconSz + 20;
+    const titleMaxW = W - PAD * 2 - iconSz - 60;
+    const titleY = sy + Math.round((cardH - titleLineH * 2) / 2);
+    ctx.font = `700 ${titleFontSz}px Inter`;
     ctx.fillStyle = "#e2e8f0";
-    wrapText(ctx, story.title, PAD + 120, sy + 30, W - PAD * 2 - 160, 36);
+    wrapTextClamped(ctx, story.title, titleX, titleY, titleMaxW, titleLineH, 2);
   });
 
   // CTA footer
-  const ctaY = H - 180;
   ctx.beginPath();
   ctx.moveTo(PAD, ctaY);
   ctx.lineTo(W - PAD, ctaY);

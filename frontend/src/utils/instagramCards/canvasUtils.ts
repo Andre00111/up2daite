@@ -65,6 +65,42 @@ export function wrapText(
   return ly;
 }
 
+export function wrapTextClamped(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  maxWidth: number,
+  lineHeight: number,
+  maxLines: number,
+): void {
+  const words = text.split(" ");
+  let line = "";
+  let ly = y;
+  let lineCount = 0;
+  for (const word of words) {
+    const test = line + word + " ";
+    if (ctx.measureText(test).width > maxWidth && line) {
+      lineCount++;
+      if (lineCount >= maxLines) {
+        // Letzte Zeile: Text mit "…" kürzen
+        let truncated = line.trim();
+        while (truncated.length > 0 && ctx.measureText(truncated + "…").width > maxWidth) {
+          truncated = truncated.slice(0, -1);
+        }
+        ctx.fillText(truncated + "…", x, ly);
+        return;
+      }
+      ctx.fillText(line.trim(), x, ly);
+      line = word + " ";
+      ly += lineHeight;
+    } else {
+      line = test;
+    }
+  }
+  ctx.fillText(line.trim(), x, ly);
+}
+
 export function drawBackground(ctx: CanvasRenderingContext2D) {
   ctx.fillStyle = "#0a1628";
   roundRect(ctx, 0, 0, CARD_W, CARD_H, 40);
