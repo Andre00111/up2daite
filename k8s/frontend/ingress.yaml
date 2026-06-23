@@ -21,7 +21,7 @@ metadata:
   annotations:
     # cert-manager: automatisch Let's Encrypt Zertifikat beantragen
     # → Erst "letsencrypt-staging" zum Testen, dann auf "letsencrypt-prod" umschalten
-    cert-manager.io/cluster-issuer: "letsencrypt-staging"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
     # HTTP → HTTPS Redirect (Traefik)
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.middlewares: default-redirect-https@kubernetescrd

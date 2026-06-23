@@ -62,7 +62,8 @@
       "Bash(curl -s http://31.70.75.157)",
       "Bash(curl -s http://31.70.75.157/api/editions)",
       "Bash(curl -sv http://31.70.75.157/api/editions)",
-      "Bash(curl -s http://31.70.75.157/api/ai-jobs)"
+      "Bash(curl -s http://31.70.75.157/api/ai-jobs)",
+      "Bash(open \"/Users/andre.butkevich/Desktop/Projects/AI-news-app/docs/architecture-https.pdf\")"
     ],
     "additionalDirectories": [
       "/Users/andre.butkevich/Desktop/Projects/AI-news-app/frontend/src/utils"
