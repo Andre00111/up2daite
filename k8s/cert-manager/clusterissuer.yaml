@@ -1,0 +1,49 @@
+# ★ CLUSTERISSUER — Verbindung zu Let's Encrypt
+#
+# cert-manager braucht einen "Issuer", der sagt:
+# → Wo kommen die Zertifikate her? (Let's Encrypt)
+# → Wie beweisen wir Domain-Besitz? (HTTP-01 Challenge über Traefik)
+#
+# ClusterIssuer (statt Issuer) gilt clusterweit — nicht nur in einem Namespace.
+# So können alle Ingress-Ressourcen in jedem Namespace diesen Issuer nutzen.
+#
+# HTTP-01 Challenge-Ablauf:
+#   1. cert-manager beantragt Zertifikat bei Let's Encrypt
+#   2. Let's Encrypt gibt einen Token zurück
+#   3. cert-manager erstellt temporär einen Pod + Ingress, der den Token served
+#   4. Let's Encrypt ruft http://up2daite.com/.well-known/acme-challenge/<token> ab
+#   5. Wenn der Token stimmt → Zertifikat wird ausgestellt
+#   6. cert-manager speichert das Zertifikat als Kubernetes Secret
+
+# ── Staging (zum Testen, kein Rate-Limit) ──────────────────────
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: andre.butkevich@adesso.de
+    privateKeySecretRef:
+      name: letsencrypt-staging-key
+    solvers:
+      - http01:
+          ingress:
+            ingressClassName: traefik
+
+---
+# ── Production (echte Zertifikate, Rate-Limit beachten!) ──────
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: andre.butkevich@adesso.de
+    privateKeySecretRef:
+      name: letsencrypt-prod-key
+    solvers:
+      - http01:
+          ingress:
+            ingressClassName: traefik

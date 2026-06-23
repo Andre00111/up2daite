@@ -1,13 +1,14 @@
 # ★ INGRESS — Eingangstor von außen in den Cluster
 #
 # Services sind nur intern erreichbar.
-# Ein Ingress macht einen Service von außen erreichbar — per Domain + HTTP.
+# Ein Ingress macht einen Service von außen erreichbar — per Domain + HTTPS.
 #
 # Ablauf einer Anfrage:
-#   Browser → up2daite.local → Ingress → Service "frontend" → Pod
+#   Browser → https://up2daite.com → Traefik (TLS) → Service "frontend" → Pod
 #
-# Voraussetzung: ein Ingress-Controller muss im Cluster laufen.
-# Für minikube: minikube addons enable ingress
+# TLS-Zertifikate werden automatisch von cert-manager geholt (Let's Encrypt).
+# cert-manager erkennt die Annotation "cert-manager.io/cluster-issuer" und
+# beantragt + erneuert Zertifikate vollautomatisch.
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -18,14 +19,36 @@ metadata:
     app.kubernetes.io/name: frontend
     app.kubernetes.io/part-of: up2daite
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    # cert-manager: automatisch Let's Encrypt Zertifikat beantragen
+    # → Erst "letsencrypt-staging" zum Testen, dann auf "letsencrypt-prod" umschalten
+    cert-manager.io/cluster-issuer: "letsencrypt-staging"
+    # HTTP → HTTPS Redirect (Traefik)
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.middlewares: default-redirect-https@kubernetescrd
 
 spec:
-  ingressClassName: traefik  # K3s verwendet Traefik als Standard-Ingress-Controller
+  ingressClassName: traefik
+
+  tls:
+    - hosts:
+        - up2daite.com
+        - www.up2daite.com
+      secretName: up2daite-tls    # cert-manager speichert das Zertifikat hier
 
   rules:
-    # ★ Kein Host = akzeptiert alle Anfragen (auch per IP)
-    - http:
+    - host: up2daite.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
+
+    - host: www.up2daite.com
+      http:
         paths:
           - path: /
             pathType: Prefix

@@ -56,7 +56,13 @@
       "Bash(open /Users/andre.butkevich/Desktop/Projects/AI-news-app/frontend/canvas-test.html)",
       "WebSearch",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:48080/api/editions)",
-      "Bash(docker compose *)"
+      "Bash(docker compose *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://31.70.75.157)",
+      "Bash(curl -sI http://31.70.75.157)",
+      "Bash(curl -s http://31.70.75.157)",
+      "Bash(curl -s http://31.70.75.157/api/editions)",
+      "Bash(curl -sv http://31.70.75.157/api/editions)",
+      "Bash(curl -s http://31.70.75.157/api/ai-jobs)"
     ],
     "additionalDirectories": [
       "/Users/andre.butkevich/Desktop/Projects/AI-news-app/frontend/src/utils"

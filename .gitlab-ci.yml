@@ -241,6 +241,19 @@ scan-backend:
 # Wendet ALLE K8s-Manifeste an (Deployments, Services, Ingress etc.)
 # und setzt dann das frische Image-Tag. Dadurch werden auch Änderungen
 # an Ingress, Services oder anderen K8s-Ressourcen automatisch deployed.
+deploy-infra:
+  stage: deploy
+  image: dtzar/helm-kubectl:latest
+  before_script:
+    - mkdir -p ~/.kube
+    - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
+  script:
+    - kubectl apply -f k8s/cert-manager/
+  rules:
+    - if: $CI_COMMIT_BRANCH == "ai-news-app"
+      changes:
+        - k8s/cert-manager/**/*
+
 deploy-frontend:
   stage: deploy
   image: dtzar/helm-kubectl:latest
@@ -256,7 +269,7 @@ deploy-frontend:
     - kubectl rollout status deployment/frontend -n $KUBE_NAMESPACE --timeout=120s
   environment:
     name: staging
-    url: http://31.70.75.157
+    url: https://up2daite.com
   rules:
     - if: $CI_COMMIT_BRANCH == "ai-news-app"
 
@@ -272,6 +285,6 @@ deploy-backend:
     - kubectl rollout status deployment/backend -n $KUBE_NAMESPACE --timeout=180s
   environment:
     name: staging
-    url: http://31.70.75.157
+    url: https://up2daite.com
   rules:
     - if: $CI_COMMIT_BRANCH == "ai-news-app"

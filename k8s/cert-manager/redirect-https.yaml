@@ -1,0 +1,17 @@
+# ★ MIDDLEWARE — HTTP → HTTPS Redirect
+#
+# Wenn jemand http://up2daite.com aufruft, wird er automatisch
+# auf https://up2daite.com weitergeleitet (301 Permanent Redirect).
+#
+# Diese Middleware wird vom Ingress über die Annotation referenziert:
+#   traefik.ingress.kubernetes.io/router.middlewares: default-redirect-https@kubernetescrd
+
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-https
+  namespace: default
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
