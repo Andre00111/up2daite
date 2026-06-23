@@ -7,20 +7,17 @@ import { theme } from './theme'
 import { LayoutProvider } from './context/LayoutContext'
 import { AuthProvider } from './context/AuthContext'
 import App from './App'
-import PinLock from './components/PinLock'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <PinLock>
-          <AuthProvider>
-            <LayoutProvider>
-              <App />
-            </LayoutProvider>
-          </AuthProvider>
-        </PinLock>
+        <AuthProvider>
+          <LayoutProvider>
+            <App />
+          </LayoutProvider>
+        </AuthProvider>
       </ThemeProvider>
     </BrowserRouter>
   </React.StrictMode>

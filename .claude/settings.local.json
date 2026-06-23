@@ -63,7 +63,8 @@
       "Bash(curl -s http://31.70.75.157/api/editions)",
       "Bash(curl -sv http://31.70.75.157/api/editions)",
       "Bash(curl -s http://31.70.75.157/api/ai-jobs)",
-      "Bash(open \"/Users/andre.butkevich/Desktop/Projects/AI-news-app/docs/architecture-https.pdf\")"
+      "Bash(open \"/Users/andre.butkevich/Desktop/Projects/AI-news-app/docs/architecture-https.pdf\")",
+      "Bash(grep -E \"\\\\.\\(java|ts|tsx|js|jsx\\)$\")"
     ],
     "additionalDirectories": [
       "/Users/andre.butkevich/Desktop/Projects/AI-news-app/frontend/src/utils"
