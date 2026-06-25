@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 import {
   Box, Typography, Button, Chip, Alert, Snackbar, Divider,
   Dialog, DialogTitle, DialogContent, DialogActions,
@@ -10,8 +10,8 @@ import { useStories } from '../../hooks/useStories'
 import EditionHeader from '../../components/features/EditionHeader'
 import StoryCard from '../../components/features/StoryCard'
 import { publishEdition, unpublishEdition, deleteEdition } from '../../api/editions'
-import InstagramPreviewDialog from '../../components/features/InstagramPreviewDialog'
-import { drawEditionCover } from '../../utils/instagramCards/drawEditionCover'
+import InstagramExportDialog from '../../components/features/InstagramExportDialog'
+import { topics } from '../../data/topics'
 
 export default function EditionPreviewPage() {
   const { id } = useParams<{ id: string }>()
@@ -37,10 +37,6 @@ export default function EditionPreviewPage() {
   }
 
   const stories = getStoriesForEdition(edition.storyIds)
-
-  const instaDrawFn = useCallback((ctx: CanvasRenderingContext2D) => {
-    drawEditionCover(ctx, edition, stories)
-  }, [edition, stories])
 
   async function handlePublish() {
     if (!id) return
@@ -155,12 +151,12 @@ export default function EditionPreviewPage() {
         {snack ? <Alert severity={snack.severity}>{snack.msg}</Alert> : undefined}
       </Snackbar>
 
-      <InstagramPreviewDialog
+      <InstagramExportDialog
         open={instaOpen}
         onClose={() => setInstaOpen(false)}
-        title="Edition Cover"
-        filename={`edition-${edition.number}`}
-        drawFn={instaDrawFn}
+        edition={edition}
+        stories={stories}
+        topics={topics}
       />
     </Box>
   )
