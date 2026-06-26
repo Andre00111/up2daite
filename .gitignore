@@ -7,3 +7,5 @@ dist/
 build/
 target/
 *.tsbuildinfo
+output/
+scripts/fonts/
