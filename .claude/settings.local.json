@@ -74,7 +74,15 @@
       "Bash(npm config *)",
       "Bash(npm init *)",
       "Bash(node render-test.js)",
-      "Bash(npx puppeteer *)"
+      "Bash(npx puppeteer *)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(echo \"EXIT: $?\")",
+      "Read(//tmp/**)",
+      "Bash(echo \"started, pid $!\")",
+      "Bash(docker volume *)",
+      "Bash(scripts/start-server.sh --project-dir /Users/andre.butkevich/Desktop/Projects/AI-news-app)",
+      "Skill(run)",
+      "Skill(run:*)"
     ],
     "additionalDirectories": [
       "/Users/andre.butkevich/Desktop/Projects/AI-news-app/frontend/src/utils"
