@@ -11,9 +11,9 @@ export interface JobRisk {
 }
 
 function getRiskLevel(score: number): { label: string; color: 'error' | 'warning' | 'success'; bgColor: string } {
-  if (score >= 70) return { label: 'Kritisch', color: 'error', bgColor: '#fef2f2' }
-  if (score >= 40) return { label: 'Mittel', color: 'warning', bgColor: '#fffbeb' }
-  return { label: 'Niedrig', color: 'success', bgColor: '#f0fdf4' }
+  if (score >= 70) return { label: 'Kritisch', color: 'error', bgColor: 'rgba(239, 68, 68, 0.12)' }
+  if (score >= 40) return { label: 'Mittel', color: 'warning', bgColor: 'rgba(245, 158, 11, 0.12)' }
+  return { label: 'Niedrig', color: 'success', bgColor: 'rgba(34, 197, 94, 0.12)' }
 }
 
 function getTrendIcon(trend: JobRisk['trend']): string {
@@ -53,7 +53,8 @@ export default function JobRiskCard({ job }: Props) {
           bgcolor: risk.bgColor,
           px: 3,
           py: 2,
-          borderBottom: '1px solid #e2e8f0',
+          borderBottom: '1px solid',
+          borderColor: 'divider',
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
