@@ -5,6 +5,7 @@ import { useStories } from '../../hooks/useStories'
 import StoryCard from '../../components/features/StoryCard'
 import NewsletterSignupForm from '../../components/features/NewsletterSignupForm'
 import DarkSection from '../../components/ui/DarkSection'
+import SignalScoreBadge from '../../components/ui/SignalScoreBadge'
 
 export default function LandingPage() {
   const navigate = useNavigate()
@@ -23,25 +24,35 @@ export default function LandingPage() {
         <Container maxWidth="md">
           <Typography
             variant="overline"
-            sx={{ color: 'brand.main', fontWeight: 700, letterSpacing: '0.08em' }}
+            sx={{ color: 'secondary.main', fontWeight: 700, letterSpacing: '0.08em' }}
           >
-            KI-NEWS · 3× PRO WOCHE
+            DIESE WOCHE · KI-NEWS 3× PRO WOCHE
           </Typography>
           <Typography
             variant="h2"
             component="h1"
             gutterBottom
-            sx={{ fontSize: { xs: '2.25rem', md: '3.25rem' }, mt: 1 }}
+            sx={{ fontSize: { xs: '2.25rem', md: '3.25rem' }, mt: 1, fontWeight: 900 }}
           >
             AI-Signal. Kein Rauschen.
           </Typography>
           <Typography
             variant="h6"
-            sx={{ mb: 4, color: 'text.secondary', fontWeight: 400, maxWidth: 560 }}
+            sx={{ mb: 3, color: 'text.secondary', fontWeight: 400, maxWidth: 560 }}
           >
             Kuratierte AI-News mit redaktionellem Urteil – 3× pro Woche.
             Wir erklären, warum etwas relevant ist. Und warum nicht.
           </Typography>
+          <Box
+            sx={{
+              height: 2,
+              width: '100%',
+              maxWidth: 560,
+              mb: 4,
+              background:
+                'linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, transparent 100%)',
+            }}
+          />
           <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
             <Button
               href="mailto:hello@up2daite.com"
@@ -112,40 +123,26 @@ export default function LandingPage() {
 
       <Divider />
 
-      {/* Signal-Score Teaser */}
-      <Box sx={{ bgcolor: 'background.paper', py: 8 }}>
+      {/* Signal-Score Teaser — dunkles Band mit Live-Bars */}
+      <DarkSection py={{ xs: 6, md: 8 }} sx={{ bgcolor: 'background.paper' }}>
         <Container maxWidth="md" sx={{ textAlign: 'center' }}>
-          <Typography variant="overline" color="text.secondary">
+          <Typography variant="overline" sx={{ color: 'secondary.main' }}>
             Unser Ansatz
           </Typography>
           <Typography variant="h5" gutterBottom sx={{ mt: 0.5 }}>
             Jede Meldung wird manuell bewertet
           </Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 4, maxWidth: 500, mx: 'auto' }}>
-            Wir beurteilen drei Dimensionen: <strong>Impact</strong> (wie relevant ist das?),{' '}
-            <strong>Hype-Level</strong> (wie viel davon ist PR?) und{' '}
-            <strong>Quellenqualität</strong> (wie verlässlich ist die Quelle?).
-            Der Score ist immer erklärt – keine Black Box.
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 4, maxWidth: 520, mx: 'auto' }}>
+            Drei Dimensionen: <strong>Impact</strong> (wie relevant?),{' '}
+            <strong>Hype-Level</strong> (wie viel PR?) und{' '}
+            <strong>Quellenqualität</strong> (wie verlässlich?). Der Score ist immer
+            erklärt – keine Black Box.
           </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 4, flexWrap: 'wrap' }}>
-            {[
-              { icon: '🔵', label: 'Primärquelle', desc: 'Direkter Output' },
-              { icon: '🟡', label: 'Analyse', desc: 'Einordnung durch Dritte' },
-              { icon: '🔴', label: 'PR-getrieben', desc: 'Pressemitteilung / spekulativ' },
-            ].map((item) => (
-              <Box key={item.label} sx={{ textAlign: 'center' }}>
-                <Typography fontSize="1.8rem">{item.icon}</Typography>
-                <Typography variant="body2" fontWeight={600}>
-                  {item.label}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {item.desc}
-                </Typography>
-              </Box>
-            ))}
+          <Box sx={{ maxWidth: 360, mx: 'auto', textAlign: 'left' }}>
+            <SignalScoreBadge score={{ impact: 5, hypeLevel: 2, sourceQuality: 4 }} />
           </Box>
         </Container>
-      </Box>
+      </DarkSection>
 
       {/* Newsletter-Anmeldung */}
       <Box sx={{ py: 8 }}>
