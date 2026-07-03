@@ -2,16 +2,15 @@ import { createTheme } from '@mui/material/styles'
 
 // --- Marken-Tokens (Single Source of Truth = Instagram-Cards, canvasUtils.ts) ---
 export const brandColors = {
-  indigo: '#6366f1', // flaches Indigo – der 90%-Akzent
+  indigo: '#6366f1',
   violet: '#8b5cf6',
-  gradient: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', // nur Hero / Primär-CTA
-  // Dunkle Flächen-Rollen (exakt die Instagram-Werte)
+  gradient: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
   inverseBg: '#0a1628',
   inverseSurface: '#0f1f3d',
   inverseBorder: '#1a2744',
+  inverseBorderHover: '#2d3f6b',
 }
 
-// MUI-Module-Augmentation: Custom-Palette-Keys typsicher machen
 declare module '@mui/material/styles' {
   interface Palette {
     brand: { main: string; gradient: string }
@@ -23,29 +22,86 @@ declare module '@mui/material/styles' {
   }
 }
 
-export const theme = createTheme({
+const sharedTypography = {
+  fontFamily: '"Inter", "Helvetica", "Arial", sans-serif',
+  h1: { fontWeight: 900, letterSpacing: '-0.02em' },
+  h2: { fontWeight: 900, letterSpacing: '-0.02em' },
+  h3: { fontWeight: 800, letterSpacing: '-0.01em' },
+  h4: { fontWeight: 800 },
+  h5: { fontWeight: 700 },
+  h6: { fontWeight: 700 },
+  body1: { lineHeight: 1.7 },
+  body2: { lineHeight: 1.6 },
+} as const
+
+// ─── ÖFFENTLICHES THEME (dunkel, Instagram-Card-Optik) ───────────────────────
+export const publicTheme = createTheme({
   palette: {
-    mode: 'light',
-    primary: {
-      main: '#0f172a', // slate-900
-      contrastText: '#ffffff',
-    },
-    secondary: {
-      main: '#3b82f6', // blue-500
-      contrastText: '#ffffff',
-    },
+    mode: 'dark',
+    primary: { main: brandColors.indigo, contrastText: '#ffffff' },
+    secondary: { main: brandColors.violet, contrastText: '#ffffff' },
     background: {
-      default: '#f8fafc',
-      paper: '#ffffff',
+      default: brandColors.inverseBg,
+      paper: brandColors.inverseSurface,
     },
     text: {
-      primary: '#0f172a',
-      secondary: '#475569', // slate-600 – WCAG-AA auf Weiß (vorher #64748b)
+      primary: '#f1f5f9',
+      secondary: '#a8b3c7', // leicht heller als #94a3b8 → WCAG-AA für Body auf Navy
     },
-    brand: {
-      main: brandColors.indigo,
-      gradient: brandColors.gradient,
+    divider: brandColors.inverseBorder,
+    brand: { main: brandColors.indigo, gradient: brandColors.gradient },
+    inverse: {
+      bg: brandColors.inverseBg,
+      surface: brandColors.inverseSurface,
+      border: brandColors.inverseBorder,
     },
+  },
+  typography: sharedTypography,
+  shape: { borderRadius: 16 },
+  components: {
+    MuiChip: {
+      styleOverrides: { root: { borderRadius: 8 } },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: { textTransform: 'none', fontWeight: 600, borderRadius: 12 },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          backgroundColor: brandColors.inverseSurface,
+          border: `1px solid ${brandColors.inverseBorder}`,
+          boxShadow: 'none',
+          backgroundImage: 'none',
+        },
+      },
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: brandColors.inverseBg,
+          color: '#f1f5f9',
+          borderBottom: `1px solid ${brandColors.inverseBorder}`,
+          backgroundImage: 'none',
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: { root: { backgroundImage: 'none' } },
+    },
+  },
+})
+
+// ─── ADMIN-THEME (unverändert hell) ──────────────────────────────────────────
+export const adminTheme = createTheme({
+  palette: {
+    mode: 'light',
+    primary: { main: '#0f172a', contrastText: '#ffffff' },
+    secondary: { main: '#3b82f6', contrastText: '#ffffff' },
+    background: { default: '#f8fafc', paper: '#ffffff' },
+    text: { primary: '#0f172a', secondary: '#475569' },
+    brand: { main: brandColors.indigo, gradient: brandColors.gradient },
     inverse: {
       bg: brandColors.inverseBg,
       surface: brandColors.inverseSurface,
@@ -63,15 +119,9 @@ export const theme = createTheme({
     body1: { lineHeight: 1.7 },
     body2: { lineHeight: 1.6 },
   },
-  shape: {
-    borderRadius: 16,
-  },
+  shape: { borderRadius: 16 },
   components: {
-    MuiChip: {
-      styleOverrides: {
-        root: { borderRadius: 8 },
-      },
-    },
+    MuiChip: { styleOverrides: { root: { borderRadius: 8 } } },
     MuiButton: {
       styleOverrides: {
         root: { textTransform: 'none', fontWeight: 600, borderRadius: 12 },
@@ -96,3 +146,6 @@ export const theme = createTheme({
     },
   },
 })
+
+// Rückwärtskompatibler Alias (Altimporte von `theme`)
+export const theme = publicTheme
