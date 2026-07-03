@@ -4,6 +4,7 @@ import { useEditions } from '../../hooks/useEditions'
 import { useStories } from '../../hooks/useStories'
 import StoryCard from '../../components/features/StoryCard'
 import NewsletterSignupForm from '../../components/features/NewsletterSignupForm'
+import DarkSection from '../../components/ui/DarkSection'
 
 export default function LandingPage() {
   const navigate = useNavigate()
@@ -17,26 +18,26 @@ export default function LandingPage() {
 
   return (
     <Box>
-      {/* Hero - auskommentiert
-      <Box
-        sx={{
-          bgcolor: 'primary.main',
-          color: 'primary.contrastText',
-          py: { xs: 8, md: 12 },
-        }}
-      >
+      {/* Hero – dunkle Marken-Fläche (Instagram-Optik) */}
+      <DarkSection glow>
         <Container maxWidth="md">
+          <Typography
+            variant="overline"
+            sx={{ color: 'brand.main', fontWeight: 700, letterSpacing: '0.08em' }}
+          >
+            KI-NEWS · 3× PRO WOCHE
+          </Typography>
           <Typography
             variant="h2"
             component="h1"
             gutterBottom
-            sx={{ fontSize: { xs: '2rem', md: '3rem' } }}
+            sx={{ fontSize: { xs: '2.25rem', md: '3.25rem' }, mt: 1 }}
           >
             AI-Signal. Kein Rauschen.
           </Typography>
           <Typography
             variant="h6"
-            sx={{ mb: 4, color: 'rgba(255,255,255,0.8)', fontWeight: 400, maxWidth: 560 }}
+            sx={{ mb: 4, color: 'text.secondary', fontWeight: 400, maxWidth: 560 }}
           >
             Kuratierte AI-News mit redaktionellem Urteil – 3× pro Woche.
             Wir erklären, warum etwas relevant ist. Und warum nicht.
@@ -45,9 +46,16 @@ export default function LandingPage() {
             <Button
               href="mailto:hello@up2daite.com"
               variant="contained"
-              color="secondary"
               size="large"
               disableElevation
+              sx={{
+                background: (t) => t.palette.brand.gradient,
+                px: 3,
+                '&:hover': {
+                  background: (t) => t.palette.brand.gradient,
+                  filter: 'brightness(1.08)',
+                },
+              }}
             >
               Newsletter abonnieren
             </Button>
@@ -55,14 +63,14 @@ export default function LandingPage() {
               onClick={() => navigate('/archiv')}
               variant="outlined"
               size="large"
-              sx={{ color: 'white', borderColor: 'rgba(255,255,255,0.4)' }}
+              color="inherit"
+              sx={{ borderColor: 'divider' }}
             >
               Archiv ansehen
             </Button>
           </Box>
         </Container>
-      </Box>
-      */}
+      </DarkSection>
 
       {/* Letzte Ausgabe */}
       {latestEdition && (

@@ -78,7 +78,7 @@ export default function Sidebar() {
             width: 40,
             height: 40,
             borderRadius: 2,
-            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+            background: (t) => t.palette.brand.gradient,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -92,7 +92,7 @@ export default function Sidebar() {
           variant="h6"
           sx={{
             fontWeight: 700,
-            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+            background: (t) => t.palette.brand.gradient,
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
           }}

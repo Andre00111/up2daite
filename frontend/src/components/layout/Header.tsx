@@ -99,7 +99,7 @@ export default function Header() {
             color: 'text.primary',
             textDecoration: 'none',
             letterSpacing: '-0.03em',
-            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+            background: (t) => t.palette.brand.gradient,
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
           }}
@@ -140,7 +140,7 @@ export default function Header() {
               size="small"
               disableElevation
               sx={{
-                background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                background: (t) => t.palette.brand.gradient,
                 borderRadius: 2,
                 textTransform: 'none',
                 fontWeight: 600,
@@ -240,7 +240,7 @@ export default function Header() {
             variant="h6"
             sx={{
               fontWeight: 700,
-              background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+              background: (t) => t.palette.brand.gradient,
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
             }}
@@ -276,7 +276,7 @@ export default function Header() {
             fullWidth
             disableElevation
             sx={{
-              background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+              background: (t) => t.palette.brand.gradient,
               borderRadius: 2,
               textTransform: 'none',
               fontWeight: 600,
