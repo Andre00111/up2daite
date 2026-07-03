@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>up2daite Card Renderer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  body { margin: 0; background: #111; color: #fff; font-family: Inter, sans-serif; }
+  .controls { padding: 20px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .controls textarea { width: 100%; height: 200px; background: #1a1a2e; color: #e0e0e0; border: 1px solid #333; border-radius: 8px; padding: 12px; font-family: monospace; font-size: 13px; }
+  .controls button { padding: 10px 20px; background: #6366f1; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+  .controls button:hover { background: #4f46e5; }
+  #output { padding: 20px; display: flex; flex-wrap: wrap; gap: 20px; }
+  #output canvas { border: 1px solid #333; border-radius: 8px; max-width: 400px; height: auto; }
+  .download-btn { display: block; margin-top: 8px; text-align: center; color: #8b5cf6; text-decoration: none; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <textarea id="jsonInput" placeholder='JSON-Daten hier einfügen. Format siehe unten.'>{
+  "type": "edition",
+  "edition": {"id":"1","slug":"kw26","number":26,"title":"KI-News der Woche","publishedAt":"2026-06-25","status":"draft","storyIds":[]},
+  "stories": []
+}</textarea>
+  <button onclick="render()">Rendern</button>
+  <button onclick="downloadAll()">Alle herunterladen</button>
+</div>
+
+<div id="output"></div>
+
+<script>
+const CARD_W = 1080, CARD_H = 1350, PAD = 64;
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function drawGlowOrb(ctx, x, y, radius, r, g, b, opacity) {
+  const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
+  grad.addColorStop(0, `rgba(${r},${g},${b},${opacity})`);
+  grad.addColorStop(1, 'transparent');
+  ctx.fillStyle = grad;
+  ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = text.split(' ');
+  let line = '', ly = y;
+  for (const word of words) {
+    const test = line + word + ' ';
+    if (ctx.measureText(test).width > maxWidth && line) {
+      ctx.fillText(line.trim(), x, ly);
+      line = word + ' ';
+      ly += lineHeight;
+    } else {
+      line = test;
+    }
+  }
+  ctx.fillText(line.trim(), x, ly);
+  return ly;
+}
+
+function wrapTextClamped(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
+  const words = text.split(' ');
+  let line = '', ly = y, lineCount = 0;
+  for (const word of words) {
+    const test = line + word + ' ';
+    if (ctx.measureText(test).width > maxWidth && line) {
+      lineCount++;
+      if (lineCount >= maxLines) {
+        let truncated = line.trim();
+        while (truncated.length > 0 && ctx.measureText(truncated + '…').width > maxWidth)
+          truncated = truncated.slice(0, -1);
+        ctx.fillText(truncated + '…', x, ly);
+        return;
+      }
+      ctx.fillText(line.trim(), x, ly);
+      line = word + ' ';
+      ly += lineHeight;
+    } else {
+      line = test;
+    }
+  }
+  ctx.fillText(line.trim(), x, ly);
+}
+
+function drawBackground(ctx) {
+  ctx.fillStyle = '#0a1628';
+  roundRect(ctx, 0, 0, CARD_W, CARD_H, 40);
+  ctx.fill();
+}
+
+function drawBorder(ctx, color) {
+  roundRect(ctx, 0, 0, CARD_W, CARD_H, 40);
+  ctx.strokeStyle = color || '#1a2744';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
+function drawHeader(ctx) {
+  ctx.font = '800 28px Inter';
+  ctx.fillStyle = '#6366f1';
+  ctx.textBaseline = 'top';
+  ctx.textAlign = 'left';
+  ctx.fillText('UP2DAITE', PAD, PAD);
+}
+
+function drawFooter(ctx, rightText) {
+  ctx.font = '500 22px Inter';
+  ctx.fillStyle = '#334155';
+  ctx.textBaseline = 'bottom';
+  ctx.textAlign = 'left';
+  ctx.fillText('up2daite.com', PAD, CARD_H - PAD);
+  ctx.textAlign = 'right';
+  ctx.fillText(rightText, CARD_W - PAD, CARD_H - PAD);
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+}
+
+function getISOWeek(dateStr) {
+  const d = new Date(dateStr);
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7));
+  const week1 = new Date(d.getFullYear(), 0, 4);
+  return 1 + Math.round(((d.getTime() - week1.getTime()) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7);
+}
+
+// ── Edition Cover ──
+const STORY_COLORS = [['#22c55e','#16a34a'],['#3b82f6','#1d4ed8'],['#f59e0b','#d97706'],['#8b5cf6','#6366f1'],['#ef4444','#dc2626'],['#06b6d4','#0891b2']];
+const STORY_EMOJIS = ['📰','💬','⚖️','🤖','💼','🔬'];
+
+function drawEditionCover(ctx, edition, stories) {
+  const W = CARD_W, H = CARD_H;
+  drawBackground(ctx);
+  drawGlowOrb(ctx, 200, H - 100, 500, 139, 92, 246, 0.06);
+  drawGlowOrb(ctx, W - 100, 100, 350, 99, 102, 241, 0.08);
+  drawBorder(ctx);
+  drawHeader(ctx);
+
+  const ausgabeText = `Issue #${edition.number}`;
+  ctx.font = '600 22px Inter';
+  const pillTextW = ctx.measureText(ausgabeText).width;
+  const pillW = pillTextW + 48;
+  roundRect(ctx, W - PAD - pillW, PAD - 6, pillW, 48, 24);
+  ctx.fillStyle = '#1a2744'; ctx.fill();
+  ctx.strokeStyle = '#2d3f6b'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.fillStyle = '#94a3b8'; ctx.textAlign = 'center';
+  ctx.fillText(ausgabeText, W - PAD - pillW / 2, PAD + 7);
+  ctx.textAlign = 'left';
+
+  ctx.font = '700 22px Inter'; ctx.fillStyle = '#8b5cf6';
+  ctx.fillText('THIS WEEK', PAD, 180);
+  ctx.font = '900 62px Inter'; ctx.fillStyle = 'white';
+  wrapText(ctx, edition.title, PAD, 220, W - PAD * 2, 76);
+
+  const lineGrad = ctx.createLinearGradient(PAD, 0, W - PAD, 0);
+  lineGrad.addColorStop(0, '#6366f1'); lineGrad.addColorStop(0.5, '#8b5cf6'); lineGrad.addColorStop(1, 'transparent');
+  ctx.fillStyle = lineGrad; ctx.fillRect(PAD, 340, W - PAD * 2, 2);
+
+  const visibleStories = stories.slice(0, 5);
+  const N = visibleStories.length || 1;
+  const storiesStartY = 380, ctaY = H - 180, GAP = 14;
+  const cardH = Math.min(148, Math.max(100, Math.floor((ctaY - storiesStartY - 16 - GAP * (N - 1)) / N)));
+  const stride = cardH + GAP;
+  const iconSz = Math.min(80, cardH - 24);
+  const iconPad = Math.round((cardH - iconSz) / 2);
+  const emojiSz = Math.round(iconSz * 0.5);
+  const titleFontSz = cardH >= 130 ? 27 : 22;
+  const titleLineH = titleFontSz + 9;
+
+  visibleStories.forEach((story, i) => {
+    const sy = storiesStartY + i * stride;
+    const [c1, c2] = STORY_COLORS[i % STORY_COLORS.length];
+    roundRect(ctx, PAD, sy, W - PAD * 2, cardH, 18);
+    ctx.fillStyle = '#0f1f3d'; ctx.fill();
+    const iconX = PAD + 20, iconY = sy + iconPad;
+    const iconGrad = ctx.createLinearGradient(iconX, iconY, iconX + iconSz, iconY + iconSz);
+    iconGrad.addColorStop(0, c1); iconGrad.addColorStop(1, c2);
+    roundRect(ctx, iconX, iconY, iconSz, iconSz, 14);
+    ctx.fillStyle = iconGrad; ctx.fill();
+    ctx.font = `${emojiSz}px serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(STORY_EMOJIS[i % STORY_EMOJIS.length], iconX + iconSz / 2, iconY + iconSz / 2);
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    const titleX = PAD + 20 + iconSz + 20;
+    const titleMaxW = W - PAD * 2 - iconSz - 60;
+    const titleY = sy + Math.round((cardH - titleLineH * 2) / 2);
+    ctx.font = `700 ${titleFontSz}px Inter`; ctx.fillStyle = '#e2e8f0';
+    wrapTextClamped(ctx, story.title, titleX, titleY, titleMaxW, titleLineH, 2);
+  });
+
+  ctx.beginPath(); ctx.moveTo(PAD, ctaY); ctx.lineTo(W - PAD, ctaY);
+  ctx.strokeStyle = '#1a2744'; ctx.lineWidth = 1; ctx.stroke();
+  ctx.font = '500 22px Inter'; ctx.fillStyle = '#334155'; ctx.textBaseline = 'top';
+  ctx.fillText('up2daite.com', PAD, ctaY + 30);
+
+  const btnW = 260, btnH = 56, btnX = W - PAD - btnW, btnY = ctaY + 16;
+  const btnGrad = ctx.createLinearGradient(btnX, 0, btnX + btnW, 0);
+  btnGrad.addColorStop(0, '#6366f1'); btnGrad.addColorStop(1, '#8b5cf6');
+  roundRect(ctx, btnX, btnY, btnW, btnH, 28);
+  ctx.fillStyle = btnGrad; ctx.fill();
+  ctx.font = '700 24px Inter'; ctx.fillStyle = 'white'; ctx.textAlign = 'center';
+  ctx.fillText('Read now →', btnX + btnW / 2, btnY + 16);
+  ctx.textAlign = 'left';
+
+  ctx.font = '500 22px Inter'; ctx.fillStyle = '#334155'; ctx.textBaseline = 'bottom'; ctx.textAlign = 'left';
+  ctx.fillText('up2daite.com', PAD, H - PAD);
+  const kw = getISOWeek(edition.publishedAt);
+  ctx.textAlign = 'right';
+  ctx.fillText(`${visibleStories.length} Stories · Week ${kw}`, W - PAD, H - PAD);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+}
+
+// ── Story Card ──
+const TOPICS = {
+  'ai-research': 'AI Research', 'ai-products': 'AI Products',
+  'ai-policy': 'AI Policy', 'ai-business': 'AI Business', 'ai-tools': 'AI Tools'
+};
+
+function drawStoryCard(ctx, story) {
+  const W = CARD_W, H = CARD_H;
+  drawBackground(ctx);
+  drawGlowOrb(ctx, W - 60, -60, 400, 99, 102, 241, 0.12);
+  drawGlowOrb(ctx, 100, H, 350, 139, 92, 246, 0.06);
+  drawBorder(ctx);
+  drawHeader(ctx);
+
+  const pillGrad = ctx.createLinearGradient(W - 220, 0, W - 60, 0);
+  pillGrad.addColorStop(0, '#6366f1'); pillGrad.addColorStop(1, '#8b5cf6');
+  roundRect(ctx, W - PAD - 180, PAD - 4, 180, 44, 22);
+  ctx.fillStyle = pillGrad; ctx.fill();
+  ctx.font = '700 20px Inter'; ctx.fillStyle = 'white'; ctx.textAlign = 'center';
+  ctx.fillText('AI NEWS', W - PAD - 90, PAD + 9);
+  ctx.textAlign = 'left';
+
+  const topicLabel = (story.topics || []).map(t => TOPICS[t] || t).join(' · ').toUpperCase();
+  const tagY = 170;
+  ctx.font = '700 20px Inter';
+  const tagTextW = ctx.measureText(topicLabel).width;
+  const tagW = Math.max(tagTextW + 56, 200);
+  roundRect(ctx, PAD, tagY, tagW, 48, 10);
+  ctx.fillStyle = '#1a2744'; ctx.fill();
+  ctx.strokeStyle = '#2d3f6b'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.beginPath(); ctx.arc(PAD + 20, tagY + 24, 8, 0, Math.PI * 2);
+  ctx.fillStyle = '#8b5cf6'; ctx.fill();
+  ctx.font = '700 20px Inter'; ctx.fillStyle = '#8b5cf6';
+  ctx.fillText(topicLabel, PAD + 40, tagY + 14);
+
+  ctx.font = '800 52px Inter'; ctx.fillStyle = 'white'; ctx.textBaseline = 'top';
+  const titleLastY = wrapText(ctx, story.title, PAD, 260, W - PAD * 2, 66);
+
+  ctx.font = '400 28px Inter'; ctx.fillStyle = '#94a3b8';
+  wrapText(ctx, story.editorialComment, PAD, titleLastY + 80, W - PAD * 2, 42);
+
+  const ssY = 820, ssH = 340;
+  roundRect(ctx, PAD, ssY, W - PAD * 2, ssH, 24);
+  ctx.fillStyle = '#0f1f3d'; ctx.fill();
+  ctx.font = '700 18px Inter'; ctx.fillStyle = '#475569';
+  ctx.fillText('SIGNAL SCORE', PAD + 32, ssY + 28);
+
+  const bars = [
+    { label: 'Impact', value: story.signalScore.impact / 5, score: story.signalScore.impact.toFixed(1), color1: '#22c55e', color2: '#16a34a', scoreColor: '#22c55e' },
+    { label: 'Hype ↓', value: story.signalScore.hypeLevel / 5, score: story.signalScore.hypeLevel.toFixed(1), color1: '#22c55e', color2: '#16a34a', scoreColor: '#22c55e' },
+    { label: 'Source', value: story.signalScore.sourceQuality / 5, score: story.signalScore.sourceQuality.toFixed(1), color1: '#6366f1', color2: '#8b5cf6', scoreColor: '#6366f1' },
+  ];
+  bars.forEach((bar, i) => {
+    const by = ssY + 70 + i * 85, barX = PAD + 180, barW = W - PAD * 2 - 280;
+    ctx.font = '500 24px Inter'; ctx.fillStyle = '#64748b'; ctx.textBaseline = 'middle';
+    ctx.fillText(bar.label, PAD + 32, by + 14);
+    roundRect(ctx, barX, by, barW, 28, 14); ctx.fillStyle = '#1e293b'; ctx.fill();
+    const grad = ctx.createLinearGradient(barX, 0, barX + barW * bar.value, 0);
+    grad.addColorStop(0, bar.color1); grad.addColorStop(1, bar.color2);
+    roundRect(ctx, barX, by, barW * bar.value, 28, 14); ctx.fillStyle = grad; ctx.fill();
+    ctx.font = '700 28px Inter'; ctx.fillStyle = bar.scoreColor; ctx.textAlign = 'right';
+    ctx.fillText(bar.score, W - PAD - 32, by + 14);
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+  });
+
+  const pubDate = new Date(story.publishedAt);
+  const kw = getISOWeek(story.publishedAt);
+  drawFooter(ctx, `Week ${kw} · ${pubDate.getFullYear()}`);
+}
+
+// ── Model Card ──
+function drawModelCard(ctx, model) {
+  const W = CARD_W, H = CARD_H;
+  drawBackground(ctx);
+  drawGlowOrb(ctx, 100, 200, 400, 139, 92, 246, 0.08);
+  drawGlowOrb(ctx, W - 150, H - 200, 350, 16, 185, 129, 0.06);
+  drawBorder(ctx);
+  drawHeader(ctx);
+
+  const pillText = `✦ AI MODEL #${model.rank}`;
+  ctx.font = '700 22px Inter';
+  const pillTextW = ctx.measureText(pillText).width;
+  const pillW = pillTextW + 48;
+  roundRect(ctx, W - PAD - pillW, PAD - 6, pillW, 48, 24);
+  ctx.fillStyle = '#1a2744'; ctx.fill();
+  ctx.strokeStyle = '#2d3f6b'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.fillStyle = '#8b5cf6'; ctx.textAlign = 'center';
+  ctx.fillText(pillText, W - PAD - pillW / 2, PAD + 7);
+  ctx.textAlign = 'left';
+
+  const logoY = 180;
+  const gradMatch = (model.gradient || '').match(/#[0-9a-fA-F]{6}/g);
+  const [g1, g2] = gradMatch && gradMatch.length >= 2 ? [gradMatch[0], gradMatch[1]] : ['#8b5cf6', '#6366f1'];
+  const logoGrad = ctx.createLinearGradient(PAD, logoY, PAD + 160, logoY + 160);
+  logoGrad.addColorStop(0, model.accentColor || g1); logoGrad.addColorStop(1, g2);
+  roundRect(ctx, PAD, logoY, 160, 160, 32);
+  ctx.fillStyle = logoGrad; ctx.fill();
+  ctx.shadowColor = `${model.accentColor || g1}4d`; ctx.shadowBlur = 40;
+  roundRect(ctx, PAD, logoY, 160, 160, 32);
+  ctx.fillStyle = logoGrad; ctx.fill(); ctx.shadowBlur = 0;
+
+  ctx.font = '72px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = 'white';
+  ctx.fillText(model.logo || '✦', PAD + 80, logoY + 84);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+
+  const nameX = PAD + 190;
+  ctx.font = '900 64px Inter'; ctx.fillStyle = 'white';
+  wrapText(ctx, model.name, nameX, logoY + 10, W - nameX - PAD, 72);
+  ctx.font = '500 28px Inter'; ctx.fillStyle = '#94a3b8';
+  ctx.fillText(`${model.company} · ${model.releaseYear}`, nameX, logoY + 85);
+
+  const tags = [model.category, 'LLM'].filter(Boolean);
+  let tagX = nameX;
+  const tagTY = logoY + 130;
+  tags.forEach(tag => {
+    ctx.font = '700 20px Inter';
+    const tw = ctx.measureText(tag).width;
+    const pw = tw + 28;
+    roundRect(ctx, tagX, tagTY, pw, 36, 8);
+    ctx.fillStyle = '#1a2744'; ctx.fill();
+    ctx.strokeStyle = '#2d3f6b'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = '#8b5cf6'; ctx.textBaseline = 'middle';
+    ctx.fillText(tag, tagX + 14, tagTY + 18);
+    ctx.textBaseline = 'top'; tagX += pw + 12;
+  });
+
+  const hlY = 420, hlItemH = 68;
+  const hlH = 70 + (model.highlights || []).length * hlItemH;
+  roundRect(ctx, PAD, hlY, W - PAD * 2, hlH, 24);
+  ctx.fillStyle = '#0f1f3d'; ctx.fill();
+  ctx.font = '700 18px Inter'; ctx.fillStyle = '#475569';
+  ctx.fillText('HIGHLIGHTS', PAD + 32, hlY + 28);
+  (model.highlights || []).forEach((hl, i) => {
+    const hy = hlY + 70 + i * hlItemH;
+    ctx.beginPath(); ctx.arc(PAD + 48, hy + 10, 8, 0, Math.PI * 2);
+    ctx.fillStyle = '#8b5cf6'; ctx.fill();
+    ctx.font = '500 28px Inter'; ctx.fillStyle = '#cbd5e1';
+    ctx.fillText(hl, PAD + 72, hy - 4);
+  });
+
+  drawFooter(ctx, `AI Models · ${model.releaseYear}`);
+}
+
+// ── Job Risk Card ──
+function drawJobRiskCard(ctx, job) {
+  const W = CARD_W, H = CARD_H;
+  const pct = job.riskScore / 100;
+  drawBackground(ctx);
+  drawGlowOrb(ctx, W - 80, -80, 400, 239, 68, 68, 0.08);
+  drawGlowOrb(ctx, 60, H, 300, 239, 68, 68, 0.04);
+  drawBorder(ctx, '#2d1a1a');
+  drawHeader(ctx);
+
+  roundRect(ctx, W - PAD - 230, PAD - 6, 230, 48, 24);
+  ctx.fillStyle = '#2d1a1a'; ctx.fill();
+  ctx.strokeStyle = '#7f1d1d'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.font = '700 22px Inter'; ctx.fillStyle = '#f87171'; ctx.textAlign = 'center';
+  ctx.fillText('⚠ JOB RISK', W - PAD - 115, PAD + 6);
+  ctx.textAlign = 'left';
+
+  const cx = PAD + 120, cy = 310, radius = 100;
+  ctx.beginPath(); ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 16; ctx.stroke();
+
+  const startAngle = -Math.PI / 2;
+  const endAngle = startAngle + (Math.PI * 2 * pct);
+  const arcGrad = ctx.createLinearGradient(cx - radius, cy, cx + radius, cy);
+  arcGrad.addColorStop(0, '#f59e0b'); arcGrad.addColorStop(1, '#dc2626');
+  ctx.beginPath(); ctx.arc(cx, cy, radius, startAngle, endAngle);
+  ctx.strokeStyle = arcGrad; ctx.lineWidth = 16; ctx.lineCap = 'round'; ctx.stroke();
+  ctx.lineCap = 'butt';
+
+  ctx.font = '900 56px Inter'; ctx.fillStyle = 'white'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(String(job.riskScore), cx, cy - 6);
+  ctx.font = '500 24px Inter'; ctx.fillStyle = '#94a3b8';
+  ctx.fillText('%', cx, cy + 30);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+
+  const titleX = cx + radius + 50;
+  ctx.font = '900 64px Inter'; ctx.fillStyle = 'white';
+  wrapText(ctx, job.title, titleX, cy - 60, W - titleX - PAD, 72);
+  const trendColors = { rising: '#ef4444', stable: '#f59e0b', declining: '#22c55e' };
+  const trendIcons = { rising: '↑ RISK RISING', stable: '→ RISK STABLE', declining: '↓ RISK DECLINING' };
+  ctx.font = '700 24px Inter'; ctx.fillStyle = trendColors[job.trend] || '#f59e0b';
+  ctx.fillText(trendIcons[job.trend] || '', titleX, cy + 10);
+  ctx.font = '500 24px Inter'; ctx.fillStyle = '#64748b';
+  ctx.fillText(job.category, titleX, cy + 50);
+
+  const boxY = 480, boxH = 420;
+  roundRect(ctx, PAD, boxY, W - PAD * 2, boxH, 24);
+  ctx.fillStyle = '#0f1f3d'; ctx.fill();
+  ctx.font = '600 20px Inter'; ctx.fillStyle = '#64748b';
+  ctx.fillText('AUTOMATION RISK', PAD + 32, boxY + 28);
+  const riskLabel = job.riskScore >= 70 ? 'Critical' : job.riskScore >= 40 ? 'Medium' : 'Low';
+  const riskColor = job.riskScore >= 70 ? '#f87171' : job.riskScore >= 40 ? '#fbbf24' : '#4ade80';
+  ctx.font = '700 26px Inter'; ctx.fillStyle = riskColor; ctx.textAlign = 'right';
+  ctx.fillText(riskLabel, W - PAD - 32, boxY + 24);
+  ctx.textAlign = 'left';
+
+  const barY = boxY + 70, barW = W - PAD * 2 - 64;
+  roundRect(ctx, PAD + 32, barY, barW, 32, 16);
+  ctx.fillStyle = '#1e293b'; ctx.fill();
+  const barGrad = ctx.createLinearGradient(PAD + 32, 0, W - PAD - 32, 0);
+  barGrad.addColorStop(0, '#f59e0b'); barGrad.addColorStop(0.5, '#ef4444'); barGrad.addColorStop(1, '#dc2626');
+  roundRect(ctx, PAD + 32, barY, barW * pct, 32, 16);
+  ctx.fillStyle = barGrad; ctx.fill();
+
+  ctx.font = '400 26px Inter'; ctx.fillStyle = '#94a3b8';
+  wrapText(ctx, job.reasoning, PAD + 32, barY + 60, barW, 40);
+
+  let tx = PAD + 32;
+  const tpY = barY + 200;
+  (job.affectedTasks || []).forEach(task => {
+    ctx.font = '600 22px Inter';
+    const tw = ctx.measureText(task).width;
+    const pw = tw + 32, ph = 40;
+    if (tx + pw > W - PAD) return;
+    roundRect(ctx, tx, tpY, pw, ph, 8);
+    ctx.fillStyle = '#1e293b'; ctx.fill();
+    ctx.strokeStyle = '#334155'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = '#64748b'; ctx.textBaseline = 'middle';
+    ctx.fillText(task, tx + 16, tpY + ph / 2);
+    ctx.textBaseline = 'top'; tx += pw + 16;
+  });
+
+  drawFooter(ctx, 'AI Jobs · 2026');
+}
+
+// ── Rendering engine ──
+const canvases = [];
+
+function createCanvas(label) {
+  const canvas = document.createElement('canvas');
+  canvas.width = CARD_W;
+  canvas.height = CARD_H;
+  const wrapper = document.createElement('div');
+  wrapper.appendChild(canvas);
+  const dl = document.createElement('a');
+  dl.className = 'download-btn';
+  dl.textContent = `⬇ ${label}.png`;
+  dl.download = `${label}.png`;
+  wrapper.appendChild(dl);
+  document.getElementById('output').appendChild(wrapper);
+  canvases.push({ canvas, dl, label });
+  return canvas;
+}
+
+async function render() {
+  document.getElementById('output').innerHTML = '';
+  canvases.length = 0;
+
+  await document.fonts.load('800 48px Inter');
+
+  const input = JSON.parse(document.getElementById('jsonInput').value);
+
+  if (input.type === 'edition' || input.edition) {
+    const c = createCanvas(`cover-ausgabe-${input.edition.number}`);
+    drawEditionCover(c.getContext('2d'), input.edition, input.stories || []);
+    canvases[canvases.length - 1].dl.href = c.toDataURL('image/png');
+
+    (input.stories || []).forEach((story, i) => {
+      const sc = createCanvas(`story-${i + 1}-${story.title.slice(0, 30).replace(/[^a-zA-Z0-9äöüÄÖÜ]/g, '-')}`);
+      drawStoryCard(sc.getContext('2d'), story);
+      canvases[canvases.length - 1].dl.href = sc.toDataURL('image/png');
+    });
+  }
+
+  if (input.type === 'models' || input.models) {
+    (input.models || []).forEach(model => {
+      const mc = createCanvas(`model-${model.rank}-${model.name.replace(/[^a-zA-Z0-9]/g, '-')}`);
+      drawModelCard(mc.getContext('2d'), model);
+      canvases[canvases.length - 1].dl.href = mc.toDataURL('image/png');
+    });
+  }
+
+  if (input.type === 'jobs' || input.jobs) {
+    (input.jobs || []).forEach(job => {
+      const jc = createCanvas(`job-${job.title.replace(/[^a-zA-Z0-9äöüÄÖÜ]/g, '-')}`);
+      drawJobRiskCard(jc.getContext('2d'), job);
+      canvases[canvases.length - 1].dl.href = jc.toDataURL('image/png');
+    });
+  }
+}
+
+function downloadAll() {
+  canvases.forEach(({ dl }) => dl.click());
+}
+
+// Auto-render from URL hash
+if (location.hash) {
+  try {
+    const data = JSON.parse(decodeURIComponent(location.hash.slice(1)));
+    document.getElementById('jsonInput').value = JSON.stringify(data, null, 2);
+    window.addEventListener('load', () => setTimeout(render, 500));
+  } catch (e) { /* ignore */ }
+}
+</script>
+</body>
+</html>

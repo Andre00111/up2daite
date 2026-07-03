@@ -90,11 +90,11 @@ export function drawJobRiskCard(ctx: CanvasRenderingContext2D, job: AIJob) {
   const trendColor = getTrendColor(job.trend)
   ctx.font = '700 24px Inter'
   ctx.fillStyle = trendColor
-  ctx.fillText(`${getTrendIcon(job.trend)} ${getTrendLabel(job.trend)}`, titleX, cy + 10)
+  ctx.fillText(`${getTrendIcon(job.trend)} ${getTrendLabel(job.trend)}`, titleX, cy + 80)
 
   ctx.font = '500 24px Inter'
   ctx.fillStyle = '#64748b'
-  ctx.fillText(job.category, titleX, cy + 50)
+  ctx.fillText(job.category, titleX, cy + 130)
 
   // Risk bar section
   const boxY = 480, boxH = 420
@@ -132,7 +132,7 @@ export function drawJobRiskCard(ctx: CanvasRenderingContext2D, job: AIJob) {
 
   // Affected tasks pills
   let tx = PAD + 32
-  const tpY = barY + 200
+  const tpY = barY + 280
   job.affectedTasks.forEach(task => {
     ctx.font = '600 22px Inter'
     const tw = ctx.measureText(task).width

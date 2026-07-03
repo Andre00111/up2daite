@@ -82,7 +82,11 @@
       "Bash(docker volume *)",
       "Bash(scripts/start-server.sh --project-dir /Users/andre.butkevich/Desktop/Projects/AI-news-app)",
       "Skill(run)",
-      "Skill(run:*)"
+      "Skill(run:*)",
+      "Bash(chmod +x /Users/andre.butkevich/Desktop/Projects/AI-news-app/scripts/seed-instagram.command)",
+      "Bash(printenv ANTHROPIC_API_KEY)",
+      "Bash(grep -E \"\\\\.\\(yml|yaml|env|properties|kt|java\\)$\")",
+      "Bash(curl -s http://localhost:8080/api/ai-jobs)"
     ],
     "additionalDirectories": [
       "/Users/andre.butkevich/Desktop/Projects/AI-news-app/frontend/src/utils"
