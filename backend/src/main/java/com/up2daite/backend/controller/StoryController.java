@@ -19,19 +19,28 @@ public class StoryController {
 
     private final StoryService storyService;
 
-    // GET /api/stories               → alle Stories
-    // GET /api/stories?editionId=x   → Stories einer Ausgabe
-    // GET /api/stories?unassigned=true → Stories ohne Ausgabe (für Admin)
+    // GET /api/stories                        → alle Stories
+    // GET /api/stories?editionId=x            → Stories einer Ausgabe
+    // GET /api/stories?unassigned=true         → Stories ohne Ausgabe (für Admin)
+    // GET /api/stories?minImpact=4&maxHype=2   → Filter nach Signal Score
+    // GET /api/stories?buzzword=AGI            → Filter nach Buzzword
     @GetMapping
     public List<StoryDto> findAll(
             @RequestParam(required = false) String editionId,
-            @RequestParam(required = false) boolean unassigned) {
+            @RequestParam(required = false) boolean unassigned,
+            @RequestParam(required = false) Integer minImpact,
+            @RequestParam(required = false) Integer maxHype,
+            @RequestParam(required = false) Integer minSourceQuality,
+            @RequestParam(required = false) String buzzword) {
 
         if (editionId != null) {
             return storyService.findByEditionId(editionId);
         }
         if (unassigned) {
             return storyService.findUnassigned();
+        }
+        if (minImpact != null || maxHype != null || minSourceQuality != null || buzzword != null) {
+            return storyService.findFiltered(minImpact, maxHype, minSourceQuality, buzzword);
         }
         return storyService.findAll();
     }

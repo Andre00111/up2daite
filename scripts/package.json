@@ -1,7 +1,9 @@
 {
-  "name": "up2daite-pipeline",
+  "name": "up2daite-scripts",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
+  "description": "Automation and rendering scripts for up2daite",
   "scripts": {
     "start": "tsx src/main.ts",
     "dry-run": "DRY_RUN=true tsx src/main.ts"
@@ -10,6 +12,7 @@
     "@anthropic-ai/sdk": "^0.39.0",
     "canvas": "^3.1.0",
     "dotenv": "^16.4.0",
+    "puppeteer": "^25.2.1",
     "rss-parser": "^3.13.0"
   },
   "devDependencies": {

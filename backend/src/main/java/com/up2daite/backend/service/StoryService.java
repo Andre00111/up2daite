@@ -42,6 +42,14 @@ public class StoryService {
                 .toList();
     }
 
+    public List<StoryDto> findFiltered(Integer minImpact, Integer maxHype,
+                                       Integer minSourceQuality, String buzzword) {
+        return storyRepository.findFiltered(minImpact, maxHype, minSourceQuality, buzzword)
+                .stream()
+                .map(StoryDto::from)
+                .toList();
+    }
+
     @Transactional
     public StoryDto create(CreateStoryRequest req) {
         StoryEntity story = new StoryEntity();
@@ -58,6 +66,7 @@ public class StoryService {
         }
 
         story.setTopics(topicRepository.findAllById(req.topicIds() != null ? req.topicIds() : List.of()));
+        story.setBuzzwords(req.buzzwords() != null ? req.buzzwords() : List.of());
 
         return StoryDto.from(storyRepository.save(story));
     }
@@ -72,6 +81,7 @@ public class StoryService {
         story.setPublishedAt(req.publishedAt());
         story.setSource(toSource(req.source()));
         story.setSignalScore(toScore(req.signalScore()));
+        story.setBuzzwords(req.buzzwords() != null ? req.buzzwords() : List.of());
 
         if (req.editionId() == null) {
             story.setEdition(null);

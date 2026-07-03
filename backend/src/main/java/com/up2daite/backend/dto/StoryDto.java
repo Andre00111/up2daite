@@ -12,6 +12,7 @@ public record StoryDto(
         SourceDto source,
         SignalScoreDto signalScore,
         List<String> topics,   // topic-IDs wie "ai-research"
+        List<String> buzzwords,
         LocalDate publishedAt,
         String editionId
 ) {
@@ -23,6 +24,7 @@ public record StoryDto(
                 SourceDto.from(e.getSource()),
                 SignalScoreDto.from(e.getSignalScore()),
                 e.getTopics().stream().map(t -> t.getId()).toList(),
+                e.getBuzzwords(),
                 e.getPublishedAt(),
                 e.getEdition() != null ? e.getEdition().getId() : null
         );

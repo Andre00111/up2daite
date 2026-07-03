@@ -1,5 +1,7 @@
 import type { Story } from '../types'
 
+const bw = (...tags: string[]) => tags
+
 export const stories: Story[] = [
   // --- Ausgabe 3 (6 Stories) ---
   {
@@ -13,6 +15,7 @@ export const stories: Story[] = [
       type: 'primary',
     },
     topics: ['ai-products', 'ai-research'],
+    buzzwords: bw('GPT-5', 'API', 'Pricing'),
     signalScore: { impact: 5, hypeLevel: 4, sourceQuality: 5 },
     publishedAt: '2026-04-17',
     editionId: 'edition-3',
@@ -28,6 +31,7 @@ export const stories: Story[] = [
       type: 'analysis',
     },
     topics: ['ai-policy', 'ai-business'],
+    buzzwords: bw('EU AI Act', 'Regulation', 'Compliance'),
     signalScore: { impact: 5, hypeLevel: 1, sourceQuality: 4 },
     publishedAt: '2026-04-16',
     editionId: 'edition-3',
@@ -43,6 +47,7 @@ export const stories: Story[] = [
       type: 'primary',
     },
     topics: ['ai-tools', 'ai-products'],
+    buzzwords: bw('Cursor', 'Agent', 'IDE'),
     signalScore: { impact: 3, hypeLevel: 2, sourceQuality: 5 },
     publishedAt: '2026-04-17',
     editionId: 'edition-3',
@@ -58,6 +63,7 @@ export const stories: Story[] = [
       type: 'primary',
     },
     topics: ['ai-research', 'ai-policy'],
+    buzzwords: bw('Safety', 'Interpretability', 'Anthropic'),
     signalScore: { impact: 4, hypeLevel: 1, sourceQuality: 5 },
     publishedAt: '2026-04-15',
     editionId: 'edition-3',
@@ -73,6 +79,7 @@ export const stories: Story[] = [
       type: 'analysis',
     },
     topics: ['ai-business'],
+    buzzwords: bw('Funding', 'Startups', 'VC'),
     signalScore: { impact: 3, hypeLevel: 3, sourceQuality: 3 },
     publishedAt: '2026-04-14',
     editionId: 'edition-3',
@@ -88,6 +95,7 @@ export const stories: Story[] = [
       type: 'pr-driven',
     },
     topics: ['ai-products', 'ai-research'],
+    buzzwords: bw('Veo 3', 'Video', 'Google'),
     signalScore: { impact: 2, hypeLevel: 5, sourceQuality: 2 },
     publishedAt: '2026-04-17',
     editionId: 'edition-3',
@@ -105,6 +113,7 @@ export const stories: Story[] = [
       type: 'primary',
     },
     topics: ['ai-products', 'ai-research'],
+    buzzwords: bw('Gemini', 'Google', 'API'),
     signalScore: { impact: 4, hypeLevel: 2, sourceQuality: 5 },
     publishedAt: '2026-04-10',
     editionId: 'edition-2',
@@ -120,6 +129,7 @@ export const stories: Story[] = [
       type: 'analysis',
     },
     topics: ['ai-research', 'ai-business'],
+    buzzwords: bw('Open Source', 'Llama', 'Mistral'),
     signalScore: { impact: 5, hypeLevel: 2, sourceQuality: 4 },
     publishedAt: '2026-04-09',
     editionId: 'edition-2',
@@ -135,6 +145,7 @@ export const stories: Story[] = [
       type: 'analysis',
     },
     topics: ['ai-business'],
+    buzzwords: bw('Jobs', 'ML-Ops', 'Arbeitsmarkt'),
     signalScore: { impact: 4, hypeLevel: 1, sourceQuality: 3 },
     publishedAt: '2026-04-08',
     editionId: 'edition-2',
@@ -150,6 +161,7 @@ export const stories: Story[] = [
       type: 'primary',
     },
     topics: ['ai-products', 'ai-tools'],
+    buzzwords: bw('NotebookLM', 'Enterprise', 'DSGVO'),
     signalScore: { impact: 3, hypeLevel: 2, sourceQuality: 4 },
     publishedAt: '2026-04-09',
     editionId: 'edition-2',
@@ -165,6 +177,7 @@ export const stories: Story[] = [
       type: 'analysis',
     },
     topics: ['ai-policy', 'ai-business'],
+    buzzwords: bw('China', 'Regulation', 'Compliance'),
     signalScore: { impact: 4, hypeLevel: 1, sourceQuality: 4 },
     publishedAt: '2026-04-07',
     editionId: 'edition-2',

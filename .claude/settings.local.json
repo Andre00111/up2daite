@@ -64,11 +64,21 @@
       "Bash(curl -sv http://31.70.75.157/api/editions)",
       "Bash(curl -s http://31.70.75.157/api/ai-jobs)",
       "Bash(open \"/Users/andre.butkevich/Desktop/Projects/AI-news-app/docs/architecture-https.pdf\")",
-      "Bash(grep -E \"\\\\.\\(java|ts|tsx|js|jsx\\)$\")"
+      "Bash(grep -E \"\\\\.\\(java|ts|tsx|js|jsx\\)$\")",
+      "Bash(mvn clean *)",
+      "Bash(chmod +x /Users/andre.butkevich/Desktop/Projects/AI-news-app/scripts/update-content.command)",
+      "Bash(npx playwright *)",
+      "Bash(npm list *)",
+      "Bash(cat /Users/andre.butkevich/Desktop/Projects/AI-news-app/.npmrc 2>/dev/null; cat ~/.npmrc 2>/dev/null | head -10)",
+      "Read(//Users/andre.butkevich/**)",
+      "Bash(npm config *)",
+      "Bash(npm init *)",
+      "Bash(node render-test.js)",
+      "Bash(npx puppeteer *)"
     ],
     "additionalDirectories": [
       "/Users/andre.butkevich/Desktop/Projects/AI-news-app/frontend/src/utils"
     ]
   },
-  "model": "claude-opus-4-6"
+  "model": "claude-opus-4-8"
 }

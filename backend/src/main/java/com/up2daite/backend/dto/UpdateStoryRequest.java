@@ -10,6 +10,7 @@ public record UpdateStoryRequest(
         SourceDto source,
         SignalScoreDto signalScore,
         List<String> topicIds,
+        List<String> buzzwords,
         LocalDate publishedAt,
         String editionId        // optional — null = unassigned
 ) {}

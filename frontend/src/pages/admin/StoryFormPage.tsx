@@ -44,11 +44,13 @@ export default function StoryFormPage() {
     sourceName: '',
     sourceType: 'primary' as SourceType,
     selectedTopics: [] as TopicId[],
+    buzzwords: [] as string[],
     impact: 3 as ScoreValue,
     hypeLevel: 3 as ScoreValue,
     sourceQuality: 3 as ScoreValue,
     editionId: '' as string,
   })
+  const [buzzwordInput, setBuzzwordInput] = useState('')
 
   const [saved, setSaved] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -66,6 +68,7 @@ export default function StoryFormPage() {
         sourceName: story.source.name,
         sourceType: story.source.type,
         selectedTopics: story.topics,
+        buzzwords: story.buzzwords ?? [],
         impact: story.signalScore.impact,
         hypeLevel: story.signalScore.hypeLevel,
         sourceQuality: story.signalScore.sourceQuality,
@@ -87,6 +90,7 @@ export default function StoryFormPage() {
         sourceQuality: form.sourceQuality,
       },
       topicIds: form.selectedTopics,
+      buzzwords: form.buzzwords,
       publishedAt: new Date().toISOString().slice(0, 10),
       editionId: form.editionId === '' ? null : form.editionId,
     }
@@ -190,6 +194,54 @@ export default function StoryFormPage() {
                 ))}
               </Select>
             </FormControl>
+
+            <Box>
+              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                Buzzwords / Keywords
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
+                <TextField
+                  size="small"
+                  placeholder="z.B. AGI, Regulation, Open Source"
+                  value={buzzwordInput}
+                  onChange={(e) => setBuzzwordInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      const val = buzzwordInput.trim()
+                      if (val && !form.buzzwords.includes(val)) {
+                        setForm({ ...form, buzzwords: [...form.buzzwords, val] })
+                      }
+                      setBuzzwordInput('')
+                    }
+                  }}
+                  sx={{ flex: 1 }}
+                />
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => {
+                    const val = buzzwordInput.trim()
+                    if (val && !form.buzzwords.includes(val)) {
+                      setForm({ ...form, buzzwords: [...form.buzzwords, val] })
+                    }
+                    setBuzzwordInput('')
+                  }}
+                >
+                  +
+                </Button>
+              </Box>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {form.buzzwords.map((bw) => (
+                  <Chip
+                    key={bw}
+                    label={bw}
+                    size="small"
+                    onDelete={() => setForm({ ...form, buzzwords: form.buzzwords.filter((b) => b !== bw) })}
+                  />
+                ))}
+              </Box>
+            </Box>
 
             <TextField
               label="Edition (optional)"

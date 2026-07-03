@@ -16,6 +16,7 @@ export type StoryWritePayload = {
   source: { name: string; url: string; type: SourceType }
   signalScore: { impact: ScoreValue; hypeLevel: ScoreValue; sourceQuality: ScoreValue }
   topicIds: TopicId[]
+  buzzwords: string[]
   publishedAt: string
   editionId: string | null
 }

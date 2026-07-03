@@ -34,6 +34,7 @@ export interface Story {
   editorialComment: string
   source: Source
   topics: TopicId[]
+  buzzwords: string[]
   signalScore: SignalScore
   publishedAt: string
   editionId: string | null

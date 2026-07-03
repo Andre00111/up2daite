@@ -1,5 +1,6 @@
 package com.up2daite.backend.entity;
 
+import com.up2daite.backend.util.StringListConverter;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,6 +38,10 @@ public class StoryEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "edition_id")
     private EditionEntity edition;
+
+    @Convert(converter = StringListConverter.class)
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private List<String> buzzwords = new ArrayList<>();
 
     // Many-to-Many mit Topics über Join-Tabelle story_topics
     @ManyToMany(fetch = FetchType.EAGER)

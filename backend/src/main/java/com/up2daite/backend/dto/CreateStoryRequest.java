@@ -10,6 +10,7 @@ public record CreateStoryRequest(
         SourceDto source,
         SignalScoreDto signalScore,
         List<String> topicIds,
+        List<String> buzzwords,
         LocalDate publishedAt,
         String editionId        // optional — null wenn noch keiner Ausgabe zugeordnet
 ) {}
