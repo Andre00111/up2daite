@@ -90,6 +90,16 @@ export const publicTheme = createTheme({
     MuiPaper: {
       styleOverrides: { root: { backgroundImage: 'none' } },
     },
+    MuiButtonBase: {
+      styleOverrides: {
+        root: {
+          '&:focus-visible': {
+            outline: `2px solid ${brandColors.indigo}`,
+            outlineOffset: 2,
+          },
+        },
+      },
+    },
   },
 })
 
