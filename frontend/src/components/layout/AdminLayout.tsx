@@ -12,6 +12,9 @@ import {
   Button,
   Divider,
 } from '@mui/material'
+import { ThemeProvider } from '@mui/material/styles'
+import CssBaseline from '@mui/material/CssBaseline'
+import { adminTheme } from '../../theme'
 
 const DRAWER_WIDTH = 220
 
@@ -31,7 +34,9 @@ export default function AdminLayout() {
   }
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <ThemeProvider theme={adminTheme}>
+      <CssBaseline />
+      <Box sx={{ display: 'flex' }}>
       <AppBar
         position="fixed"
         elevation={0}
@@ -88,6 +93,7 @@ export default function AdminLayout() {
         <Toolbar />
         <Outlet />
       </Box>
-    </Box>
+      </Box>
+    </ThemeProvider>
   )
 }
