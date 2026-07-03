@@ -46,7 +46,20 @@ function ScoreDimension({ label, value, tooltip, inverted = false }: DimensionPr
           variant="determinate"
           value={normalizedValue}
           color={color}
-          sx={{ height: 6, borderRadius: 3 }}
+          sx={{
+            height: 8,
+            borderRadius: 4,
+            bgcolor: '#1e293b',
+            '& .MuiLinearProgress-bar': {
+              borderRadius: 4,
+              backgroundImage:
+                color === 'success'
+                  ? 'linear-gradient(90deg, #22c55e, #16a34a)'
+                  : color === 'warning'
+                  ? 'linear-gradient(90deg, #f59e0b, #d97706)'
+                  : 'linear-gradient(90deg, #ef4444, #dc2626)',
+            },
+          }}
         />
       </Box>
     </Tooltip>
