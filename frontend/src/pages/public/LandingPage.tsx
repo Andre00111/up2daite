@@ -55,7 +55,7 @@ export default function LandingPage() {
           />
           <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
             <Button
-              href="mailto:hello@up2daite.com"
+              href="#newsletter"
               variant="contained"
               size="large"
               disableElevation
@@ -145,7 +145,7 @@ export default function LandingPage() {
       </DarkSection>
 
       {/* Newsletter-Anmeldung */}
-      <Box sx={{ py: 8 }}>
+      <Box id="newsletter" sx={{ py: 8 }}>
         <Container maxWidth="sm">
           <Paper
             elevation={0}
