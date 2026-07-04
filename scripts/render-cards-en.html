@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>up2daite Card Renderer</title>
@@ -83,7 +83,7 @@ function wrapTextClamped(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
         while (truncated.length > 0 && ctx.measureText(truncated + '…').width > maxWidth)
           truncated = truncated.slice(0, -1);
         ctx.fillText(truncated + '…', x, ly);
-        return;
+        return ly;
       }
       ctx.fillText(line.trim(), x, ly);
       line = word + ' ';
@@ -93,6 +93,37 @@ function wrapTextClamped(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
     }
   }
   ctx.fillText(line.trim(), x, ly);
+  return ly;
+}
+
+// Break text into an array of lines, clamped to maxLines (last line gets an ellipsis
+// when truncated). Measurement-only — does not draw. Uses the current ctx font.
+function wrapLines(ctx, text, maxWidth, maxLines) {
+  const words = text.split(' ');
+  const lines = [];
+  let line = '';
+  for (let i = 0; i < words.length; i++) {
+    const test = line + words[i] + ' ';
+    if (ctx.measureText(test).width > maxWidth && line) {
+      lines.push(line.trim());
+      line = words[i] + ' ';
+      // If this is the last allowed line, pack the remaining words and clamp with '…'.
+      if (maxLines && lines.length === maxLines - 1) {
+        let rest = words.slice(i).join(' ');
+        if (ctx.measureText(rest).width > maxWidth) {
+          while (rest.length > 0 && ctx.measureText(rest + '…').width > maxWidth)
+            rest = rest.slice(0, -1);
+          rest = rest.trim() + '…';
+        }
+        lines.push(rest);
+        return lines;
+      }
+    } else {
+      line = test;
+    }
+  }
+  if (line.trim()) lines.push(line.trim());
+  return lines;
 }
 
 function drawBackground(ctx) {
@@ -164,13 +195,9 @@ function drawEditionCover(ctx, edition, stories) {
   ctx.font = '900 62px Inter'; ctx.fillStyle = 'white';
   wrapText(ctx, edition.title, PAD, 220, W - PAD * 2, 76);
 
-  const lineGrad = ctx.createLinearGradient(PAD, 0, W - PAD, 0);
-  lineGrad.addColorStop(0, '#6366f1'); lineGrad.addColorStop(0.5, '#8b5cf6'); lineGrad.addColorStop(1, 'transparent');
-  ctx.fillStyle = lineGrad; ctx.fillRect(PAD, 340, W - PAD * 2, 2);
-
-  const visibleStories = stories.slice(0, 5);
+  const visibleStories = stories.slice(0, 4);
   const N = visibleStories.length || 1;
-  const storiesStartY = 380, ctaY = H - 180, GAP = 14;
+  const storiesStartY = 420, ctaY = H - 180, GAP = 14;
   const cardH = Math.min(148, Math.max(100, Math.floor((ctaY - storiesStartY - 16 - GAP * (N - 1)) / N)));
   const stride = cardH + GAP;
   const iconSz = Math.min(80, cardH - 24);
@@ -199,8 +226,6 @@ function drawEditionCover(ctx, edition, stories) {
     wrapTextClamped(ctx, story.title, titleX, titleY, titleMaxW, titleLineH, 2);
   });
 
-  ctx.beginPath(); ctx.moveTo(PAD, ctaY); ctx.lineTo(W - PAD, ctaY);
-  ctx.strokeStyle = '#1a2744'; ctx.lineWidth = 1; ctx.stroke();
   ctx.font = '500 22px Inter'; ctx.fillStyle = '#334155'; ctx.textBaseline = 'top';
   ctx.fillText('up2daite.com', PAD, ctaY + 30);
 
@@ -400,14 +425,29 @@ function drawJobRiskCard(ctx, job) {
   ctx.textAlign = 'left'; ctx.textBaseline = 'top';
 
   const titleX = cx + radius + 50;
-  ctx.font = '900 64px Inter'; ctx.fillStyle = 'white';
-  wrapText(ctx, job.title, titleX, cy - 60, W - titleX - PAD, 72);
+  const titleMaxW = W - titleX - PAD;
+  const titleLineH = 68;
   const trendColors = { rising: '#ef4444', stable: '#f59e0b', declining: '#22c55e' };
   const trendIcons = { rising: '↑ RISK RISING', stable: '→ RISK STABLE', declining: '↓ RISK DECLINING' };
+
+  // Adaptive header block: measure the title (max 2 lines), then vertically
+  // center title + trend + category around the gauge so long titles never
+  // collide with the trend/category rows.
+  ctx.font = '900 64px Inter';
+  const titleLines = wrapLines(ctx, job.title, titleMaxW, 2);
+  const trendGap = 22, trendH = 28, catGap = 12, catH = 26;
+  const blockH = titleLines.length * titleLineH + trendGap + trendH + catGap + catH;
+  let ty = cy - blockH / 2;
+
+  ctx.fillStyle = 'white';
+  for (const l of titleLines) { ctx.fillText(l, titleX, ty); ty += titleLineH; }
+
+  ty += trendGap;
   ctx.font = '700 24px Inter'; ctx.fillStyle = trendColors[job.trend] || '#f59e0b';
-  ctx.fillText(trendIcons[job.trend] || '', titleX, cy + 10);
+  ctx.fillText(trendIcons[job.trend] || '', titleX, ty);
+  ty += trendH + catGap;
   ctx.font = '500 24px Inter'; ctx.fillStyle = '#64748b';
-  ctx.fillText(job.category, titleX, cy + 50);
+  ctx.fillText(job.category, titleX, ty);
 
   const boxY = 480, boxH = 420;
   roundRect(ctx, PAD, boxY, W - PAD * 2, boxH, 24);
@@ -428,15 +468,23 @@ function drawJobRiskCard(ctx, job) {
   roundRect(ctx, PAD + 32, barY, barW * pct, 32, 16);
   ctx.fillStyle = barGrad; ctx.fill();
 
+  // Reasoning — clamp to the lines that fit above the tags so it never overflows.
+  const reasonY = barY + 60, reasonLineH = 38, ph = 40, tagGap = 28;
+  const boxBottom = boxY + boxH;
+  const reasonMaxLines = Math.max(1, Math.floor((boxBottom - 32 - ph - tagGap - reasonY) / reasonLineH));
   ctx.font = '400 26px Inter'; ctx.fillStyle = '#94a3b8';
-  wrapText(ctx, job.reasoning, PAD + 32, barY + 60, barW, 40);
+  const reasonLines = wrapLines(ctx, job.reasoning, barW, reasonMaxLines);
+  let ry = reasonY;
+  for (const l of reasonLines) { ctx.fillText(l, PAD + 32, ry); ry += reasonLineH; }
+  const reasonBottom = reasonY + (reasonLines.length - 1) * reasonLineH;
 
+  // Tags follow the actual bottom of the reasoning text.
   let tx = PAD + 32;
-  const tpY = barY + 200;
+  const tpY = reasonBottom + tagGap + 12;
   (job.affectedTasks || []).forEach(task => {
     ctx.font = '600 22px Inter';
     const tw = ctx.measureText(task).width;
-    const pw = tw + 32, ph = 40;
+    const pw = tw + 32;
     if (tx + pw > W - PAD) return;
     roundRect(ctx, tx, tpY, pw, ph, 8);
     ctx.fillStyle = '#1e293b'; ctx.fill();

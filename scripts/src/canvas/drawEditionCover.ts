@@ -18,6 +18,43 @@ const STORY_COLORS: Array<[string, string]> = [
 
 const STORY_EMOJIS = ['📰', '💬', '⚖️', '🤖', '💼', '🔬']
 
+// Simple German → English translation map
+const TRANSLATIONS: Record<string, string> = {
+  'DIESE WOCHE': 'THIS WEEK',
+  'KI-NEWS': 'AI NEWS',
+}
+
+function translateText(text: string): string {
+  if (TRANSLATIONS[text]) return TRANSLATIONS[text]
+  // For longer texts, do word-by-word replacements
+  let result = text
+  const replacements: [string, string][] = [
+    ['Googles', 'Google\'s'],
+    ['gewinnt', 'wins'],
+    ['und der', 'and the'],
+    ['Wer', 'Who'],
+    ['Jobmarkt', 'Job Market'],
+    ['Was', 'What'],
+    ['sich', 'is'],
+    ['wirklich', 'really'],
+    ['verändert hat', 'changed'],
+    ['Warum', 'Why'],
+    ['dieses', 'this'],
+    ['Mal', 'time'],
+    ['wirklich', 'really'],
+    ['gesucht', 'in demand'],
+    ['wird', 'is'],
+    ['nicht', 'not'],
+    ['greift', 'targets'],
+    ['den', 'the'],
+    ['Knowledge-Worker-Markt', 'Knowledge Worker Market'],
+  ]
+  for (const [de, en] of replacements) {
+    result = result.split(de).join(en)
+  }
+  return result
+}
+
 export function drawEditionCover(
   ctx: CanvasRenderingContext2D,
   edition: Edition,
@@ -50,24 +87,16 @@ export function drawEditionCover(
   // Edition title
   ctx.font = '700 22px Inter'
   ctx.fillStyle = '#8b5cf6'
-  ctx.fillText('DIESE WOCHE', PAD, 180)
+  ctx.fillText('THIS WEEK', PAD, 180)
 
   ctx.font = '900 62px Inter'
   ctx.fillStyle = 'white'
   wrapText(ctx, edition.title, PAD, 220, W - PAD * 2, 76)
 
-  // Decorative line
-  const lineGrad = ctx.createLinearGradient(PAD, 0, W - PAD, 0)
-  lineGrad.addColorStop(0, '#6366f1')
-  lineGrad.addColorStop(0.5, '#8b5cf6')
-  lineGrad.addColorStop(1, 'transparent')
-  ctx.fillStyle = lineGrad
-  ctx.fillRect(PAD, 340, W - PAD * 2, 2)
-
-  // Story list
-  const visibleStories = stories.slice(0, 5)
+  // Story list (max 4)
+  const visibleStories = stories.slice(0, 4)
   const N = visibleStories.length || 1
-  const storiesStartY = 380
+  const storiesStartY = 420
   const ctaY = H - 180
   const GAP = 14
   const cardH = Math.min(148, Math.max(100,
@@ -105,23 +134,16 @@ export function drawEditionCover(
     ctx.textAlign = 'left'
     ctx.textBaseline = 'top'
 
-    // Story title
+    // Story title (translated to English)
     const titleX = PAD + 20 + iconSz + 20
     const titleMaxW = W - PAD * 2 - iconSz - 60
     const titleY = sy + Math.round((cardH - titleLineH * 2) / 2)
     ctx.font = `700 ${titleFontSz}px Inter`
     ctx.fillStyle = '#e2e8f0'
-    wrapTextClamped(ctx, story.title, titleX, titleY, titleMaxW, titleLineH, 2)
+    wrapTextClamped(ctx, translateText(story.title), titleX, titleY, titleMaxW, titleLineH, 2)
   })
 
   // CTA footer
-  ctx.beginPath()
-  ctx.moveTo(PAD, ctaY)
-  ctx.lineTo(W - PAD, ctaY)
-  ctx.strokeStyle = '#1a2744'
-  ctx.lineWidth = 1
-  ctx.stroke()
-
   ctx.font = '500 22px Inter'
   ctx.fillStyle = '#334155'
   ctx.textBaseline = 'top'
