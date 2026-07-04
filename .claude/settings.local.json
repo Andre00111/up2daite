@@ -86,7 +86,13 @@
       "Bash(chmod +x /Users/andre.butkevich/Desktop/Projects/AI-news-app/scripts/seed-instagram.command)",
       "Bash(printenv ANTHROPIC_API_KEY)",
       "Bash(grep -E \"\\\\.\\(yml|yaml|env|properties|kt|java\\)$\")",
-      "Bash(curl -s http://localhost:8080/api/ai-jobs)"
+      "Bash(curl -s http://localhost:8080/api/ai-jobs)",
+      "Bash(chmod +x /Users/andre.butkevich/Desktop/Projects/AI-news-app/scripts/backup-db.sh)",
+      "Bash(chmod +x scripts/render-editions-only.ts)",
+      "Bash(tsx scripts/render-editions-only.ts)",
+      "Bash(node scripts/render-editions-only.mjs)",
+      "Bash(scripts/seed-instagram.command)",
+      "Bash(node scripts/generate-metadata.js)"
     ],
     "additionalDirectories": [
       "/Users/andre.butkevich/Desktop/Projects/AI-news-app/frontend/src/utils"

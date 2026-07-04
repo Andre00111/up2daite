@@ -283,6 +283,10 @@ deploy-backend:
     - kubectl apply -f k8s/backend/
     - kubectl set image deployment/backend backend=$BACKEND_IMAGE:$IMAGE_TAG -n $KUBE_NAMESPACE
     - kubectl rollout status deployment/backend -n $KUBE_NAMESPACE --timeout=180s
+    # Apply latest content updates
+    - apk add --no-cache postgresql-client
+    - export PGPASSWORD=$PROD_DB_PASSWORD
+    - psql -h $PROD_DB_HOST -U $PROD_DB_USER -d up2daite -f db/content-updates/latest.sql || true
   environment:
     name: staging
     url: https://up2daite.com

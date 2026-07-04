@@ -14,7 +14,7 @@ services:
     ports:
       - "45432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./data/postgres:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U up2daite"]
       interval: 10s
@@ -77,7 +77,5 @@ services:
   #     - prometheus
   #   restart: unless-stopped
 
-volumes:
-  postgres_data:
-  prometheus_data:
-  grafana_data:
+# Note: postgres_data is now a local mount (./data/postgres)
+# See scripts/backup-db.sh for SQL-dump backups
