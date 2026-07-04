@@ -15,12 +15,12 @@ function ScoreDimension({ label, value, tooltip, inverted = false }: DimensionPr
 
   let color: BarColor
   if (inverted) {
-    // hypeLevel: 1 = grün (kein Hype = gut), 5 = rot (reiner Hype = schlecht)
+    // hypeLevel: 1 = green (no hype = good), 5 = red (pure hype = bad)
     if (value <= 2) color = 'success'
     else if (value === 3) color = 'warning'
     else color = 'error'
   } else {
-    // impact, sourceQuality: 5 = grün (hoch = gut), 1 = rot (niedrig = schlecht)
+    // impact, sourceQuality: 5 = green (high = good), 1 = red (low = bad)
     if (value >= 4) color = 'success'
     else if (value === 3) color = 'warning'
     else color = 'error'
@@ -34,7 +34,7 @@ function ScoreDimension({ label, value, tooltip, inverted = false }: DimensionPr
             {label}
             {inverted && (
               <Typography component="span" variant="caption" color="text.disabled" sx={{ ml: 0.5 }}>
-                (niedrig = besser)
+                (lower = better)
               </Typography>
             )}
           </Typography>
@@ -74,23 +74,23 @@ export default function SignalScoreBadge({ score }: Props) {
   return (
     <Box sx={{ minWidth: 220 }}>
       <Typography variant="overline" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-        Signal-Score
+        Signal Score
       </Typography>
       <ScoreDimension
         label="Impact"
         value={score.impact}
-        tooltip="Relevanz für AI-Industrie und Professionals – 5 = hohe Konsequenz"
+        tooltip="Relevance for the AI industry and professionals – 5 = high impact"
       />
       <ScoreDimension
-        label="Hype-Level"
+        label="Hype"
         value={score.hypeLevel}
-        tooltip="PR- und Hype-Anteil – 1 = kein Hype (gut), 5 = reiner Hype (schlecht)"
+        tooltip="PR and hype share – 1 = no hype (good), 5 = pure hype (bad)"
         inverted
       />
       <ScoreDimension
-        label="Quellenqualität"
+        label="Source quality"
         value={score.sourceQuality}
-        tooltip="5 = Primärquelle oder Tier-1-Publikation, 1 = aggregiertes Rauschen"
+        tooltip="5 = primary source or tier-1 publication, 1 = aggregated noise"
       />
     </Box>
   )

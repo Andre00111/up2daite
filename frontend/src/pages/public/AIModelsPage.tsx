@@ -134,7 +134,7 @@ export default function AIModelsPage() {
   useEffect(() => {
     aiModelsApi.list()
       .then(setModels)
-      .catch(() => setError('KI-Modelle konnten nicht geladen werden.'))
+      .catch(() => setError('AI models could not be loaded.'))
       .finally(() => setLoading(false))
   }, [])
 
@@ -145,7 +145,7 @@ export default function AIModelsPage() {
     <Box>
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%)',
+          background: '#0a1628',
           color: 'white',
           py: { xs: 8, md: 12 },
           position: 'relative',
@@ -157,7 +157,7 @@ export default function AIModelsPage() {
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(236, 72, 153, 0.3) 0%, transparent 50%)',
+            background: 'radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.25) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(139, 92, 246, 0.25) 0%, transparent 50%)',
             pointerEvents: 'none',
           },
         }}
@@ -168,7 +168,7 @@ export default function AIModelsPage() {
               variant="overline"
               sx={{ color: 'rgba(255,255,255,0.7)', letterSpacing: 3, mb: 1, display: 'block' }}
             >
-              Stand: Mai 2025
+              As of: May 2025
             </Typography>
             <Typography
               variant="h2"
@@ -176,20 +176,20 @@ export default function AIModelsPage() {
               sx={{
                 fontWeight: 800,
                 fontSize: { xs: '2rem', md: '3.5rem' },
-                background: 'linear-gradient(90deg, #fff 0%, #c4b5fd 50%, #f9a8d4 100%)',
+                background: 'linear-gradient(90deg, #fff 0%, #c4b5fd 50%, #8b5cf6 100%)',
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 mb: 2,
               }}
             >
-              Die führenden KI-Modelle
+              The leading AI models
             </Typography>
             <Typography
               variant="h6"
               sx={{ color: 'rgba(255,255,255,0.8)', fontWeight: 400, maxWidth: 600, mx: 'auto' }}
             >
-              Ein Überblick über die leistungsstärksten AI-Systeme der Welt
+              An overview of the most powerful AI systems in the world
             </Typography>
           </Box>
         </Container>
@@ -197,7 +197,7 @@ export default function AIModelsPage() {
 
       <Box
         sx={{
-          background: 'linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%)',
+          background: '#0a1628',
           py: 8,
         }}
       >
@@ -212,7 +212,7 @@ export default function AIModelsPage() {
             variant="overline"
             sx={{ color: 'rgba(255,255,255,0.5)', letterSpacing: 2, mb: 3, display: 'block' }}
           >
-            Top 3 Modelle
+            Top 3 models
           </Typography>
           <Grid container spacing={3} sx={{ mb: 6 }}>
             {top3.map((model) => (
@@ -226,7 +226,7 @@ export default function AIModelsPage() {
             variant="overline"
             sx={{ color: 'rgba(255,255,255,0.5)', letterSpacing: 2, mb: 3, display: 'block' }}
           >
-            Weitere führende Modelle
+            More leading models
           </Typography>
           <Grid container spacing={3}>
             {rest.map((model) => (
@@ -240,15 +240,15 @@ export default function AIModelsPage() {
 
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
+          background: '#0a1628',
           py: 6,
           textAlign: 'center',
         }}
       >
         <Container maxWidth="md">
           <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.5)' }}>
-            Rankings basieren auf Benchmarks, Nutzerfeedback und Industrieadoption.
-            Die KI-Landschaft entwickelt sich rasant – Änderungen vorbehalten.
+            Rankings are based on benchmarks, user feedback, and industry adoption.
+            The AI landscape is evolving rapidly — subject to change.
           </Typography>
         </Container>
       </Box>

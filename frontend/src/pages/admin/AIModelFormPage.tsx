@@ -69,7 +69,7 @@ export default function AIModelFormPage() {
       setSaved(true)
       setTimeout(() => navigate('/admin/ki-modelle'), 800)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Speichern fehlgeschlagen')
+      setError(e instanceof Error ? e.message : 'Save failed')
     } finally {
       setSubmitting(false)
     }
@@ -80,7 +80,7 @@ export default function AIModelFormPage() {
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
       <Typography variant="h4" fontWeight={700} gutterBottom>
-        {isEdit ? 'Modell bearbeiten' : 'Neues Modell'}
+        {isEdit ? 'Edit Model' : 'New Model'}
       </Typography>
 
       <Card>
@@ -88,14 +88,14 @@ export default function AIModelFormPage() {
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
             <Box sx={{ display: 'flex', gap: 2 }}>
               <TextField label="Name" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} sx={{ flex: 2 }} />
-              <TextField label="Logo (Emoji)" value={form.logo} onChange={(e) => setForm({ ...form, logo: e.target.value })} sx={{ flex: 1 }} />
+              <TextField label="Logo (emoji)" value={form.logo} onChange={(e) => setForm({ ...form, logo: e.target.value })} sx={{ flex: 1 }} />
             </Box>
 
-            <TextField label="Hersteller" required value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} fullWidth />
+            <TextField label="Company" required value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} fullWidth />
 
             <Box sx={{ display: 'flex', gap: 2 }}>
               <TextField
-                label="Rang"
+                label="Rank"
                 type="number"
                 required
                 value={form.rank}
@@ -103,7 +103,7 @@ export default function AIModelFormPage() {
                 sx={{ flex: 1 }}
               />
               <TextField
-                label="Veröffentlichungsjahr"
+                label="Release year"
                 type="number"
                 value={form.releaseYear ?? ''}
                 onChange={(e) => setForm({ ...form, releaseYear: parseInt(e.target.value, 10) || undefined })}
@@ -111,10 +111,10 @@ export default function AIModelFormPage() {
               />
             </Box>
 
-            <TextField label="Kategorie" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} fullWidth />
+            <TextField label="Category" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} fullWidth />
 
             <TextField
-              label="Akzentfarbe (Hex)"
+              label="Accent color (hex)"
               value={form.accentColor}
               onChange={(e) => setForm({ ...form, accentColor: e.target.value })}
               placeholder="#10b981"
@@ -127,7 +127,7 @@ export default function AIModelFormPage() {
               onChange={(e) => setForm({ ...form, gradient: e.target.value })}
               placeholder="linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)"
               fullWidth
-              helperText="CSS-Gradient für die Card-Hintergrundfarbe"
+              helperText="CSS gradient for the card background color"
             />
 
             <Box>
@@ -139,7 +139,7 @@ export default function AIModelFormPage() {
                   value={highlightInput}
                   onChange={(e) => setHighlightInput(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addHighlight() } }}
-                  placeholder="z.B. Multimodal"
+                  placeholder="e.g. Multimodal"
                 />
                 <Button onClick={addHighlight} variant="outlined">+</Button>
               </Box>
@@ -150,7 +150,7 @@ export default function AIModelFormPage() {
               </Box>
             </Box>
 
-            {/* Live-Preview der Card-Farbe */}
+            {/* Live preview of the card color */}
             {form.gradient && (
               <Box
                 sx={{
@@ -164,16 +164,16 @@ export default function AIModelFormPage() {
                   fontWeight: 700,
                 }}
               >
-                {form.logo} {form.name || 'Vorschau'}
+                {form.logo} {form.name || 'Preview'}
               </Box>
             )}
 
             {error && <Alert severity="error">{error}</Alert>}
 
             <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-              <Button onClick={() => navigate('/admin/ki-modelle')} color="inherit">Abbrechen</Button>
+              <Button onClick={() => navigate('/admin/ki-modelle')} color="inherit">Cancel</Button>
               <Button onClick={handleSave} variant="contained" disableElevation disabled={!form.name || !form.company || submitting}>
-                {submitting ? 'Speichern…' : isEdit ? 'Aktualisieren' : 'Anlegen'}
+                {submitting ? 'Saving…' : isEdit ? 'Update' : 'Create'}
               </Button>
             </Box>
           </Box>
@@ -181,7 +181,7 @@ export default function AIModelFormPage() {
       </Card>
 
       <Snackbar open={saved} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-        <Alert severity="success">Modell gespeichert</Alert>
+        <Alert severity="success">Model saved</Alert>
       </Snackbar>
     </Container>
   )

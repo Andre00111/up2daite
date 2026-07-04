@@ -25,9 +25,9 @@ import { useStories } from '../../hooks/useStories'
 import { useEditions } from '../../hooks/useEditions'
 
 const sourceTypes: { value: SourceType; label: string }[] = [
-  { value: 'primary', label: '🔵 Primärquelle' },
-  { value: 'analysis', label: '🟡 Analyse' },
-  { value: 'pr-driven', label: '🔴 PR-getrieben' },
+  { value: 'primary', label: '🔵 Primary source' },
+  { value: 'analysis', label: '🟡 Analysis' },
+  { value: 'pr-driven', label: '🔴 PR-driven' },
 ]
 
 export default function StoryFormPage() {
@@ -56,7 +56,7 @@ export default function StoryFormPage() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Beim Edit: Form aus existierender Story füllen
+  // When editing: populate form from the existing story
   useEffect(() => {
     if (!isEdit) return
     const story = getStoryById(id!)
@@ -103,7 +103,7 @@ export default function StoryFormPage() {
       setSaved(true)
       setTimeout(() => navigate('/admin'), 1000)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Speichern fehlgeschlagen')
+      setError(e instanceof Error ? e.message : 'Save failed')
     } finally {
       setSubmitting(false)
     }
@@ -116,14 +116,14 @@ export default function StoryFormPage() {
   return (
     <Box>
       <Typography variant="h4" fontWeight={700} gutterBottom>
-        {isEdit ? 'Story bearbeiten' : 'Neue Story'}
+        {isEdit ? 'Edit Story' : 'New Story'}
       </Typography>
 
       <Card>
         <CardContent sx={{ p: 3 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
             <TextField
-              label="Titel"
+              label="Title"
               fullWidth
               required
               value={form.title}
@@ -131,26 +131,26 @@ export default function StoryFormPage() {
             />
 
             <TextField
-              label="Redaktioneller Kommentar"
+              label="Editorial comment"
               fullWidth
               required
               multiline
               rows={4}
               value={form.editorialComment}
               onChange={(e) => setForm({ ...form, editorialComment: e.target.value })}
-              helperText="2–4 Sätze: warum ist diese Meldung relevant?"
+              helperText="2–4 sentences: why is this story relevant?"
             />
 
             <Box sx={{ display: 'flex', gap: 2 }}>
               <TextField
-                label="Quellenname"
+                label="Source name"
                 required
                 value={form.sourceName}
                 onChange={(e) => setForm({ ...form, sourceName: e.target.value })}
                 sx={{ flex: 1 }}
               />
               <TextField
-                label="URL zur Originalquelle"
+                label="URL to original source"
                 required
                 value={form.sourceUrl}
                 onChange={(e) => setForm({ ...form, sourceUrl: e.target.value })}
@@ -159,7 +159,7 @@ export default function StoryFormPage() {
             </Box>
 
             <TextField
-              label="Quellentyp"
+              label="Source type"
               select
               required
               value={form.sourceType}
@@ -173,12 +173,12 @@ export default function StoryFormPage() {
             </TextField>
 
             <FormControl fullWidth>
-              <InputLabel>Themen</InputLabel>
+              <InputLabel>Topics</InputLabel>
               <Select
                 multiple
                 value={form.selectedTopics}
                 onChange={(e) => setForm({ ...form, selectedTopics: e.target.value as TopicId[] })}
-                input={<OutlinedInput label="Themen" />}
+                input={<OutlinedInput label="Topics" />}
                 renderValue={(selected) => (
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                     {selected.map((v) => (
@@ -202,7 +202,7 @@ export default function StoryFormPage() {
               <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
                 <TextField
                   size="small"
-                  placeholder="z.B. AGI, Regulation, Open Source"
+                  placeholder="e.g. AGI, Regulation, Open Source"
                   value={buzzwordInput}
                   onChange={(e) => setBuzzwordInput(e.target.value)}
                   onKeyDown={(e) => {
@@ -248,9 +248,9 @@ export default function StoryFormPage() {
               select
               value={form.editionId}
               onChange={(e) => setForm({ ...form, editionId: e.target.value })}
-              helperText="Leer = unassigned"
+              helperText="Empty = unassigned"
             >
-              <MenuItem value="">— keine —</MenuItem>
+              <MenuItem value="">— none —</MenuItem>
               {editions.map((e) => (
                 <MenuItem key={e.id} value={e.id}>
                   #{e.number} – {e.title}
@@ -260,12 +260,12 @@ export default function StoryFormPage() {
 
             <Box>
               <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-                Signal-Score
+                Signal score
               </Typography>
               {[
-                { key: 'impact' as const, label: 'Impact (1 = gering, 5 = hoch)' },
-                { key: 'hypeLevel' as const, label: 'Hype-Level (1 = kein Hype = gut, 5 = reiner Hype = schlecht)' },
-                { key: 'sourceQuality' as const, label: 'Quellenqualität (1 = gering, 5 = Primärquelle)' },
+                { key: 'impact' as const, label: 'Impact (1 = low, 5 = high)' },
+                { key: 'hypeLevel' as const, label: 'Hype level (1 = no hype = good, 5 = pure hype = bad)' },
+                { key: 'sourceQuality' as const, label: 'Source quality (1 = low, 5 = primary source)' },
               ].map(({ key, label }) => (
                 <Box key={key} sx={{ mb: 2 }}>
                   <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -288,7 +288,7 @@ export default function StoryFormPage() {
 
             <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
               <Button onClick={() => navigate('/admin')} color="inherit">
-                Abbrechen
+                Cancel
               </Button>
               <Button
                 onClick={handleSave}
@@ -296,7 +296,7 @@ export default function StoryFormPage() {
                 disableElevation
                 disabled={!form.title || !form.editorialComment || submitting}
               >
-                {submitting ? 'Speichern…' : isEdit ? 'Aktualisieren' : 'Anlegen'}
+                {submitting ? 'Saving…' : isEdit ? 'Update' : 'Create'}
               </Button>
             </Box>
           </Box>
@@ -304,7 +304,7 @@ export default function StoryFormPage() {
       </Card>
 
       <Snackbar open={saved} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-        <Alert severity="success">Story gespeichert</Alert>
+        <Alert severity="success">Story saved</Alert>
       </Snackbar>
     </Box>
   )

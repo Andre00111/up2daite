@@ -44,16 +44,16 @@ function buildCaption(edition: Edition, stories: Story[]): string {
   const kw = getISOWeek(edition.publishedAt)
 
   return [
-    `📰 up2daite — Ausgabe #${edition.number}: ${edition.title}`,
-    `📅 KW ${kw}`,
+    `📰 up2daite — Edition #${edition.number}: ${edition.title}`,
+    `📅 Week ${kw}`,
     '',
     storyLines,
     '',
-    `📊 Ø Signal Scores: Impact ${avg(allImpact)}/5 · Hype ${avg(allHype)}/5 · Quelle ${avg(allQuality)}/5`,
+    `📊 Ø Signal Scores: Impact ${avg(allImpact)}/5 · Hype ${avg(allHype)}/5 · Source ${avg(allQuality)}/5`,
     '',
-    `🔗 Mehr auf up2daite.com/ausgabe/${edition.slug}`,
+    `🔗 More at up2daite.com/ausgabe/${edition.slug}`,
     '',
-    `#KI #AI #KünstlicheIntelligenz #AINews #up2daite ${hashtags}`,
+    `#AI #ArtificialIntelligence #AINews #up2daite ${hashtags}`,
   ].join('\n')
 }
 
@@ -140,10 +140,10 @@ export default function InstagramExportDialog({ open, onClose, edition, stories,
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth scroll="paper">
       <DialogTitle sx={{ pb: 0 }}>
         <Typography variant="h6" fontWeight={700}>
-          Instagram Export — Ausgabe #{edition.number}
+          Instagram Export — Edition #{edition.number}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          {stories.length + 1} Bilder · 1080 × 1350px · 4:5 Portrait · PNG
+          {stories.length + 1} images · 1080 × 1350px · 4:5 Portrait · PNG
         </Typography>
       </DialogTitle>
 
@@ -225,7 +225,7 @@ export default function InstagramExportDialog({ open, onClose, edition, stories,
             <Typography variant="subtitle2" fontWeight={700} color="text.secondary">
               Instagram Caption
             </Typography>
-            <IconButton onClick={handleCopy} size="small" title="Caption kopieren">
+            <IconButton onClick={handleCopy} size="small" title="Copy caption">
               <CopyIcon fontSize="small" />
             </IconButton>
           </Box>
@@ -244,7 +244,7 @@ export default function InstagramExportDialog({ open, onClose, edition, stories,
       </DialogContent>
 
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onClose} color="inherit">Schließen</Button>
+        <Button onClick={onClose} color="inherit">Close</Button>
       </DialogActions>
 
       <Snackbar
@@ -253,7 +253,7 @@ export default function InstagramExportDialog({ open, onClose, edition, stories,
         onClose={() => setCopied(false)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert severity="success" variant="filled">Caption kopiert!</Alert>
+        <Alert severity="success" variant="filled">Caption copied!</Alert>
       </Snackbar>
     </Dialog>
   )

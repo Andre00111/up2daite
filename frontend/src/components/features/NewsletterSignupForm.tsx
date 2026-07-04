@@ -19,14 +19,14 @@ export default function NewsletterSignupForm({ variant = 'inline' }: { variant?:
       setEmail('')
     } catch (err) {
       setStatus('error')
-      setErrorMsg(err instanceof Error ? err.message : 'Anmeldung fehlgeschlagen')
+      setErrorMsg(err instanceof Error ? err.message : 'Sign-up failed')
     }
   }
 
   if (status === 'success') {
     return (
       <Alert severity="success" sx={{ borderRadius: 2 }}>
-        Fast geschafft! Wir haben dir eine E-Mail zur Bestätigung geschickt.
+        Almost there! We've sent you a confirmation email.
       </Alert>
     )
   }
@@ -35,16 +35,16 @@ export default function NewsletterSignupForm({ variant = 'inline' }: { variant?:
     <Box>
       {variant === 'hero' && (
         <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
-          Newsletter abonnieren
+          Subscribe to newsletter
         </Typography>
       )}
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-        AI-Signal. Kein Rauschen. 3× pro Woche.
+        AI signal. No noise. 3× per week.
       </Typography>
       <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
         <TextField
           type="email"
-          placeholder="deine@email.de"
+          placeholder="you@email.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -62,7 +62,7 @@ export default function NewsletterSignupForm({ variant = 'inline' }: { variant?:
             fontWeight: 600,
           }}
         >
-          {status === 'submitting' ? 'Senden…' : 'Abonnieren'}
+          {status === 'submitting' ? 'Sending…' : 'Subscribe'}
         </Button>
       </Box>
       {status === 'error' && (
@@ -71,7 +71,7 @@ export default function NewsletterSignupForm({ variant = 'inline' }: { variant?:
         </Alert>
       )}
       <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
-        Mit der Anmeldung stimmst du der Speicherung deiner E-Mail zu. Du kannst dich jederzeit abmelden.
+        By signing up you agree to us storing your email. You can unsubscribe at any time.
       </Typography>
     </Box>
   )

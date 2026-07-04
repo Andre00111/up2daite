@@ -6,7 +6,7 @@ interface Props {
 }
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('de-DE', {
+  return new Date(iso).toLocaleDateString('en-US', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -18,7 +18,7 @@ export default function EditionHeader({ edition }: Props) {
     <Box sx={{ mb: 4 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
         <Chip
-          label={`Ausgabe #${edition.number}`}
+          label={`Edition #${edition.number}`}
           size="small"
           variant="outlined"
           sx={{ fontWeight: 600 }}

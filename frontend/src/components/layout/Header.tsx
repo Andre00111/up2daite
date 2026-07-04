@@ -34,11 +34,12 @@ import {
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useLayout } from '../../context/LayoutContext'
 import { useAuth } from '../../context/AuthContext'
+import Logo, { Wordmark } from '../ui/Logo'
 
 const navItems = [
-  { label: 'Archiv', path: '/archiv', icon: <ArchiveIcon /> },
-  { label: 'KI-Jobs', path: '/ki-jobs', icon: <WorkIcon /> },
-  { label: 'KI-Modelle', path: '/ki-modelle', icon: <PsychologyIcon /> },
+  { label: 'Archive', path: '/archiv', icon: <ArchiveIcon /> },
+  { label: 'Endangered Jobs', path: '/endangered-jobs', icon: <WorkIcon /> },
+  { label: 'AI Models', path: '/ki-modelle', icon: <PsychologyIcon /> },
 ]
 
 export default function Header() {
@@ -90,22 +91,14 @@ export default function Header() {
           </IconButton>
         )}
 
-        <Typography
+        <Box
           component={Link}
           to="/"
-          variant="h6"
-          sx={{
-            fontWeight: 700,
-            color: 'text.primary',
-            textDecoration: 'none',
-            letterSpacing: '-0.03em',
-            background: (t) => t.palette.brand.gradient,
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
+          sx={{ display: 'flex', alignItems: 'center', gap: 1, textDecoration: 'none' }}
         >
-          up2daite
-        </Typography>
+          <Logo size={28} />
+          <Wordmark fontSize={22} />
+        </Box>
 
         {!isMobile && (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, ml: 4 }}>
@@ -187,7 +180,7 @@ export default function Header() {
             {user && (
               <MenuItem component={Link} to="/admin" onClick={handleProfileMenuClose}>
                 <ListItemIcon><AdminIcon fontSize="small" /></ListItemIcon>
-                Admin-Bereich
+                Admin area
               </MenuItem>
             )}
             <MenuItem component={Link} to="/about" onClick={handleProfileMenuClose}>
@@ -208,7 +201,7 @@ export default function Header() {
                 }
                 label={
                   <Typography variant="body2" color="text.secondary">
-                    Sidebar Layout
+                    Sidebar layout
                   </Typography>
                 }
               />
@@ -220,7 +213,7 @@ export default function Header() {
                 sx={{ color: 'error.main' }}
               >
                 <ListItemIcon><LogoutIcon fontSize="small" color="error" /></ListItemIcon>
-                Abmelden
+                Log out
               </MenuItem>
             )}
           </Menu>
@@ -282,7 +275,7 @@ export default function Header() {
               fontWeight: 600,
             }}
           >
-            Newsletter abonnieren
+            Subscribe to newsletter
           </Button>
         </Box>
       </Drawer>

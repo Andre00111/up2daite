@@ -8,7 +8,7 @@ export default function Footer() {
     >
       <Container maxWidth="lg">
         <Typography variant="body2" color="text.secondary">
-          © 2026 up2daite.com – AI-Signal. Kein Rauschen.
+          © 2026 up2daite.com – AI signal. No noise.
         </Typography>
       </Container>
     </Box>

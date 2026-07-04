@@ -17,7 +17,7 @@ export default function SubscriberListPage() {
   useEffect(() => {
     subscribersApi.listAll()
       .then(setSubscribers)
-      .catch(() => setError('Subscribers konnten nicht geladen werden.'))
+      .catch(() => setError('Subscribers could not be loaded.'))
       .finally(() => setLoading(false))
   }, [])
 
@@ -25,9 +25,9 @@ export default function SubscriberListPage() {
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Box>
-          <Typography variant="h4" fontWeight={700}>Newsletter-Abonnenten</Typography>
+          <Typography variant="h4" fontWeight={700}>Newsletter Subscribers</Typography>
           <Typography color="text.secondary">
-            {loading ? 'Lade…' : `${subscribers.length} bestätigte Subscriber`}
+            {loading ? 'Loading…' : `${subscribers.length} confirmed subscribers`}
           </Typography>
         </Box>
         <Button
@@ -38,7 +38,7 @@ export default function SubscriberListPage() {
           disableElevation
           sx={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', textTransform: 'none' }}
         >
-          Edition versenden
+          Send edition
         </Button>
       </Box>
 
@@ -52,22 +52,22 @@ export default function SubscriberListPage() {
             <TableHead>
               <TableRow>
                 <TableCell>Email</TableCell>
-                <TableCell>Angemeldet</TableCell>
-                <TableCell>Bestätigt</TableCell>
+                <TableCell>Subscribed</TableCell>
+                <TableCell>Confirmed</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {subscribers.map((s) => (
                 <TableRow key={s.id}>
                   <TableCell>{s.email}</TableCell>
-                  <TableCell>{new Date(s.subscribedAt).toLocaleString('de-DE')}</TableCell>
-                  <TableCell>{s.confirmedAt ? new Date(s.confirmedAt).toLocaleString('de-DE') : '—'}</TableCell>
+                  <TableCell>{new Date(s.subscribedAt).toLocaleString('en-US')}</TableCell>
+                  <TableCell>{s.confirmedAt ? new Date(s.confirmedAt).toLocaleString('en-US') : '—'}</TableCell>
                 </TableRow>
               ))}
               {subscribers.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={3} align="center" sx={{ color: 'text.secondary', py: 4 }}>
-                    Noch keine bestätigten Subscriber.
+                    No confirmed subscribers yet.
                   </TableCell>
                 </TableRow>
               )}
@@ -102,7 +102,7 @@ function SendEditionDialog({
       const r = await subscribersApi.sendEdition(editionId)
       setResult(r)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Versand fehlgeschlagen')
+      setError(e instanceof Error ? e.message : 'Sending failed')
     } finally {
       setSending(false)
     }
@@ -117,21 +117,21 @@ function SendEditionDialog({
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-      <DialogTitle>Edition versenden</DialogTitle>
+      <DialogTitle>Send edition</DialogTitle>
       <DialogContent>
         {result ? (
           <Alert severity={result.failed === 0 ? 'success' : 'warning'}>
-            {result.sent} von {result.total} Mails verschickt
-            {result.failed > 0 && ` (${result.failed} Fehler)`}.
+            {result.sent} of {result.total} emails sent
+            {result.failed > 0 && ` (${result.failed} failed)`}.
           </Alert>
         ) : (
           <>
             <Typography sx={{ mb: 2 }}>
-              Diese Edition wird an <Chip label={`${subscriberCount} Subscriber`} size="small" /> verschickt.
+              This edition will be sent to <Chip label={`${subscriberCount} subscribers`} size="small" />.
             </Typography>
             <FormControl fullWidth>
-              <InputLabel>Ausgabe</InputLabel>
-              <Select value={editionId} label="Ausgabe" onChange={(e) => setEditionId(e.target.value)}>
+              <InputLabel>Edition</InputLabel>
+              <Select value={editionId} label="Edition" onChange={(e) => setEditionId(e.target.value)}>
                 {publishedEditions.map((e) => (
                   <MenuItem key={e.id} value={e.id}>
                     #{e.number} – {e.title}
@@ -144,7 +144,7 @@ function SendEditionDialog({
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Schließen</Button>
+        <Button onClick={handleClose}>Close</Button>
         {!result && (
           <Button
             variant="contained"
@@ -153,7 +153,7 @@ function SendEditionDialog({
             disableElevation
             sx={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', textTransform: 'none' }}
           >
-            {sending ? 'Versende…' : 'Versenden'}
+            {sending ? 'Sending…' : 'Send'}
           </Button>
         )}
       </DialogActions>

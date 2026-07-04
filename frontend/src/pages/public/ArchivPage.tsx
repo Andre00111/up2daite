@@ -10,15 +10,15 @@ export default function ArchivPage() {
   return (
     <Container maxWidth="md" sx={{ py: 6 }}>
       <Typography variant="h4" component="h1" gutterBottom>
-        Archiv
+        Archive
       </Typography>
       <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-        Alle veröffentlichten Ausgaben – kuratiert, kommentiert, eingeordnet.
+        All published editions – curated, commented, put in context.
       </Typography>
 
       {publishedEditions.length === 0 ? (
         <Alert severity="info" sx={{ mt: 2 }}>
-          Noch keine veröffentlichten Ausgaben.
+          No published editions yet.
         </Alert>
       ) : (
         publishedEditions.map((edition) => (

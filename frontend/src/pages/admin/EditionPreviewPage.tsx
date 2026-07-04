@@ -28,9 +28,9 @@ export default function EditionPreviewPage() {
   if (!edition) {
     return (
       <Box>
-        <Alert severity="error">Ausgabe nicht gefunden.</Alert>
+        <Alert severity="error">Edition not found.</Alert>
         <Button onClick={() => navigate('/admin')} sx={{ mt: 2 }}>
-          ← Zurück
+          ← Back
         </Button>
       </Box>
     )
@@ -44,9 +44,9 @@ export default function EditionPreviewPage() {
     try {
       await publishEdition(id)
       await refreshEditions()
-      setSnack({ msg: 'Ausgabe veröffentlicht.', severity: 'success' })
+      setSnack({ msg: 'Edition published.', severity: 'success' })
     } catch (e) {
-      setSnack({ msg: e instanceof Error ? e.message : 'Veröffentlichen fehlgeschlagen.', severity: 'error' })
+      setSnack({ msg: e instanceof Error ? e.message : 'Publishing failed.', severity: 'error' })
     } finally {
       setSubmitting(false)
     }
@@ -58,9 +58,9 @@ export default function EditionPreviewPage() {
     try {
       await unpublishEdition(id)
       await refreshEditions()
-      setSnack({ msg: 'Ausgabe zurück auf Entwurf gesetzt.', severity: 'success' })
+      setSnack({ msg: 'Edition reverted to draft.', severity: 'success' })
     } catch (e) {
-      setSnack({ msg: e instanceof Error ? e.message : 'Aktion fehlgeschlagen.', severity: 'error' })
+      setSnack({ msg: e instanceof Error ? e.message : 'Action failed.', severity: 'error' })
     } finally {
       setSubmitting(false)
     }
@@ -74,7 +74,7 @@ export default function EditionPreviewPage() {
       await refreshEditions()
       navigate('/admin')
     } catch (e) {
-      setSnack({ msg: e instanceof Error ? e.message : 'Löschen fehlgeschlagen.', severity: 'error' })
+      setSnack({ msg: e instanceof Error ? e.message : 'Delete failed.', severity: 'error' })
       setSubmitting(false)
     }
   }
@@ -88,9 +88,9 @@ export default function EditionPreviewPage() {
           <Button onClick={() => navigate('/admin')} color="inherit" size="small">
             ← Dashboard
           </Button>
-          <Typography variant="h5" fontWeight={700}>Vorschau</Typography>
+          <Typography variant="h5" fontWeight={700}>Preview</Typography>
           <Chip
-            label={isPublished ? 'Veröffentlicht' : 'Entwurf'}
+            label={isPublished ? 'Published' : 'Draft'}
             color={isPublished ? 'success' : 'default'}
             size="small"
           />
@@ -100,18 +100,18 @@ export default function EditionPreviewPage() {
             Instagram
           </Button>
           <Button onClick={() => navigate(`/admin/edition/${edition.id}/edit`)} color="inherit">
-            Bearbeiten
+            Edit
           </Button>
           <Button color="error" onClick={() => setDeleteDialogOpen(true)} disabled={submitting}>
-            Löschen
+            Delete
           </Button>
           {isPublished ? (
             <Button onClick={handleUnpublish} variant="outlined" disabled={submitting}>
-              Zurück auf Entwurf
+              Revert to draft
             </Button>
           ) : (
             <Button onClick={handlePublish} variant="contained" disableElevation disabled={submitting}>
-              Jetzt veröffentlichen
+              Publish now
             </Button>
           )}
         </Box>
@@ -124,21 +124,21 @@ export default function EditionPreviewPage() {
       <Divider sx={{ mb: 4 }} />
 
       {stories.length === 0 ? (
-        <Alert severity="warning">Diese Ausgabe enthält noch keine Stories.</Alert>
+        <Alert severity="warning">This edition doesn't contain any stories yet.</Alert>
       ) : (
         stories.map((story) => <StoryCard key={story.id} story={story} variant="full" />)
       )}
 
       <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-        <DialogTitle>Ausgabe wirklich löschen?</DialogTitle>
+        <DialogTitle>Really delete this edition?</DialogTitle>
         <DialogContent>
           <Typography>
-            Stories der Ausgabe werden nicht gelöscht, sondern verlieren ihre Zuordnung.
+            Stories in this edition will not be deleted, but will lose their assignment.
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDeleteDialogOpen(false)}>Abbrechen</Button>
-          <Button color="error" onClick={handleDelete} disabled={submitting}>Löschen</Button>
+          <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+          <Button color="error" onClick={handleDelete} disabled={submitting}>Delete</Button>
         </DialogActions>
       </Dialog>
 

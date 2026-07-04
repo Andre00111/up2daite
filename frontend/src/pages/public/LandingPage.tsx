@@ -19,14 +19,14 @@ export default function LandingPage() {
 
   return (
     <Box>
-      {/* Hero – dunkle Marken-Fläche (Instagram-Optik) */}
+      {/* Hero – dark brand surface (Instagram look) */}
       <DarkSection glow>
         <Container maxWidth="md">
           <Typography
             variant="overline"
             sx={{ color: 'secondary.main', fontWeight: 700, letterSpacing: '0.08em' }}
           >
-            DIESE WOCHE · KI-NEWS 3× PRO WOCHE
+            THIS WEEK · AI NEWS 3× A WEEK
           </Typography>
           <Typography
             variant="h2"
@@ -34,14 +34,14 @@ export default function LandingPage() {
             gutterBottom
             sx={{ fontSize: { xs: '2.25rem', md: '3.25rem' }, mt: 1, fontWeight: 900 }}
           >
-            AI-Signal. Kein Rauschen.
+            AI signal. No noise.
           </Typography>
           <Typography
             variant="h6"
             sx={{ mb: 3, color: 'text.secondary', fontWeight: 400, maxWidth: 560 }}
           >
-            Kuratierte AI-News mit redaktionellem Urteil – 3× pro Woche.
-            Wir erklären, warum etwas relevant ist. Und warum nicht.
+            Curated AI news with editorial judgment – 3× a week.
+            We explain why something matters. And why it doesn't.
           </Typography>
           <Box
             sx={{
@@ -68,7 +68,7 @@ export default function LandingPage() {
                 },
               }}
             >
-              Newsletter abonnieren
+              Subscribe to newsletter
             </Button>
             <Button
               onClick={() => navigate('/archiv')}
@@ -77,18 +77,18 @@ export default function LandingPage() {
               color="inherit"
               sx={{ borderColor: 'divider' }}
             >
-              Archiv ansehen
+              View archive
             </Button>
           </Box>
         </Container>
       </DarkSection>
 
-      {/* Letzte Ausgabe */}
+      {/* Latest edition */}
       {latestEdition && (
         <Container maxWidth="lg" sx={{ py: 8 }}>
           <Box sx={{ mb: 4 }}>
             <Typography variant="overline" color="text.secondary">
-              Letzte Ausgabe · #{latestEdition.number}
+              Latest edition · #{latestEdition.number}
             </Typography>
             <Typography variant="h4" gutterBottom sx={{ mt: 0.5 }}>
               {latestEdition.title}
@@ -115,7 +115,7 @@ export default function LandingPage() {
               color="primary"
               size="large"
             >
-              Gesamte Ausgabe lesen →
+              Read full edition →
             </Button>
           </Box>
         </Container>
@@ -123,20 +123,20 @@ export default function LandingPage() {
 
       <Divider />
 
-      {/* Signal-Score Teaser — dunkles Band mit Live-Bars */}
+      {/* Signal score teaser — dark band with live bars */}
       <DarkSection py={{ xs: 6, md: 8 }} sx={{ bgcolor: 'background.paper' }}>
         <Container maxWidth="md" sx={{ textAlign: 'center' }}>
           <Typography variant="overline" sx={{ color: 'secondary.main' }}>
-            Unser Ansatz
+            Our approach
           </Typography>
           <Typography variant="h5" gutterBottom sx={{ mt: 0.5 }}>
-            Jede Meldung wird manuell bewertet
+            Every story is manually scored
           </Typography>
           <Typography variant="body1" color="text.secondary" sx={{ mb: 4, maxWidth: 520, mx: 'auto' }}>
-            Drei Dimensionen: <strong>Impact</strong> (wie relevant?),{' '}
-            <strong>Hype-Level</strong> (wie viel PR?) und{' '}
-            <strong>Quellenqualität</strong> (wie verlässlich?). Der Score ist immer
-            erklärt – keine Black Box.
+            Three dimensions: <strong>Impact</strong> (how relevant?),{' '}
+            <strong>Hype level</strong> (how much PR?) and{' '}
+            <strong>Source quality</strong> (how reliable?). The score is always
+            explained – no black box.
           </Typography>
           <Box sx={{ maxWidth: 360, mx: 'auto', textAlign: 'left' }}>
             <SignalScoreBadge score={{ impact: 5, hypeLevel: 2, sourceQuality: 4 }} />
@@ -144,7 +144,7 @@ export default function LandingPage() {
         </Container>
       </DarkSection>
 
-      {/* Newsletter-Anmeldung */}
+      {/* Newsletter signup */}
       <Box id="newsletter" sx={{ py: 8 }}>
         <Container maxWidth="sm">
           <Paper

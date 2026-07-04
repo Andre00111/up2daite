@@ -4,18 +4,18 @@ import type { Source } from '../../types'
 const config = {
   primary: {
     icon: '🔵',
-    label: 'Primärquelle',
-    tooltip: 'Direkter Output der Quelle – Blogpost, Paper oder offizielle Ankündigung',
+    label: 'Primary source',
+    tooltip: 'Direct output from the source – blog post, paper, or official announcement',
   },
   analysis: {
     icon: '🟡',
-    label: 'Analyse',
-    tooltip: 'Einordnung durch Dritte – Journalist, Analyst oder Researcher',
+    label: 'Analysis',
+    tooltip: 'Interpretation by a third party – journalist, analyst, or researcher',
   },
   'pr-driven': {
     icon: '🔴',
-    label: 'PR-getrieben',
-    tooltip: 'Pressemitteilung, Paid Content oder stark spekulativ',
+    label: 'PR-driven',
+    tooltip: 'Press release, paid content, or highly speculative',
   },
 }
 

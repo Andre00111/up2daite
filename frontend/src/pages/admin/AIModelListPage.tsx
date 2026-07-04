@@ -34,11 +34,11 @@ export default function AIModelListPage() {
     setBusy(true)
     try {
       await aiModelsApi.remove(confirm.id)
-      setSnack({ msg: 'Modell gelöscht.', severity: 'success' })
+      setSnack({ msg: 'Model deleted.', severity: 'success' })
       setConfirm(null)
       load()
     } catch (e) {
-      setSnack({ msg: e instanceof Error ? e.message : 'Löschen fehlgeschlagen.', severity: 'error' })
+      setSnack({ msg: e instanceof Error ? e.message : 'Delete failed.', severity: 'error' })
     } finally {
       setBusy(false)
     }
@@ -48,8 +48,8 @@ export default function AIModelListPage() {
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Box>
-          <Typography variant="h4" fontWeight={700}>KI-Modelle</Typography>
-          <Typography color="text.secondary">{models.length} Modelle</Typography>
+          <Typography variant="h4" fontWeight={700}>AI Models</Typography>
+          <Typography color="text.secondary">{models.length} models</Typography>
         </Box>
         <Button
           variant="contained"
@@ -58,7 +58,7 @@ export default function AIModelListPage() {
           disableElevation
           sx={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', textTransform: 'none' }}
         >
-          Neues Modell
+          New model
         </Button>
       </Box>
 
@@ -69,12 +69,12 @@ export default function AIModelListPage() {
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell>Rang</TableCell>
+                <TableCell>Rank</TableCell>
                 <TableCell>Name</TableCell>
-                <TableCell>Hersteller</TableCell>
-                <TableCell>Kategorie</TableCell>
-                <TableCell>Jahr</TableCell>
-                <TableCell align="right">Aktionen</TableCell>
+                <TableCell>Company</TableCell>
+                <TableCell>Category</TableCell>
+                <TableCell>Year</TableCell>
+                <TableCell align="right">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -99,7 +99,7 @@ export default function AIModelListPage() {
                 </TableRow>
               ))}
               {models.length === 0 && (
-                <TableRow><TableCell colSpan={6} align="center" sx={{ py: 4, color: 'text.secondary' }}>Noch keine Modelle.</TableCell></TableRow>
+                <TableRow><TableCell colSpan={6} align="center" sx={{ py: 4, color: 'text.secondary' }}>No models yet.</TableCell></TableRow>
               )}
             </TableBody>
           </Table>
@@ -107,11 +107,11 @@ export default function AIModelListPage() {
       </Card>
 
       <Dialog open={confirm !== null} onClose={() => setConfirm(null)}>
-        <DialogTitle>Modell löschen?</DialogTitle>
-        <DialogContent>"{confirm?.name}" wird gelöscht.</DialogContent>
+        <DialogTitle>Delete model?</DialogTitle>
+        <DialogContent>"{confirm?.name}" will be deleted.</DialogContent>
         <DialogActions>
-          <Button onClick={() => setConfirm(null)}>Abbrechen</Button>
-          <Button color="error" onClick={handleDelete} disabled={busy}>Löschen</Button>
+          <Button onClick={() => setConfirm(null)}>Cancel</Button>
+          <Button color="error" onClick={handleDelete} disabled={busy}>Delete</Button>
         </DialogActions>
       </Dialog>
 
@@ -122,7 +122,7 @@ export default function AIModelListPage() {
       <InstagramPreviewDialog
         open={instaPreview !== null}
         onClose={() => setInstaPreview(null)}
-        title="KI-Modell Card"
+        title="AI Model Card"
         filename={`model-${instaPreview?.id ?? ''}`}
         drawFn={instaDrawFn}
       />

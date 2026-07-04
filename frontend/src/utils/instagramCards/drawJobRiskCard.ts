@@ -168,5 +168,5 @@ export function drawJobRiskCard(ctx: CanvasRenderingContext2D, job: AIJob) {
   ctx.fillStyle = '#cbd5e1'
   wrapText(ctx, job.reasoning, PAD + 32, insY + 65, W - PAD * 2 - 64, 40)
 
-  drawFooter(ctx, 'KI-Jobs · 2025')
+  drawFooter(ctx, 'Endangered Jobs · 2025')
 }

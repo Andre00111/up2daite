@@ -34,11 +34,11 @@ export default function AIJobListPage() {
     setBusy(true)
     try {
       await aiJobsApi.remove(confirm.id)
-      setSnack({ msg: 'Job gelöscht.', severity: 'success' })
+      setSnack({ msg: 'Job deleted.', severity: 'success' })
       setConfirm(null)
       load()
     } catch (e) {
-      setSnack({ msg: e instanceof Error ? e.message : 'Löschen fehlgeschlagen.', severity: 'error' })
+      setSnack({ msg: e instanceof Error ? e.message : 'Delete failed.', severity: 'error' })
     } finally {
       setBusy(false)
     }
@@ -48,17 +48,17 @@ export default function AIJobListPage() {
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Box>
-          <Typography variant="h4" fontWeight={700}>KI-Jobs</Typography>
-          <Typography color="text.secondary">{jobs.length} Berufe</Typography>
+          <Typography variant="h4" fontWeight={700}>Endangered Jobs</Typography>
+          <Typography color="text.secondary">{jobs.length} jobs</Typography>
         </Box>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => navigate('/admin/ki-jobs/neu')}
+          onClick={() => navigate('/admin/endangered-jobs/neu')}
           disableElevation
           sx={{ background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', textTransform: 'none' }}
         >
-          Neuer Job
+          New job
         </Button>
       </Box>
 
@@ -69,11 +69,11 @@ export default function AIJobListPage() {
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell>Titel</TableCell>
-                <TableCell>Kategorie</TableCell>
-                <TableCell align="right">Risiko</TableCell>
+                <TableCell>Title</TableCell>
+                <TableCell>Category</TableCell>
+                <TableCell align="right">Risk</TableCell>
                 <TableCell>Trend</TableCell>
-                <TableCell align="right">Aktionen</TableCell>
+                <TableCell align="right">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -93,7 +93,7 @@ export default function AIJobListPage() {
                     <IconButton size="small" onClick={() => setInstaPreview(job)} title="Instagram Card">
                       <InstagramIcon fontSize="small" />
                     </IconButton>
-                    <IconButton size="small" onClick={() => navigate(`/admin/ki-jobs/${job.id}/edit`)}>
+                    <IconButton size="small" onClick={() => navigate(`/admin/endangered-jobs/${job.id}/edit`)}>
                       <EditIcon fontSize="small" />
                     </IconButton>
                     <IconButton size="small" color="error" onClick={() => setConfirm(job)}>
@@ -103,7 +103,7 @@ export default function AIJobListPage() {
                 </TableRow>
               ))}
               {jobs.length === 0 && (
-                <TableRow><TableCell colSpan={5} align="center" sx={{ py: 4, color: 'text.secondary' }}>Noch keine Jobs.</TableCell></TableRow>
+                <TableRow><TableCell colSpan={5} align="center" sx={{ py: 4, color: 'text.secondary' }}>No jobs yet.</TableCell></TableRow>
               )}
             </TableBody>
           </Table>
@@ -111,11 +111,11 @@ export default function AIJobListPage() {
       </Card>
 
       <Dialog open={confirm !== null} onClose={() => setConfirm(null)}>
-        <DialogTitle>Job löschen?</DialogTitle>
-        <DialogContent>"{confirm?.title}" wird gelöscht.</DialogContent>
+        <DialogTitle>Delete job?</DialogTitle>
+        <DialogContent>"{confirm?.title}" will be deleted.</DialogContent>
         <DialogActions>
-          <Button onClick={() => setConfirm(null)}>Abbrechen</Button>
-          <Button color="error" onClick={handleDelete} disabled={busy}>Löschen</Button>
+          <Button onClick={() => setConfirm(null)}>Cancel</Button>
+          <Button color="error" onClick={handleDelete} disabled={busy}>Delete</Button>
         </DialogActions>
       </Dialog>
 

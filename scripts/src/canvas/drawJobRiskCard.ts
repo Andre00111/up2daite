@@ -152,5 +152,5 @@ export function drawJobRiskCard(ctx: CanvasRenderingContext2D, job: AIJob) {
     tx += pw + 16
   })
 
-  drawFooter(ctx, 'KI-Jobs · 2026')
+  drawFooter(ctx, 'Endangered Jobs · 2026')
 }

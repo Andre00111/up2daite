@@ -7,9 +7,9 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { aiJobsApi, type AIJobWritePayload } from '../../api/aiJobs'
 
 const trends = [
-  { value: 'rising', label: 'Steigend' },
-  { value: 'stable', label: 'Stabil' },
-  { value: 'declining', label: 'Sinkend' },
+  { value: 'rising', label: 'Rising' },
+  { value: 'stable', label: 'Stable' },
+  { value: 'declining', label: 'Declining' },
 ]
 
 export default function AIJobFormPage() {
@@ -69,9 +69,9 @@ export default function AIJobFormPage() {
         await aiJobsApi.create(form)
       }
       setSaved(true)
-      setTimeout(() => navigate('/admin/ki-jobs'), 800)
+      setTimeout(() => navigate('/admin/endangered-jobs'), 800)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Speichern fehlgeschlagen')
+      setError(e instanceof Error ? e.message : 'Save failed')
     } finally {
       setSubmitting(false)
     }
@@ -82,18 +82,18 @@ export default function AIJobFormPage() {
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
       <Typography variant="h4" fontWeight={700} gutterBottom>
-        {isEdit ? 'KI-Job bearbeiten' : 'Neuer KI-Job'}
+        {isEdit ? 'Edit Endangered Job' : 'New Endangered Job'}
       </Typography>
 
       <Card>
         <CardContent sx={{ p: 3 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-            <TextField label="Titel" required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} fullWidth />
-            <TextField label="Kategorie" required value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} fullWidth />
+            <TextField label="Title" required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} fullWidth />
+            <TextField label="Category" required value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} fullWidth />
 
             <Box>
               <Typography variant="body2" color="text.secondary" gutterBottom>
-                Risiko-Score: <strong>{form.riskScore}%</strong>
+                Risk score: <strong>{form.riskScore}%</strong>
               </Typography>
               <Slider
                 value={form.riskScore}
@@ -110,10 +110,10 @@ export default function AIJobFormPage() {
               {trends.map((t) => <MenuItem key={t.value} value={t.value}>{t.label}</MenuItem>)}
             </TextField>
 
-            <TextField label="Begründung" required multiline rows={4} value={form.reasoning} onChange={(e) => setForm({ ...form, reasoning: e.target.value })} fullWidth />
+            <TextField label="Reasoning" required multiline rows={4} value={form.reasoning} onChange={(e) => setForm({ ...form, reasoning: e.target.value })} fullWidth />
 
             <Box>
-              <Typography variant="subtitle2" fontWeight={600} gutterBottom>Betroffene Tätigkeiten</Typography>
+              <Typography variant="subtitle2" fontWeight={600} gutterBottom>Affected tasks</Typography>
               <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
                 <TextField
                   size="small"
@@ -121,7 +121,7 @@ export default function AIJobFormPage() {
                   value={taskInput}
                   onChange={(e) => setTaskInput(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addTask() } }}
-                  placeholder="z.B. Termine vereinbaren"
+                  placeholder="e.g. scheduling appointments"
                 />
                 <Button onClick={addTask} variant="outlined">+</Button>
               </Box>
@@ -135,9 +135,9 @@ export default function AIJobFormPage() {
             {error && <Alert severity="error">{error}</Alert>}
 
             <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-              <Button onClick={() => navigate('/admin/ki-jobs')} color="inherit">Abbrechen</Button>
+              <Button onClick={() => navigate('/admin/endangered-jobs')} color="inherit">Cancel</Button>
               <Button onClick={handleSave} variant="contained" disableElevation disabled={!form.title || !form.category || submitting}>
-                {submitting ? 'Speichern…' : isEdit ? 'Aktualisieren' : 'Anlegen'}
+                {submitting ? 'Saving…' : isEdit ? 'Update' : 'Create'}
               </Button>
             </Box>
           </Box>
@@ -145,7 +145,7 @@ export default function AIJobFormPage() {
       </Card>
 
       <Snackbar open={saved} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-        <Alert severity="success">Job gespeichert</Alert>
+        <Alert severity="success">Job saved</Alert>
       </Snackbar>
     </Container>
   )

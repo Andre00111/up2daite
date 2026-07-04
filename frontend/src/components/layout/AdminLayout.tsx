@@ -20,8 +20,8 @@ const DRAWER_WIDTH = 220
 
 const navItems = [
   { label: 'Dashboard', to: '/admin' },
-  { label: 'Neue Story', to: '/admin/story/neu' },
-  { label: 'Neue Ausgabe', to: '/admin/edition/neu' },
+  { label: 'New story', to: '/admin/story/neu' },
+  { label: 'New edition', to: '/admin/edition/neu' },
 ]
 
 export default function AdminLayout() {
@@ -52,7 +52,7 @@ export default function AdminLayout() {
             size="small"
             sx={{ color: 'text.secondary' }}
           >
-            ← Zur Website
+            ← Back to website
           </Button>
         </Toolbar>
       </AppBar>

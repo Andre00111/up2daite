@@ -17,9 +17,9 @@ export default function EditionDetailPage() {
     return (
       <Container maxWidth="md" sx={{ py: 6 }}>
         <Alert severity="error" sx={{ mb: 2 }}>
-          Ausgabe nicht gefunden.
+          Edition not found.
         </Alert>
-        <Button onClick={() => navigate('/archiv')}>← Zurück zum Archiv</Button>
+        <Button onClick={() => navigate('/archiv')}>← Back to archive</Button>
       </Container>
     )
   }
@@ -34,7 +34,7 @@ export default function EditionDetailPage() {
         color="inherit"
         sx={{ mb: 3, color: 'text.secondary' }}
       >
-        ← Zurück zum Archiv
+        ← Back to archive
       </Button>
 
       <EditionHeader edition={edition} />
@@ -42,12 +42,12 @@ export default function EditionDetailPage() {
       <Divider sx={{ mb: 4 }} />
 
       {stories.length === 0 ? (
-        <Alert severity="info">Diese Ausgabe enthält noch keine Stories.</Alert>
+        <Alert severity="info">This edition doesn't contain any stories yet.</Alert>
       ) : (
         stories.map((story) => <StoryCard key={story.id} story={story} variant="full" />)
       )}
 
-      {/* Ausgaben-Navigation */}
+      {/* Edition navigation */}
       <Divider sx={{ my: 4 }} />
       <Box sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
         <Box>
@@ -86,10 +86,10 @@ export default function EditionDetailPage() {
         }}
       >
         <Typography variant="h6" gutterBottom>
-          Diese Ausgabe hat dir gefallen?
+          Enjoyed this edition?
         </Typography>
         <Typography variant="body2" sx={{ mb: 2, color: 'rgba(255,255,255,0.8)' }}>
-          3× pro Woche direkt in dein Postfach – kuratiert, kommentiert, ohne Bullshit.
+          3× a week straight to your inbox – curated, commented, no bullshit.
         </Typography>
         <Button
           href="mailto:hello@up2daite.com"
@@ -97,7 +97,7 @@ export default function EditionDetailPage() {
           color="secondary"
           disableElevation
         >
-          Newsletter abonnieren
+          Subscribe to newsletter
         </Button>
       </Box>
     </Container>

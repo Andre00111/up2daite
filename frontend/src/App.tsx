@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/layout/Layout";
 import AdminLayout from "./components/layout/AdminLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -28,7 +28,9 @@ export default function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/archiv" element={<ArchivPage />} />
         <Route path="/ausgabe/:slug" element={<EditionDetailPage />} />
-        <Route path="/ki-jobs" element={<AIJobsPage />} />
+        <Route path="/endangered-jobs" element={<AIJobsPage />} />
+        {/* Legacy URL redirect — keeps old links/bookmarks working */}
+        <Route path="/ki-jobs" element={<Navigate to="/endangered-jobs" replace />} />
         <Route path="/ki-modelle" element={<AIModelsPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/confirm" element={<ConfirmPage />} />
@@ -52,9 +54,11 @@ export default function App() {
         <Route path="edition/:id" element={<EditionPreviewPage />} />
         <Route path="edition/:id/edit" element={<EditionFormPage />} />
         <Route path="subscribers" element={<SubscriberListPage />} />
-        <Route path="ki-jobs" element={<AIJobListPage />} />
-        <Route path="ki-jobs/neu" element={<AIJobFormPage />} />
-        <Route path="ki-jobs/:id/edit" element={<AIJobFormPage />} />
+        <Route path="endangered-jobs" element={<AIJobListPage />} />
+        <Route path="endangered-jobs/neu" element={<AIJobFormPage />} />
+        <Route path="endangered-jobs/:id/edit" element={<AIJobFormPage />} />
+        {/* Legacy admin URL redirect */}
+        <Route path="ki-jobs" element={<Navigate to="/admin/endangered-jobs" replace />} />
         <Route path="ki-modelle" element={<AIModelListPage />} />
         <Route path="ki-modelle/neu" element={<AIModelFormPage />} />
         <Route path="ki-modelle/:id/edit" element={<AIModelFormPage />} />

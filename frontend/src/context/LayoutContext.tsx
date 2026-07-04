@@ -10,7 +10,7 @@ interface LayoutContextType {
 const LayoutContext = createContext<LayoutContextType | undefined>(undefined)
 
 export function LayoutProvider({ children }: { children: ReactNode }) {
-  const [mode, setMode] = useState<LayoutMode>('sidebar')
+  const [mode, setMode] = useState<LayoutMode>('header')
 
   const toggleMode = () => {
     setMode((prev) => (prev === 'header' ? 'sidebar' : 'header'))

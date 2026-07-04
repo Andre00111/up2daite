@@ -1,6 +1,16 @@
 {
   "permissions": {
     "allow": [
+      "Edit(//Users/andre.butkevich/Desktop/Projects/AI-news-app/**)",
+      "Write(//Users/andre.butkevich/Desktop/Projects/AI-news-app/**)",
+      "Read(//Users/andre.butkevich/Desktop/Projects/AI-news-app/**)",
+      "WebFetch",
+      "WebSearch",
+      "Skill",
+      "Bash(cd /Users/andre.butkevich/Desktop/Projects/AI-news-app && *)",
+      "Bash(cd /Users/andre.butkevich/Desktop/Projects/AI-news-app/frontend && *)",
+      "Bash(cd /Users/andre.butkevich/Desktop/Projects/AI-news-app/backend && *)",
+      "Bash(cd /Users/andre.butkevich/Desktop/Projects/AI-news-app/scripts && *)",
       "Bash(git config *)",
       "Bash(ssh-keygen -F gitlab.com)",
       "Bash(ssh-keyscan gitlab.com)",
@@ -92,10 +102,23 @@
       "Bash(tsx scripts/render-editions-only.ts)",
       "Bash(node scripts/render-editions-only.mjs)",
       "Bash(scripts/seed-instagram.command)",
-      "Bash(node scripts/generate-metadata.js)"
+      "Bash(node scripts/generate-metadata.js)",
+      "Bash(npm run dev > /tmp/vite-dev.log 2>&1 & *)",
+      "Bash(open -a Safari \"http://localhost:5175/ki-jobs\")",
+      "Bash(open -a Safari \"http://localhost:5175/ki-modelle\")",
+      "Bash(open -a Safari \"http://localhost:5175/archiv\")",
+      "Bash(lsof -ti:48080)",
+      "Bash(curl -s -m 4 -o /dev/null -w \"backend /api/ai-jobs -> HTTP %{http_code}\\\\n\" http://localhost:48080/api/ai-jobs)",
+      "Bash(curl -s -m 4 -w \"\\\\nproxy /api/ai-jobs -> HTTP %{http_code}\\\\n\" http://localhost:5175/api/ai-jobs)",
+      "Bash(curl -s -m 5 http://localhost:5175/api/ai-jobs)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('\\\\n'.join\\(f\\\\\"{j['riskScore']:>3} {j['title']}\\\\\" for j in sorted\\(d,key=lambda x:-x['riskScore']\\)\\)\\); print\\('---'\\); print\\('total:',len\\(d\\)\\)\")",
+      "Bash(echo \"TSC_EXIT=$?\")",
+      "Bash(lsof -ti:5175)",
+      "Bash(open -a Safari \"http://localhost:5175/\")"
     ],
     "additionalDirectories": [
-      "/Users/andre.butkevich/Desktop/Projects/AI-news-app/frontend/src/utils"
+      "/Users/andre.butkevich/Desktop/Projects/AI-news-app/frontend/src/utils",
+      "/tmp"
     ]
   },
   "model": "claude-opus-4-8"

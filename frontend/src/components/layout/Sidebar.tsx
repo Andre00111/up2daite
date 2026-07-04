@@ -25,14 +25,15 @@ import {
 import { NavLink, useLocation } from 'react-router-dom'
 import { useLayout } from '../../context/LayoutContext'
 import { useAuth } from '../../context/AuthContext'
+import Logo, { Wordmark } from '../ui/Logo'
 
 const DRAWER_WIDTH = 260
 
 const navItems = [
   { label: 'Home', path: '/', icon: <HomeIcon /> },
-  { label: 'Archiv', path: '/archiv', icon: <ArchiveIcon /> },
-  { label: 'KI-Jobs', path: '/ki-jobs', icon: <WorkIcon /> },
-  { label: 'KI-Modelle', path: '/ki-modelle', icon: <PsychologyIcon /> },
+  { label: 'Archive', path: '/archiv', icon: <ArchiveIcon /> },
+  { label: 'Endangered Jobs', path: '/endangered-jobs', icon: <WorkIcon /> },
+  { label: 'AI Models', path: '/ki-modelle', icon: <PsychologyIcon /> },
 ]
 
 const secondaryItems = [
@@ -78,27 +79,16 @@ export default function Sidebar() {
             width: 40,
             height: 40,
             borderRadius: 2,
-            background: (t) => t.palette.brand.gradient,
+            bgcolor: 'background.default',
+            border: (t) => `1px solid ${t.palette.divider}`,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
-          <Typography sx={{ color: 'white', fontWeight: 700, fontSize: 18 }}>
-            U
-          </Typography>
+          <Logo size={26} />
         </Box>
-        <Typography
-          variant="h6"
-          sx={{
-            fontWeight: 700,
-            background: (t) => t.palette.brand.gradient,
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
-        >
-          up2daite
-        </Typography>
+        <Wordmark fontSize={20} />
       </Box>
 
       <Divider />
@@ -139,7 +129,7 @@ export default function Sidebar() {
 
       <Box sx={{ px: 2, py: 1 }}>
         <Typography variant="overline" color="text.secondary" sx={{ px: 1 }}>
-          Mehr
+          More
         </Typography>
       </Box>
 
@@ -187,10 +177,10 @@ export default function Sidebar() {
           </Avatar>
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography variant="body2" fontWeight={600} noWrap>
-              {user ? user.username : 'Gast'}
+              {user ? user.username : 'Guest'}
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              {user ? 'Admin' : 'Nicht angemeldet'}
+              {user ? 'Admin' : 'Not logged in'}
             </Typography>
           </Box>
           {user && (
@@ -198,7 +188,7 @@ export default function Sidebar() {
               size="small"
               onClick={logout}
               sx={{ minWidth: 0, p: 0.5, color: 'text.secondary' }}
-              title="Abmelden"
+              title="Log out"
             >
               <LogoutIcon fontSize="small" />
             </Button>
@@ -215,7 +205,7 @@ export default function Sidebar() {
           }
           label={
             <Typography variant="caption" color="text.secondary">
-              Sidebar Layout
+              Sidebar layout
             </Typography>
           }
           sx={{ mt: 2, ml: 0 }}

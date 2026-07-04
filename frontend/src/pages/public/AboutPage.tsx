@@ -33,25 +33,24 @@ export default function AboutPage() {
         </Box>
 
         <Typography variant="body1" color="text.secondary" paragraph>
-          up2daite ist dein wöchentlicher Newsletter für die wichtigsten
-          Entwicklungen im Bereich Künstliche Intelligenz. Wir kuratieren die
-          relevantesten News, Jobmöglichkeiten und neuen KI-Modelle für dich.
+          up2daite is your weekly newsletter for the most important
+          developments in artificial intelligence. We curate the most
+          relevant news, job opportunities, and new AI models for you.
         </Typography>
 
         <Typography variant="body1" color="text.secondary" paragraph>
-          Unser Ziel ist es, dir einen schnellen und fundierten Überblick zu
-          geben, damit du immer auf dem neuesten Stand bleibst — ohne stundenlang
-          recherchieren zu müssen.
+          Our goal is to give you a quick and well-founded overview so you
+          always stay up to date — without having to spend hours researching.
         </Typography>
 
         <Typography variant="h6" fontWeight={600} sx={{ mt: 4, mb: 2 }}>
-          Kontakt
+          Contact
         </Typography>
 
         <Typography variant="body1" color="text.secondary">
-          Fragen, Feedback oder Kooperationsanfragen?
+          Questions, feedback, or partnership inquiries?
           <br />
-          Schreib uns an{' '}
+          Write to us at{' '}
           <Box
             component="a"
             href="mailto:hello@up2daite.com"

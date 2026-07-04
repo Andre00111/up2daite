@@ -25,9 +25,9 @@ export default function LoginPage() {
       navigate(redirectTo, { replace: true })
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
-        setError('Falscher Username oder Passwort.')
+        setError('Incorrect username or password.')
       } else {
-        setError('Login fehlgeschlagen. Bitte später erneut versuchen.')
+        setError('Login failed. Please try again later.')
       }
     } finally {
       setSubmitting(false)
@@ -73,10 +73,10 @@ export default function LoginPage() {
         </Box>
 
         <Typography variant="h5" fontWeight={700} textAlign="center" sx={{ mb: 1 }}>
-          Admin-Login
+          Admin login
         </Typography>
         <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mb: 4 }}>
-          Nur für die Redaktion.
+          For editorial staff only.
         </Typography>
 
         <form onSubmit={handleSubmit}>
@@ -91,7 +91,7 @@ export default function LoginPage() {
             sx={{ mb: 2 }}
           />
           <TextField
-            label="Passwort"
+            label="Password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -119,7 +119,7 @@ export default function LoginPage() {
               textTransform: 'none',
             }}
           >
-            {submitting ? 'Anmelden…' : 'Anmelden'}
+            {submitting ? 'Logging in…' : 'Log in'}
           </Button>
         </form>
       </Paper>

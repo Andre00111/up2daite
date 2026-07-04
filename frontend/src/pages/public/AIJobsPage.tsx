@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Box, Container, Typography, ToggleButtonGroup, ToggleButton, Grid2 as Grid, CircularProgress, Alert } from '@mui/material'
 import JobRiskCard, { type JobRisk } from '../../components/features/JobRiskCard'
 import { aiJobsApi, type AIJob } from '../../api/aiJobs'
+import { brandColors } from '../../theme'
 
 type SortOption = 'risk-high' | 'risk-low' | 'alpha'
 
@@ -14,21 +15,21 @@ export default function AIJobsPage() {
   useEffect(() => {
     aiJobsApi.list()
       .then(setJobsData)
-      .catch(() => setError('KI-Jobs konnten nicht geladen werden.'))
+      .catch(() => setError('AI jobs could not be loaded.'))
       .finally(() => setLoading(false))
   }, [])
 
   const sortedJobs: JobRisk[] = [...jobsData].sort((a, b) => {
     if (sortBy === 'risk-high') return b.riskScore - a.riskScore
     if (sortBy === 'risk-low') return a.riskScore - b.riskScore
-    return a.title.localeCompare(b.title, 'de')
+    return a.title.localeCompare(b.title, 'en')
   })
 
   return (
     <Box>
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0d47a1 100%)',
+          background: brandColors.inverseBg,
           color: 'white',
           py: { xs: 8, md: 12 },
           position: 'relative',
@@ -40,7 +41,7 @@ export default function AIJobsPage() {
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(14, 165, 233, 0.3) 0%, transparent 50%)',
+            background: 'radial-gradient(circle at 20% 50%, rgba(99,102,241,0.25) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(139,92,246,0.25) 0%, transparent 50%)',
             pointerEvents: 'none',
           },
         }}
@@ -51,7 +52,7 @@ export default function AIJobsPage() {
               variant="overline"
               sx={{ color: 'rgba(255,255,255,0.7)', letterSpacing: 3, mb: 1, display: 'block' }}
             >
-              Stand: Mai 2025
+              As of: May 2025
             </Typography>
             <Typography
               variant="h2"
@@ -59,21 +60,21 @@ export default function AIJobsPage() {
               sx={{
                 fontWeight: 800,
                 fontSize: { xs: '2rem', md: '3.5rem' },
-                background: 'linear-gradient(90deg, #fff 0%, #93c5fd 50%, #38bdf8 100%)',
+                background: 'linear-gradient(90deg, #fff 0%, #c4b5fd 50%, #8b5cf6 100%)',
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 mb: 2,
               }}
             >
-              AI Job-Risiko-Monitor
+              AI Job Risk Monitor
             </Typography>
             <Typography
               variant="h6"
               sx={{ color: 'rgba(255,255,255,0.8)', fontWeight: 400, maxWidth: 640, mx: 'auto' }}
             >
-              Welche Berufe sind durch künstliche Intelligenz gefährdet?
-              Aktuelle Einschätzungen basierend auf technologischen Entwicklungen und Markttrends.
+              Which jobs are at risk from artificial intelligence? Current assessments based on
+              technological developments and market trends.
             </Typography>
           </Box>
         </Container>
@@ -89,7 +90,7 @@ export default function AIJobsPage() {
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4, flexWrap: 'wrap', gap: 2 }}>
           <Box>
             <Typography variant="body2" color="text.secondary">
-              {jobsData.length} Berufe analysiert
+              {jobsData.length} jobs analyzed
             </Typography>
           </Box>
           <ToggleButtonGroup
@@ -99,10 +100,10 @@ export default function AIJobsPage() {
             size="small"
           >
             <ToggleButton value="risk-high">
-              Höchstes Risiko
+              Highest risk
             </ToggleButton>
             <ToggleButton value="risk-low">
-              Niedrigstes Risiko
+              Lowest risk
             </ToggleButton>
             <ToggleButton value="alpha">
               A–Z
@@ -114,15 +115,15 @@ export default function AIJobsPage() {
           <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: '#dc2626' }} />
-              <Typography variant="caption" color="text.secondary">Kritisch (70–100%)</Typography>
+              <Typography variant="caption" color="text.secondary">Critical (70–100%)</Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: '#f59e0b' }} />
-              <Typography variant="caption" color="text.secondary">Mittel (40–69%)</Typography>
+              <Typography variant="caption" color="text.secondary">Medium (40–69%)</Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: '#22c55e' }} />
-              <Typography variant="caption" color="text.secondary">Niedrig (0–39%)</Typography>
+              <Typography variant="caption" color="text.secondary">Low (0–39%)</Typography>
             </Box>
           </Box>
         </Box>
@@ -139,20 +140,20 @@ export default function AIJobsPage() {
 
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)',
+          background: brandColors.inverseBg,
           py: 6,
           textAlign: 'center',
         }}
       >
         <Container maxWidth="md">
           <Typography variant="overline" sx={{ color: 'rgba(255,255,255,0.5)', letterSpacing: 2 }}>
-            Hinweis zur Methodik
+            Methodology note
           </Typography>
           <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)', mt: 1 }}>
-            Die Risiko-Scores basieren auf einer Kombination aus aktuellen AI-Fähigkeiten, Markttrends,
-            Automatisierungsgrad der Kernaufgaben und regulatorischen Faktoren. Die Einschätzungen sind
-            keine Prognosen, sondern spiegeln den aktuellen Stand der Technologie wider.
-            Individuelle Spezialisierungen können das persönliche Risiko erheblich beeinflussen.
+            Risk scores are based on a combination of current AI capabilities, market trends, the degree
+            of automation of core tasks, and regulatory factors. These assessments are not forecasts but
+            reflect the current state of technology. Individual specializations can significantly affect
+            personal risk.
           </Typography>
         </Container>
       </Box>

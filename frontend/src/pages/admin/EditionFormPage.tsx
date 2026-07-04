@@ -47,14 +47,14 @@ export default function EditionFormPage() {
   const [form, setForm] = useState({
     title: '',
     editorNote: '',
-    // Geordnete Liste aller ausgewählten Story-IDs (per Drag-Drop sortierbar)
+    // Ordered list of all selected story IDs (sortable via drag and drop)
     selectedStoryIds: [] as string[],
   })
   const [saved, setSaved] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Beim Edit: Form aus existierender Edition füllen
+  // When editing: populate form from the existing edition
   useEffect(() => {
     if (!isEdit) return
     const edition = getEditionById(id!)
@@ -108,7 +108,7 @@ export default function EditionFormPage() {
       setSaved(true)
       setTimeout(() => navigate('/admin'), 1000)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Speichern fehlgeschlagen')
+      setError(e instanceof Error ? e.message : 'Save failed')
     } finally {
       setSubmitting(false)
     }
@@ -127,14 +127,14 @@ export default function EditionFormPage() {
   return (
     <Box>
       <Typography variant="h4" fontWeight={700} gutterBottom>
-        {isEdit ? 'Ausgabe bearbeiten' : 'Neue Ausgabe'}
+        {isEdit ? 'Edit Edition' : 'New Edition'}
       </Typography>
 
       <Card>
         <CardContent sx={{ p: 3 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
             <TextField
-              label="Titel der Ausgabe"
+              label="Edition title"
               fullWidth
               required
               value={form.title}
@@ -142,22 +142,22 @@ export default function EditionFormPage() {
             />
 
             <TextField
-              label="Editor-Note (optional)"
+              label="Editor note (optional)"
               fullWidth
               multiline
               rows={3}
               value={form.editorNote}
               onChange={(e) => setForm({ ...form, editorNote: e.target.value })}
-              helperText="Kurze redaktionelle Einleitung zur Ausgabe"
+              helperText="Short editorial introduction for the edition"
             />
 
-            {/* Ausgewählte Stories – sortierbar per Drag-Drop */}
+            {/* Selected stories – sortable via drag and drop */}
             <Box>
               <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-                Ausgewählte Stories ({selectedStories.length}) – ziehen zum Sortieren
+                Selected stories ({selectedStories.length}) – drag to reorder
               </Typography>
               {selectedStories.length === 0 ? (
-                <Alert severity="info">Noch keine Stories ausgewählt.</Alert>
+                <Alert severity="info">No stories selected yet.</Alert>
               ) : (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                   <SortableContext items={form.selectedStoryIds} strategy={verticalListSortingStrategy}>
@@ -175,15 +175,15 @@ export default function EditionFormPage() {
 
             <Divider />
 
-            {/* Verfügbare Stories zum Hinzufügen */}
+            {/* Available stories to add */}
             <Box>
               <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-                Verfügbare Stories ({unselectedStories.length})
+                Available stories ({unselectedStories.length})
               </Typography>
               {storiesLoading ? (
                 <CircularProgress />
               ) : unselectedStories.length === 0 ? (
-                <Typography variant="body2" color="text.secondary">Keine weiteren Stories verfügbar.</Typography>
+                <Typography variant="body2" color="text.secondary">No more stories available.</Typography>
               ) : (
                 unselectedStories.map((story) => (
                   <Box key={story.id} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -191,7 +191,7 @@ export default function EditionFormPage() {
                     <Box>
                       <Typography variant="body2" fontWeight={500}>{story.title}</Typography>
                       <Typography variant="caption" color="text.secondary">
-                        {story.source.name} · {story.editionId ? `In Ausgabe ${story.editionId}` : 'nicht zugeordnet'}
+                        {story.source.name} · {story.editionId ? `In edition ${story.editionId}` : 'unassigned'}
                       </Typography>
                     </Box>
                   </Box>
@@ -203,7 +203,7 @@ export default function EditionFormPage() {
 
             <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
               <Button onClick={() => navigate('/admin')} color="inherit">
-                Abbrechen
+                Cancel
               </Button>
               <Button
                 onClick={handleSave}
@@ -211,7 +211,7 @@ export default function EditionFormPage() {
                 disableElevation
                 disabled={!form.title || submitting}
               >
-                {submitting ? 'Speichern…' : isEdit ? 'Aktualisieren' : 'Anlegen'}
+                {submitting ? 'Saving…' : isEdit ? 'Update' : 'Create'}
               </Button>
             </Box>
           </Box>
@@ -219,7 +219,7 @@ export default function EditionFormPage() {
       </Card>
 
       <Snackbar open={saved} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
-        <Alert severity="success">Ausgabe gespeichert</Alert>
+        <Alert severity="success">Edition saved</Alert>
       </Snackbar>
     </Box>
   )
@@ -256,7 +256,7 @@ function SortableStoryRow({ story, onRemove }: { story: Story; onRemove: () => v
         <Typography variant="caption" color="text.secondary">{story.source.name}</Typography>
       </Box>
       <Button size="small" color="inherit" onClick={onRemove}>
-        Entfernen
+        Remove
       </Button>
     </Box>
   )
