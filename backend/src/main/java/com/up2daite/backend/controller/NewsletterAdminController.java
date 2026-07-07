@@ -1,5 +1,7 @@
 package com.up2daite.backend.controller;
 
+// ─── Newsletter deaktiviert: gesamter Controller auskommentiert ───────────────
+/*
 import com.up2daite.backend.dto.SendNewsletterRequest;
 import com.up2daite.backend.dto.SubscriberAdminDto;
 import com.up2daite.backend.repository.SubscriberRepository;
@@ -49,3 +51,4 @@ public class NewsletterAdminController {
         }
     }
 }
+*/

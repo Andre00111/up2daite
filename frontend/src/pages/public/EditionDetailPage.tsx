@@ -74,7 +74,7 @@ export default function EditionDetailPage() {
         </Box>
       </Box>
 
-      {/* Newsletter CTA */}
+      {/* Newsletter CTA — deaktiviert
       <Box
         sx={{
           mt: 6,
@@ -100,6 +100,7 @@ export default function EditionDetailPage() {
           Subscribe to newsletter
         </Button>
       </Box>
+      */}
     </Container>
   )
 }

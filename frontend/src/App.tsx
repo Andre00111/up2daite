@@ -8,14 +8,14 @@ import EditionDetailPage from "./pages/public/EditionDetailPage";
 import AIJobsPage from "./pages/public/AIJobsPage";
 import AIModelsPage from "./pages/public/AIModelsPage";
 import AboutPage from "./pages/public/AboutPage";
-import ConfirmPage from "./pages/public/ConfirmPage";
-import UnsubscribePage from "./pages/public/UnsubscribePage";
+// import ConfirmPage from "./pages/public/ConfirmPage"; // newsletter deaktiviert
+// import UnsubscribePage from "./pages/public/UnsubscribePage"; // newsletter deaktiviert
 import LoginPage from "./pages/LoginPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import StoryFormPage from "./pages/admin/StoryFormPage";
 import EditionFormPage from "./pages/admin/EditionFormPage";
 import EditionPreviewPage from "./pages/admin/EditionPreviewPage";
-import SubscriberListPage from "./pages/admin/SubscriberListPage";
+// import SubscriberListPage from "./pages/admin/SubscriberListPage"; // newsletter deaktiviert
 import AIJobListPage from "./pages/admin/AIJobListPage";
 import AIJobFormPage from "./pages/admin/AIJobFormPage";
 import AIModelListPage from "./pages/admin/AIModelListPage";
@@ -33,8 +33,10 @@ export default function App() {
         <Route path="/ki-jobs" element={<Navigate to="/endangered-jobs" replace />} />
         <Route path="/ki-modelle" element={<AIModelsPage />} />
         <Route path="/about" element={<AboutPage />} />
+        {/* Newsletter deaktiviert
         <Route path="/confirm" element={<ConfirmPage />} />
         <Route path="/unsubscribe" element={<UnsubscribePage />} />
+        */}
       </Route>
 
       <Route path="/login" element={<LoginPage />} />
@@ -53,7 +55,9 @@ export default function App() {
         <Route path="edition/neu" element={<EditionFormPage />} />
         <Route path="edition/:id" element={<EditionPreviewPage />} />
         <Route path="edition/:id/edit" element={<EditionFormPage />} />
+        {/* Newsletter deaktiviert
         <Route path="subscribers" element={<SubscriberListPage />} />
+        */}
         <Route path="endangered-jobs" element={<AIJobListPage />} />
         <Route path="endangered-jobs/neu" element={<AIJobFormPage />} />
         <Route path="endangered-jobs/:id/edit" element={<AIJobFormPage />} />

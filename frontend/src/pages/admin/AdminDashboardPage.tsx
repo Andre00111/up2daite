@@ -83,9 +83,11 @@ export default function AdminDashboardPage() {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Typography variant="h4" fontWeight={700}>Dashboard</Typography>
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+          {/* Newsletter deaktiviert
           <Button variant="outlined" onClick={() => navigate('/admin/subscribers')}>
             Subscribers
           </Button>
+          */}
           <Button variant="outlined" onClick={() => navigate('/admin/endangered-jobs')}>
             Endangered Jobs
           </Button>

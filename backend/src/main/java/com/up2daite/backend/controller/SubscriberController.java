@@ -1,5 +1,7 @@
 package com.up2daite.backend.controller;
 
+// ─── Newsletter deaktiviert: gesamter Controller auskommentiert ───────────────
+/*
 import com.up2daite.backend.dto.SubscribeRequest;
 import com.up2daite.backend.service.SubscriberService;
 import jakarta.validation.Valid;
@@ -40,3 +42,4 @@ public class SubscriberController {
                                           : ResponseEntity.notFound().build();
     }
 }
+*/

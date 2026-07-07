@@ -59,9 +59,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/topics/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/ai-jobs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/ai-models/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/subscribers").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/subscribers/confirm").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/subscribers/unsubscribe").permitAll()
+                        // Newsletter deaktiviert
+                        // .requestMatchers(HttpMethod.POST, "/api/subscribers").permitAll()
+                        // .requestMatchers(HttpMethod.GET, "/api/subscribers/confirm").permitAll()
+                        // .requestMatchers(HttpMethod.GET, "/api/subscribers/unsubscribe").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/info", "/actuator/prometheus").permitAll()
                         // Admin Endpoints
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")

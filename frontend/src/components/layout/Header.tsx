@@ -126,6 +126,7 @@ export default function Header() {
         )}
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 'auto' }}>
+          {/* Newsletter deaktiviert
           {!isMobile && (
             <Button
               href="mailto:hello@up2daite.com"
@@ -143,6 +144,7 @@ export default function Header() {
               Newsletter
             </Button>
           )}
+          */}
 
           <IconButton
             onClick={handleProfileMenuOpen}
@@ -262,6 +264,7 @@ export default function Header() {
           ))}
         </List>
         <Divider sx={{ mt: 'auto' }} />
+        {/* Newsletter deaktiviert
         <Box sx={{ p: 2 }}>
           <Button
             href="mailto:hello@up2daite.com"
@@ -278,6 +281,7 @@ export default function Header() {
             Subscribe to newsletter
           </Button>
         </Box>
+        */}
       </Drawer>
     </AppBar>
   )

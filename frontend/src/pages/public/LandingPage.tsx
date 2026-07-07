@@ -1,9 +1,9 @@
-import { Box, Container, Typography, Button, Divider, Grid2 as Grid, Paper } from '@mui/material'
+import { Box, Container, Typography, Button, Divider, Grid2 as Grid /*, Paper */ } from '@mui/material' // Paper: newsletter deaktiviert
 import { useNavigate } from 'react-router-dom'
 import { useEditions } from '../../hooks/useEditions'
 import { useStories } from '../../hooks/useStories'
 import StoryCard from '../../components/features/StoryCard'
-import NewsletterSignupForm from '../../components/features/NewsletterSignupForm'
+// import NewsletterSignupForm from '../../components/features/NewsletterSignupForm' // newsletter deaktiviert
 import DarkSection from '../../components/ui/DarkSection'
 import SignalScoreBadge from '../../components/ui/SignalScoreBadge'
 
@@ -54,6 +54,7 @@ export default function LandingPage() {
             }}
           />
           <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+            {/* Newsletter deaktiviert
             <Button
               href="#newsletter"
               variant="contained"
@@ -70,6 +71,7 @@ export default function LandingPage() {
             >
               Subscribe to newsletter
             </Button>
+            */}
             <Button
               onClick={() => navigate('/archiv')}
               variant="outlined"
@@ -144,7 +146,7 @@ export default function LandingPage() {
         </Container>
       </DarkSection>
 
-      {/* Newsletter signup */}
+      {/* Newsletter signup — deaktiviert
       <Box id="newsletter" sx={{ py: 8 }}>
         <Container maxWidth="sm">
           <Paper
@@ -155,6 +157,7 @@ export default function LandingPage() {
           </Paper>
         </Container>
       </Box>
+      */}
     </Box>
   )
 }
