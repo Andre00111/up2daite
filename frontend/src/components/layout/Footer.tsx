@@ -1,4 +1,4 @@
-import { Box, Container, Typography } from '@mui/material'
+import { Box, Container, Typography, Link } from '@mui/material'
 
 export default function Footer() {
   return (
@@ -7,9 +7,35 @@ export default function Footer() {
       sx={{ py: 4, mt: 8, borderTop: '1px solid', borderColor: 'divider' }}
     >
       <Container maxWidth="lg">
-        <Typography variant="body2" color="text.secondary">
-          © 2026 up2daite.com – AI signal. No noise.
-        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Typography variant="body2" color="text.secondary">
+            © 2026 up2daite.com – AI signal. No noise.
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+            <Link
+              href="/imprint"
+              variant="body2"
+              sx={{
+                color: 'text.secondary',
+                textDecoration: 'none',
+                '&:hover': { color: 'primary.main', textDecoration: 'underline' },
+              }}
+            >
+              Impressum
+            </Link>
+            <Link
+              href="/privacy"
+              variant="body2"
+              sx={{
+                color: 'text.secondary',
+                textDecoration: 'none',
+                '&:hover': { color: 'primary.main', textDecoration: 'underline' },
+              }}
+            >
+              Datenschutz
+            </Link>
+          </Box>
+        </Box>
       </Container>
     </Box>
   )

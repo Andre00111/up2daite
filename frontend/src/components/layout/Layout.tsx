@@ -3,6 +3,7 @@ import { Box, useMediaQuery, useTheme } from '@mui/material'
 import Header from './Header'
 import Footer from './Footer'
 import Sidebar, { DRAWER_WIDTH } from './Sidebar'
+import CookieBanner from '../CookieBanner'
 import { useLayout } from '../../context/LayoutContext'
 
 export default function Layout() {
@@ -32,6 +33,8 @@ export default function Layout() {
 
         <Footer />
       </Box>
+
+      <CookieBanner />
     </Box>
   )
 }

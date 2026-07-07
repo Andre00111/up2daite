@@ -8,6 +8,8 @@ import EditionDetailPage from "./pages/public/EditionDetailPage";
 import AIJobsPage from "./pages/public/AIJobsPage";
 import AIModelsPage from "./pages/public/AIModelsPage";
 import AboutPage from "./pages/public/AboutPage";
+import ImprintPage from "./pages/public/ImprintPage";
+import PrivacyPage from "./pages/public/PrivacyPage";
 // import ConfirmPage from "./pages/public/ConfirmPage"; // newsletter deaktiviert
 // import UnsubscribePage from "./pages/public/UnsubscribePage"; // newsletter deaktiviert
 import LoginPage from "./pages/LoginPage";
@@ -33,6 +35,8 @@ export default function App() {
         <Route path="/ki-jobs" element={<Navigate to="/endangered-jobs" replace />} />
         <Route path="/ki-modelle" element={<AIModelsPage />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/imprint" element={<ImprintPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
         {/* Newsletter deaktiviert
         <Route path="/confirm" element={<ConfirmPage />} />
         <Route path="/unsubscribe" element={<UnsubscribePage />} />
