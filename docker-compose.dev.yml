@@ -37,6 +37,11 @@ services:
       postgres:
         condition: service_healthy
     restart: unless-stopped
+    volumes:
+      # ★ M2-Cache mounten: Maven sucht hier nach Dependencies
+      # → Dependencies werden einmal runtergeladen, danach aus Host-Cache benutzt
+      # → Ohne Mount: jeder Build lädt ~3800 JARs neu (750s), mit Mount: nur pom.xml-Änderungen (instant)
+      - ~/.m2/repository:/root/.m2/repository:cached
 
   frontend:
     build:

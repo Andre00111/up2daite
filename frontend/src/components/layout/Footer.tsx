@@ -21,7 +21,7 @@ export default function Footer() {
                 '&:hover': { color: 'primary.main', textDecoration: 'underline' },
               }}
             >
-              Impressum
+              Imprint
             </Link>
             <Link
               href="/privacy"
@@ -32,7 +32,7 @@ export default function Footer() {
                 '&:hover': { color: 'primary.main', textDecoration: 'underline' },
               }}
             >
-              Datenschutz
+              Privacy Policy
             </Link>
           </Box>
         </Box>
