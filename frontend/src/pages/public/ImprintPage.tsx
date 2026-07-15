@@ -22,7 +22,7 @@ export default function ImprintPage() {
         <Typography variant="body1" color="text.secondary" paragraph>
           André Butkevich
           <br />
-          hello@up2daite.com
+          andreb722@web.de
         </Typography>
 
         <Typography variant="h6" fontWeight={600} sx={{ mt: 4, mb: 2 }}>
