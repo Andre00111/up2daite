@@ -1,4 +1,4 @@
-import { Box, Container, Typography, Paper } from '@mui/material'
+import { Box, Container, Typography, Paper } from "@mui/material";
 
 export default function ImprintPage() {
   return (
@@ -8,16 +8,16 @@ export default function ImprintPage() {
         sx={{
           p: 4,
           borderRadius: 3,
-          border: '1px solid',
-          borderColor: 'divider',
+          border: "1px solid",
+          borderColor: "divider",
         }}
       >
         <Typography variant="h4" fontWeight={700} gutterBottom>
-          Impressum
+          Imprint
         </Typography>
 
         <Typography variant="h6" fontWeight={600} sx={{ mt: 4, mb: 2 }}>
-          Verantwortlicher
+          Responsible Party
         </Typography>
         <Typography variant="body1" color="text.secondary" paragraph>
           André Butkevich
@@ -26,65 +26,62 @@ export default function ImprintPage() {
         </Typography>
 
         <Typography variant="h6" fontWeight={600} sx={{ mt: 4, mb: 2 }}>
-          Haftungsausschluss
+          Legal Disclaimer
         </Typography>
         <Typography variant="body1" color="text.secondary" paragraph>
-          Die Inhalte dieser Website wurden mit größtmöglicher Sorgfalt erstellt.
-          Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte
-          übernehmen wir jedoch keine Haftung. Als Diensteanbieter sind wir gemäß
-          TMG § 7 Abs. 1 für eigene Inhalte auf diesen Seiten nach den allgemeinen
-          Gesetzen verantwortlich. Nach §§ 8–10 des TMG sind wir als
-          Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte
-          fremde Informationen zu überwachen oder nach Umständen zu forschen, die
-          auf eine rechtswidrige Tätigkeit hinweisen.
+          The content of this website has been compiled with great care. However, we cannot assume
+          any liability for the accuracy, completeness, or timeliness of the content. As a service
+          provider, we are responsible for our own content on these pages in accordance with
+          applicable law. We are not obligated to monitor transmitted or stored external information
+          or to investigate circumstances that indicate unlawful activity.
         </Typography>
 
         <Typography variant="h6" fontWeight={600} sx={{ mt: 4, mb: 2 }}>
-          Haftung für Links
+          Liability for Links
         </Typography>
         <Typography variant="body1" color="text.secondary" paragraph>
-          Unser Angebot enthält Links zu externen Websites. Für die Inhalte der
-          verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.
-          Wir haben keinen Einfluss auf die Gestaltung und die Inhalte der
-          verlinkten Seiten. Das Setzen von Links bedeutet nicht, dass wir uns die
-          hinter dem Link liegenden Inhalte zu eigen machen.
+          Our site contains links to external websites. We are not responsible for the content of
+          linked pages. We have no influence on the design and content of linked pages. The
+          inclusion of links does not imply that we endorse the content behind the link.
         </Typography>
 
         <Typography variant="h6" fontWeight={600} sx={{ mt: 4, mb: 2 }}>
-          Urheberrecht
+          Copyright
         </Typography>
         <Typography variant="body1" color="text.secondary" paragraph>
-          Die Inhalte und Werke auf dieser Website sind urheberrechtlich geschützt.
-          Jede Art der Vervielfältigung, Bearbeitung, Verbreitung und jede Art der
-          Verwertung außerhalb der Grenzen des Urheberrechtes bedarf der
-          schriftlichen Zustimmung des Autors oder Creators.
+          The content and works on this website are subject to copyright protection. Any
+          reproduction, processing, distribution, or any form of utilization outside the scope of
+          copyright law requires the written permission of the author or creator.
         </Typography>
 
         <Typography variant="h6" fontWeight={600} sx={{ mt: 4, mb: 2 }}>
-          Datenschutz
+          Data Protection
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          Informationen zur Verarbeitung personenbezogener Daten findest du in
-          unserer{' '}
+          For information on the processing of personal data, please refer to our{" "}
           <Box
             component="a"
             href="/privacy"
             sx={{
-              color: 'primary.main',
-              textDecoration: 'none',
+              color: "primary.main",
+              textDecoration: "none",
               fontWeight: 600,
-              '&:hover': { textDecoration: 'underline' },
+              "&:hover": { textDecoration: "underline" },
             }}
           >
-            Datenschutzerklärung
+            Privacy Policy
           </Box>
           .
         </Typography>
 
-        <Typography variant="caption" color="text.secondary" sx={{ mt: 4, display: 'block' }}>
-          Letzte Aktualisierung: Juli 2026
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ mt: 4, display: "block" }}
+        >
+          Last updated: July 2026
         </Typography>
       </Paper>
     </Container>
-  )
+  );
 }

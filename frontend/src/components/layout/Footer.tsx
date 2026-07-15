@@ -11,7 +11,7 @@ export default function Footer() {
           <Typography variant="body2" color="text.secondary">
             © 2026 up2daite.com – AI signal. No noise.
           </Typography>
-          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+          <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
             <Link
               href="/imprint"
               variant="body2"
@@ -23,6 +23,7 @@ export default function Footer() {
             >
               Imprint
             </Link>
+            <Box sx={{ color: 'text.secondary' }}>·</Box>
             <Link
               href="/privacy"
               variant="body2"
